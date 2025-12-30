@@ -39,6 +39,10 @@ class ProductionDataSeeder extends Seeder
         if (File::exists(base_path('export-users.json'))) {
             $users = json_decode(File::get(base_path('export-users.json')), true);
             foreach ($users as $user) {
+                // S'assurer que le mot de passe existe
+                if (empty($user['password'])) {
+                    $user['password'] = bcrypt('password123'); // Mot de passe par défaut
+                }
                 User::updateOrCreate(['id' => $user['id']], $user);
             }
             echo "✅ Users imported: " . count($users) . "\n";
