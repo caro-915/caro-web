@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 
@@ -21,11 +21,11 @@
                     </a>
                 </div>
 
-                {{-- Titre / texte d’intro --}}
+                {{-- Titre / texte d'intro --}}
                 <div class="mb-5">
                     <h1 class="text-2xl md:text-3xl font-bold mb-1">Créer un compte</h1>
                     <p class="text-xs md:text-sm text-gray-500">
-                        En créant votre compte autoDZ, vous pourrez déposer et gérer vos annonces facilement.
+                        En créant votre compte Caro, vous pourrez déposer et gérer vos annonces facilement.
                     </p>
                 </div>
 
@@ -41,25 +41,13 @@
                     </div>
                 @endif
 
-                {{-- (Optionnel) Boutons sociaux visuels --}}
+                {{-- Bouton Google uniquement --}}
                 <div class="space-y-2 mb-4">
-                    <div class="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                        <button type="button"
-                                class="border border-gray-200 rounded-full py-2 flex items-center justify-center gap-2 hover:bg-gray-50">
-                            <span class="text-lg"></span>
-                            <span class="hidden md:inline">Apple</span>
-                        </button>
-                        <a href="{{ route('auth.google') }}"
-                           class="border border-gray-200 rounded-full py-2 flex items-center justify-center gap-2 hover:bg-gray-50">
-                            <span class="text-lg">G</span>
-                            <span class="hidden md:inline">Google</span>
-                        </a>
-                        <button type="button"
-                                class="border border-gray-200 rounded-full py-2 flex items-center justify-center gap-2 hover:bg-gray-50">
-                            <span class="text-lg">f</span>
-                            <span class="hidden md:inline">Facebook</span>
-                        </button>
-                    </div>
+                    <a href="{{ route('auth.google') }}"
+                       class="w-full border border-gray-200 rounded-full py-2.5 flex items-center justify-center gap-2 hover:bg-gray-50 text-sm font-medium">
+                        <span class="text-lg">G</span>
+                        <span>Google</span>
+                    </a>
 
                     <div class="flex items-center gap-3 text-[11px] text-gray-400">
                         <div class="flex-1 h-px bg-gray-200"></div>
@@ -68,20 +56,20 @@
                     </div>
                 </div>
 
-                {{-- FORMULAIRE D’INSCRIPTION --}}
+                {{-- FORMULAIRE D'INSCRIPTION --}}
                 <form method="POST" action="{{ route('register') }}" class="space-y-4 flex-1 flex flex-col">
                     @csrf
 
                     {{-- Nom --}}
                     <div>
-                        <label for="name" class="block text-xs font-semibold mb-1">Nom / Prénom</label>
+                        <label for="name" class="block text-xs font-semibold mb-1">Nom / PrÃ©nom</label>
                         <input id="name" type="text" name="name" value="{{ old('name') }}" required
                                class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm
                                       focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
                     </div>
                     {{-- phone --}}
                     <div class="mt-4">
-    <label for="phone" class="block text-xs font-semibold mb-1">Téléphone</label>
+    <label for="phone" class="block text-xs font-semibold mb-1">TÃ©lÃ©phone</label>
     <input id="phone" name="phone" type="text"
            class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm
                   focus:outline-none focus:ring-2 focus:ring-pink-500"
@@ -119,7 +107,7 @@
                         <input type="checkbox" required
                                class="mt-0.5 rounded border-gray-300 text-pink-600 focus:ring-pink-500">
                         <span>
-                            J’accepte les conditions d’utilisation d’autoDZ.
+                            J'accepte les conditions d'utilisation de Caro.
                         </span>
                     </div>
 
@@ -129,13 +117,13 @@
                                 class="w-full inline-flex items-center justify-center px-4 py-2
                                        rounded-full bg-pink-600 text-white text-sm font-semibold
                                        hover:bg-pink-700">
-                            Créer mon compte
+                            CrÃ©er mon compte
                         </button>
                     </div>
 
                     {{-- Lien Connexion --}}
                     <p class="mt-3 text-[11px] md:text-xs text-gray-500 text-center">
-                        Vous avez déjà un compte ?
+                        Vous avez dÃ©jÃ  un compte ?
                         <a href="{{ route('login') }}" class="text-pink-600 hover:text-pink-700 font-semibold">
                             Se connecter
                         </a>
@@ -148,7 +136,7 @@
     <div class="w-full rounded-3xl overflow-hidden shadow-lg">
         <img
             src="{{ asset('images/auth-hero.png') }}"
-            alt="AutoDZ"
+            alt="Caro"
             class="w-full h-80 md:h-[520px] object-cover"
         >
     </div>
@@ -156,3 +144,4 @@
         </div>
     </div>
 @endsection
+

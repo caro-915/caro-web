@@ -193,7 +193,7 @@
                 <span>Afficher mon numéro de téléphone sur l’annonce</span>
             </label>
             <p class="mt-1 text-[11px] text-gray-400">
-                Si vous décochez, les acheteurs pourront uniquement vous envoyer des messages via autoDZ.
+                Si vous décochez, les acheteurs pourront uniquement vous envoyer des messages via Caro.
             </p>
         </div>
 

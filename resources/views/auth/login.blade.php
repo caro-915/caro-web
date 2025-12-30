@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 
@@ -22,11 +22,11 @@
                     </a>
                 </div>
 
-                {{-- Titre / texte d’intro --}}
+                {{-- Titre / texte d'intro --}}
                 <div class="mb-5">
                     <h1 class="text-2xl md:text-3xl font-bold mb-1">Bienvenue</h1>
                     <p class="text-xs md:text-sm text-gray-500">
-                        Inscrivez-vous ou connectez-vous pour profiter de toutes les fonctionnalités d’autoDZ.
+                        Inscrivez-vous ou connectez-vous pour profiter de toutes les fonctionnalités de Caro.
                     </p>
                 </div>
 
@@ -48,25 +48,13 @@
                     </div>
                 @endif
 
-                {{-- Boutons sociaux (visuels uniquement pour l’instant) --}}
+                {{-- Bouton Google uniquement --}}
                 <div class="space-y-2 mb-4">
-                    <div class="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                        <button type="button"
-                                class="border border-gray-200 rounded-full py-2 flex items-center justify-center gap-2 hover:bg-gray-50">
-                            <span class="text-lg"></span>
-                            <span class="hidden md:inline">Apple</span>
-                        </button>
-                        <a href="{{ route('auth.google') }}"
-                           class="border border-gray-200 rounded-full py-2 flex items-center justify-center gap-2 hover:bg-gray-50">
-                            <span class="text-lg">G</span>
-                            <span class="hidden md:inline">Google</span>
-                        </a>
-                        <button type="button"
-                                class="border border-gray-200 rounded-full py-2 flex items-center justify-center gap-2 hover:bg-gray-50">
-                            <span class="text-lg">f</span>
-                            <span class="hidden md:inline">Facebook</span>
-                        </button>
-                    </div>
+                    <a href="{{ route('auth.google') }}"
+                       class="w-full border border-gray-200 rounded-full py-2.5 flex items-center justify-center gap-2 hover:bg-gray-50 text-sm font-medium">
+                        <span class="text-lg">G</span>
+                        <span>Google</span>
+                    </a>
 
                     <div class="flex items-center gap-3 text-[11px] text-gray-400">
                         <div class="flex-1 h-px bg-gray-200"></div>
@@ -140,7 +128,7 @@
     <div class="w-full rounded-3xl overflow-hidden shadow-lg">
         <img
             src="{{ asset('images/auth-hero.png') }}"
-            alt="AutoDZ"
+            alt="Caro"
             class="w-full h-80 md:h-[520px] object-cover"
         >
     </div>
@@ -161,3 +149,4 @@
         });
     </script>
 @endsection
+

@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>AutoDZ – Trouvez votre voiture d’occasion</title>
+    <title>Caro – Trouvez votre voiture d'occasion</title>
 
     {{-- Tailwind + JS compilés par Vite (Breeze) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -17,13 +17,13 @@
 </head>
 <body class="bg-gray-50 text-slate-900">
 
-    {{-- HEADER autoDZ --}}
+    {{-- HEADER Caro --}}
     <header class="bg-white shadow-sm">
         <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 min-w-0">
 
             {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center space-x-2">
-                <span class="text-pink-600 font-extrabold text-xl">autoDZ</span>
+            <a href="{{ route('home') }}" class="flex items-center">
+                <img src="{{ asset('images/logo.png') }}" alt="Caro" class="h-10 w-auto">
             </a>
 
             {{-- Nav --}}

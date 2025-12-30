@@ -194,7 +194,7 @@ class AnnonceApiController extends Controller
 
         $data = array_merge($data, $imagePaths);
         $data['user_id'] = $request->user()->id;
-        $data['is_active'] = true; // Activer automatiquement les annonces de l'app
+        $data['is_active'] = false; // Nécessite validation admin
 
         $annonce = Annonce::create($data);
 
@@ -248,6 +248,167 @@ class AnnonceApiController extends Controller
 
         return response()->json([
             'message' => 'Annonce supprimée avec succès',
+        ]);
+    }
+
+    /**
+     * Annonces d'un utilisateur spécifique
+     * GET /api/users/{id}/annonces
+     */
+    public function userAnnonces($id)
+    {
+        $query = Annonce::where('user_id', $id)
+            ->where('is_active', true)
+            ->orderBy('created_at', 'desc');
+
+        $annonces = $query->paginate(20);
+
+        return response()->json([
+            'data' => $annonces->getCollection()->map(function($annonce) {
+                return $this->formatAnnonce($annonce, false);
+            }),
+            'current_page' => $annonces->currentPage(),
+            'last_page' => $annonces->lastPage(),
+            'per_page' => $annonces->perPage(),
+            'total' => $annonces->total(),
+        ]);
+    }
+
+    /**
+     * Statistiques d'une annonce
+     * GET /api/annonces/{id}/stats
+     */
+    public function stats($id)
+    {
+        $annonce = Annonce::with('user')->findOrFail($id);
+
+        return response()->json([
+            'id' => $annonce->id,
+            'views' => (int) $annonce->views,
+            'favorites' => $annonce->favorites()->count(),
+            'messages' => $annonce->conversations()->count(),
+            'isActive' => $annonce->is_active,
+            'createdAt' => $annonce->created_at->toIso8601String(),
+        ]);
+    }
+
+    /**
+     * Incrémenter les vues d'une annonce
+     * POST /api/annonces/{id}/view
+     */
+    public function incrementView(Request $request, $id)
+    {
+        $annonce = Annonce::findOrFail($id);
+
+        // Ne pas compter les vues du propriétaire
+        if (!$request->user() || $request->user()->id !== $annonce->user_id) {
+            $annonce->increment('views');
+        }
+
+        return response()->json([
+            'views' => (int) $annonce->views,
+        ]);
+    }
+
+    /**
+     * Modifier une annonce
+     * PUT/POST /api/annonces/{id}
+     */
+    public function update(Request $request, $id)
+    {
+        $annonce = Annonce::findOrFail($id);
+
+        // Check ownership
+        if ($annonce->user_id !== $request->user()->id) {
+            return response()->json([
+                'message' => 'Vous n\'êtes pas autorisé à modifier cette annonce.',
+            ], 403);
+        }
+
+        // Support both French and English field names (Flutter compatibility)
+        $data = $request->validate([
+            'titre'         => 'nullable|string|max:255',
+            'title'         => 'nullable|string|max:255',
+            'description'   => 'nullable|string',
+            'prix'          => 'nullable|integer|min:0',
+            'price'         => 'nullable|integer|min:0',
+            'marque'        => 'nullable|string|max:100',
+            'modele'        => 'nullable|string|max:100',
+            'annee'         => 'nullable|integer|min:1980|max:' . (date('Y') + 1),
+            'year'          => 'nullable|integer|min:1980|max:' . (date('Y') + 1),
+            'kilometrage'   => 'nullable|integer|min:0',
+            'km'            => 'nullable|integer|min:0',
+            'carburant'     => 'nullable|string|max:50',
+            'fuel'          => 'nullable|string|max:50',
+            'boite_vitesse' => 'nullable|string|max:50',
+            'gearbox'       => 'nullable|string|max:50',
+            'ville'         => 'nullable|string|max:100',
+            'wilaya'        => 'nullable|string|max:100',
+            'vehicle_type'  => 'nullable|string|max:50',
+            'show_phone'    => 'nullable|boolean',
+            'couleur'       => 'nullable|string|max:50',
+            'color'         => 'nullable|string|max:50',
+            'document_type' => 'nullable|in:carte_grise,procuration',
+            'finition'      => 'nullable|string|max:80',
+            'condition'     => 'nullable|in:oui,non,neuf,occasion',
+            'images.*'      => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+        ]);
+
+        // Map English to French field names
+        $mappedData = [];
+        if (isset($data['title'])) $mappedData['titre'] = $data['title'];
+        if (isset($data['titre'])) $mappedData['titre'] = $data['titre'];
+        if (isset($data['price'])) $mappedData['prix'] = $data['price'];
+        if (isset($data['prix'])) $mappedData['prix'] = $data['prix'];
+        if (isset($data['year'])) $mappedData['annee'] = $data['year'];
+        if (isset($data['annee'])) $mappedData['annee'] = $data['annee'];
+        if (isset($data['km'])) $mappedData['kilometrage'] = $data['km'];
+        if (isset($data['kilometrage'])) $mappedData['kilometrage'] = $data['kilometrage'];
+        if (isset($data['fuel'])) $mappedData['carburant'] = $data['fuel'];
+        if (isset($data['carburant'])) $mappedData['carburant'] = $data['carburant'];
+        if (isset($data['gearbox'])) $mappedData['boite_vitesse'] = $data['gearbox'];
+        if (isset($data['boite_vitesse'])) $mappedData['boite_vitesse'] = $data['boite_vitesse'];
+        if (isset($data['wilaya'])) $mappedData['ville'] = $data['wilaya'];
+        if (isset($data['ville'])) $mappedData['ville'] = $data['ville'];
+        if (isset($data['color'])) $mappedData['couleur'] = $data['color'];
+        if (isset($data['couleur'])) $mappedData['couleur'] = $data['couleur'];
+        if (isset($data['description'])) $mappedData['description'] = $data['description'];
+        if (isset($data['marque'])) $mappedData['marque'] = $data['marque'];
+        if (isset($data['modele'])) $mappedData['modele'] = $data['modele'];
+        if (isset($data['vehicle_type'])) $mappedData['vehicle_type'] = $data['vehicle_type'];
+        if (isset($data['document_type'])) $mappedData['document_type'] = $data['document_type'];
+        if (isset($data['finition'])) $mappedData['finition'] = $data['finition'];
+        if (isset($data['condition'])) $mappedData['condition'] = $data['condition'];
+        
+        // Handle show_phone
+        if ($request->has('show_phone')) {
+            $mappedData['show_phone'] = $request->boolean('show_phone');
+        }
+
+        // Upload new images if provided
+        if ($request->hasFile('images')) {
+            $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5'];
+            
+            foreach ($request->file('images') as $index => $file) {
+                if ($index >= 5) break;
+                
+                // Delete old image if exists
+                $fieldName = $index === 0 ? 'image_path' : 'image_path_' . ($index + 1);
+                if ($annonce->$fieldName) {
+                    Storage::disk('public')->delete($annonce->$fieldName);
+                }
+                
+                // Upload new image
+                $path = $file->store('annonces', 'public');
+                $mappedData[$fieldName] = $path;
+            }
+        }
+
+        $annonce->update($mappedData);
+
+        return response()->json([
+            'message' => 'Annonce modifiée avec succès',
+            'annonce' => $this->formatAnnonce($annonce->fresh(), false),
         ]);
     }
 

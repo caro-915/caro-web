@@ -162,10 +162,10 @@
 
 
     <section id="about" class="mt-16 bg-white rounded-2xl shadow p-6 md:p-8">
-    <h2 class="text-2xl font-bold mb-3">À propos de AutoDZ</h2>
+    <h2 class="text-2xl font-bold mb-3">À propos de Caro</h2>
 
     <p class="text-sm md:text-base text-gray-600 leading-relaxed">
-        AutoDZ est une plateforme algérienne dédiée à la vente et à l’achat de véhicules
+        Caro est une plateforme algérienne dédiée à la vente et à l'achat de véhicules
         entre particuliers et professionnels.
         Notre objectif est de proposer une expérience simple, fiable et rapide pour
         trouver le véhicule idéal.
@@ -181,7 +181,7 @@
     </p>
 
     <ul class="text-sm md:text-base text-gray-700 space-y-2">
-        <li>📧 Email : <strong>contact@autodz.dz</strong></li>
+        <li>📧 Email : <strong>contact@caro.dz</strong></li>
         <li>📞 Téléphone : <strong>05 00 00 00 00</strong></li>
     </ul>
 </section>

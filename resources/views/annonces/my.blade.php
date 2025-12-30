@@ -63,16 +63,7 @@
                                 Créée le {{ $annonce->created_at->format('d/m/Y') }}
                                 <span class="mx-1">•</span>
                                 {{ $annonce->views ?? 0 }} vues
-
-                                @if(($annonce->views ?? 0) >= 50)
-                                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[11px]
-                                    bg-orange-50 text-orange-700 border border-orange-200">
-                                    🔥 Populaire
-                                 </span>
-                                @endif
                                 </p>
-
-
 
                                 @if(($annonce->views ?? 0) >= 50)
                         <span class="inline-flex mt-2 px-2 py-0.5 rounded-full text-[11px] bg-orange-50 text-orange-700 border border-orange-200">

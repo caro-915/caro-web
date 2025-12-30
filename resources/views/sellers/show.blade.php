@@ -18,7 +18,7 @@
 
             <a href="{{ route('annonces.search') }}"
                class="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-50 text-sm font-semibold">
-                Rechercher sur AutoDZ
+                Rechercher sur Caro
             </a>
         </div>
     </div>

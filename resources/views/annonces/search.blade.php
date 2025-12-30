@@ -284,12 +284,6 @@
                                             {{ $annonce->boite_vitesse }}
                                         @endif
                                         {{ $annonce->views ?? 0 }} vue(s)
-                                        @if(($annonce->views ?? 0) >= 50)
-        <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[11px]
-                     bg-orange-50 text-orange-700 border border-orange-200">
-            🔥 Populaire
-        </span>
-    @endif
                                     </p>
 
                                     {{-- Short description --}}
@@ -372,7 +366,7 @@
             <div class="bg-white rounded-2xl shadow p-4">
                 <p class="text-xs uppercase font-semibold text-gray-400 mb-1">Publicité</p>
                 <div class="bg-gradient-to-br from-pink-600 to-purple-600 rounded-xl p-4 text-white text-sm">
-                    <p class="font-semibold mb-1">autoDZ Financement</p>
+                    <p class="font-semibold mb-1">Caro Financement</p>
                     <p class="text-xs mb-3">Simulez votre crédit auto et trouvez la mensualité qui vous convient.</p>
                     <button class="px-3 py-1 rounded-full bg-white text-pink-600 text-xs font-semibold">
                         Faire une simulation
@@ -381,7 +375,7 @@
             </div>
 
             <div class="bg-white rounded-2xl shadow p-4 text-xs text-gray-600 space-y-2">
-                <p class="font-semibold text-gray-800">Conseils autoDZ</p>
+                <p class="font-semibold text-gray-800">Conseils Caro</p>
                 <ul class="list-disc list-inside space-y-1">
                     <li>Vérifiez le carnet d'entretien.</li>
                     <li>Essayez le véhicule sur route.</li>

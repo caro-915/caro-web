@@ -139,33 +139,43 @@ class MessageApiController extends Controller
         $userId = $request->user()->id;
         $sellerId = $annonce->user_id;
 
-        // Don't allow seller to message themselves
-        if ($userId === $sellerId) {
-            return response()->json([
-                'message' => 'Vous ne pouvez pas vous envoyer de messages à vous-même',
-            ], 422);
+        // Trouver ou créer la conversation
+        // Déterminer qui est le buyer et qui est le seller
+        $isSeller = ($userId === $sellerId);
+        
+        if ($isSeller) {
+            // Le vendeur répond : chercher une conversation existante où il est seller
+            $conversation = Conversation::where('annonce_id', $annonce->id)
+                ->where('seller_id', $userId)
+                ->first();
+            
+            if (!$conversation) {
+                return response()->json([
+                    'message' => 'Aucune conversation trouvée. Le vendeur ne peut pas initier une conversation.',
+                ], 422);
+            }
+        } else {
+            // L'acheteur envoie : créer ou trouver la conversation
+            $conversation = Conversation::firstOrCreate(
+                [
+                    'annonce_id' => $annonce->id,
+                    'buyer_id' => $userId,
+                    'seller_id' => $sellerId,
+                ],
+                [
+                    'last_message_at' => now(),
+                ]
+            );
         }
 
-        // Find or create conversation
-        $conversation = Conversation::firstOrCreate(
-            [
-                'annonce_id' => $annonce->id,
-                'buyer_id' => $userId,
-                'seller_id' => $sellerId,
-            ],
-            [
-                'last_message_at' => now(),
-            ]
-        );
-
-        // Create message
+        // Créer le message
         $message = Message::create([
             'conversation_id' => $conversation->id,
             'sender_id' => $userId,
             'body' => $request->content,
         ]);
 
-        // Update conversation timestamp
+        // Mettre à jour le timestamp de la conversation
         $conversation->update([
             'last_message_at' => now(),
         ]);
@@ -181,4 +191,31 @@ class MessageApiController extends Controller
             ],
         ], 201);
     }
-}
+
+    /**
+     * Marquer les messages d'une conversation comme lus
+     * POST /api/conversations/{id}/read
+     */
+    public function markAsRead(Request $request, $id)
+    {
+        $conversation = Conversation::findOrFail($id);
+
+        // Check if user is part of the conversation
+        $userId = $request->user()->id;
+        if ($conversation->buyer_id !== $userId && $conversation->seller_id !== $userId) {
+            return response()->json([
+                'message' => 'Accès non autorisé',
+            ], 403);
+        }
+
+        // Mark all messages from the other user as read
+        $updated = Message::where('conversation_id', $conversation->id)
+            ->where('sender_id', '!=', $userId)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json([
+            'message' => 'Messages marqués comme lus',
+            'updated' => $updated,
+        ]);
+    }}
