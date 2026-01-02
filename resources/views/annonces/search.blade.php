@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-6 md:py-8">
@@ -8,7 +8,7 @@
             <h1 class="text-3xl font-bold">
                 Voitures d'occasion
                 @if($annonces->total())
-                    <span class="text-pink-600 font-extrabold">
+                    <span class="text-gray-800 font-extrabold">
                         – {{ number_format($annonces->total(), 0, ',', ' ') }} annonces
                     </span>
                 @endif
@@ -85,7 +85,7 @@
                                     name="vehicle_type"
                                     value="{{ $value }}"
                                     class="px-3 py-1 rounded-full border 
-                                        {{ $currentType === $value ? 'bg-pink-600 text-white border-pink-600' : 'bg-white text-gray-700 border-gray-200' }}">
+                                        {{ $currentType === $value ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-200' }}">
                                 {{ $label }}
                             </button>
                         @endforeach
@@ -219,7 +219,7 @@
                 {{-- Filter actions --}}
                 <div class="pt-2 flex flex-col gap-2">
                     <button type="submit"
-                            class="w-full py-2 rounded-full bg-pink-600 text-white text-xs font-semibold hover:bg-pink-700">
+                            class="w-full py-2 rounded-full bg-gray-800 text-white text-xs font-semibold hover:bg-gray-900">
                         Appliquer les filtres
                     </button>
                     <a href="{{ route('annonces.search') }}"
@@ -316,7 +316,7 @@
                                     <button
                                         type="button"
                                         onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('fav-form-{{ $annonce->id }}').submit();"
-                                        class="flex items-center gap-1 hover:text-pink-600"
+                                        class="flex items-center gap-1 hover:text-gray-800"
                                     >
                                         @if($isFavorite)
                                             <span>♥</span>
@@ -339,7 +339,7 @@
                                     <button
                                         type="button"
                                         onclick="event.preventDefault(); event.stopPropagation(); window.location.href='{{ route('login') }}';"
-                                        class="flex items-center gap-1 hover:text-pink-600"
+                                        class="flex items-center gap-1 hover:text-gray-800"
                                     >
                                         <span>♡</span>
                                         <span>Ajouter aux favoris</span>
@@ -365,10 +365,10 @@
         <aside class="hidden lg:block space-y-4">
             <div class="bg-white rounded-2xl shadow p-4">
                 <p class="text-xs uppercase font-semibold text-gray-400 mb-1">Publicité</p>
-                <div class="bg-gradient-to-br from-pink-600 to-purple-600 rounded-xl p-4 text-white text-sm">
+                <div class="bg-gradient-to-br from-gray-800 to-purple-600 rounded-xl p-4 text-white text-sm">
                     <p class="font-semibold mb-1">Caro Financement</p>
                     <p class="text-xs mb-3">Simulez votre crédit auto et trouvez la mensualité qui vous convient.</p>
-                    <button class="px-3 py-1 rounded-full bg-white text-pink-600 text-xs font-semibold">
+                    <button class="px-3 py-1 rounded-full bg-white text-gray-800 text-xs font-semibold">
                         Faire une simulation
                     </button>
                 </div>

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="min-h-[80vh] flex items-center justify-center px-4 py-10">
@@ -56,21 +56,21 @@
                     <label for="email" class="block text-xs font-semibold mb-1">E-mail</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
                            class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm
-                                  focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                                  focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800"
                            placeholder="votre@email.com">
                 </div>
 
                 {{-- Bouton envoi --}}
                 <div class="mt-auto">
                     <button type="submit"
-                            class="w-full bg-pink-600 text-white font-semibold py-2.5 rounded-full hover:bg-pink-700 text-sm">
+                            class="w-full bg-gray-800 text-white font-semibold py-2.5 rounded-full hover:bg-gray-900 text-sm">
                         Envoyer le lien de réinitialisation
                     </button>
                 </div>
 
                 {{-- Retour connexion --}}
                 <div class="text-center">
-                    <a href="{{ route('login') }}" class="text-xs text-gray-600 hover:text-pink-600">
+                    <a href="{{ route('login') }}" class="text-xs text-gray-600 hover:text-gray-800">
                         ← Retour à la connexion
                     </a>
                 </div>

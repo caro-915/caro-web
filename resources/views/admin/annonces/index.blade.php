@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-8">
@@ -9,7 +9,7 @@
             <p class="text-sm text-gray-500">Gérer toutes les annonces (approuver/rejeter/supprimer).</p>
         </div>
 
-        <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-600 hover:text-pink-600">
+        <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-600 hover:text-gray-800">
             ← Dashboard
         </a>
     </div>
@@ -33,9 +33,9 @@
                 <input type="text"
                        name="q"
                        value="{{ $filters['q'] ?? '' }}"
-                       class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                       class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
                        placeholder="Rechercher (titre, marque, modèle, vendeur, email)">
-                <button type="submit" class="rounded-lg bg-pink-600 text-white text-sm font-semibold px-6 py-2 hover:bg-pink-700 shrink-0">
+                <button type="submit" class="rounded-lg bg-gray-800 text-white text-sm font-semibold px-6 py-2 hover:bg-gray-900 shrink-0">
                     Rechercher
                 </button>
             </div>
@@ -45,7 +45,7 @@
                 {{-- Statut --}}
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-600 mb-1">STATUT</label>
-                    <select name="status" id="status-filter" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    <select name="status" id="status-filter" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-gray-800">
                         <option value="all" {{ ($status ?? 'all')==='all' ? 'selected' : '' }}>Tous</option>
                         <option value="pending" {{ ($status ?? '')==='pending' ? 'selected' : '' }}>⧖ En attente</option>
                         <option value="active" {{ ($status ?? '')==='active' ? 'selected' : '' }}>✓ Activées</option>
@@ -56,7 +56,7 @@
                 {{-- Marque --}}
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-600 mb-1">MARQUE</label>
-                    <select name="marque" id="marque-filter" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    <select name="marque" id="marque-filter" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-gray-800">
                         <option value="">Toutes</option>
                         @if(isset($marques))
                             @foreach($marques as $m)
@@ -69,7 +69,7 @@
                 {{-- Carburant --}}
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-600 mb-1">CARBURANT</label>
-                    <select name="carburant" id="carburant-filter" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    <select name="carburant" id="carburant-filter" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-gray-800">
                         <option value="">Tous</option>
                         <option value="Essence" {{ ($carburant ?? '')==='Essence' ? 'selected' : '' }}>Essence</option>
                         <option value="Diesel" {{ ($carburant ?? '')==='Diesel' ? 'selected' : '' }}>Diesel</option>
@@ -82,7 +82,7 @@
                 {{-- Tri --}}
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-600 mb-1">TRIER PAR</label>
-                    <select name="sort" id="sort-filter" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    <select name="sort" id="sort-filter" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-gray-800">
                         <option value="recent" {{ ($sort ?? 'recent')==='recent' ? 'selected' : '' }}>Plus récentes</option>
                         <option value="oldest" {{ ($sort ?? '')==='oldest' ? 'selected' : '' }}>Plus anciennes</option>
                         <option value="price_high" {{ ($sort ?? '')==='price_high' ? 'selected' : '' }}>Prix décroissant</option>
@@ -94,7 +94,7 @@
             {{-- Bouton reset --}}
             @if(($q ?? '') || ($status ?? 'all') !== 'all' || ($marque ?? '') || ($carburant ?? '') || ($sort ?? 'recent') !== 'recent')
                 <div class="flex justify-end">
-                    <a href="{{ route('admin.annonces.index') }}" class="text-xs text-gray-600 hover:text-pink-600 underline">
+                    <a href="{{ route('admin.annonces.index') }}" class="text-xs text-gray-600 hover:text-gray-800 underline">
                         Réinitialiser les filtres
                     </a>
                 </div>
@@ -135,7 +135,7 @@
                                 <div class="text-[10px] text-gray-500">
                                     {{ $a->marque }} • {{ $a->modele }} • {{ optional($a->created_at)->diffForHumans() }}
                                 </div>
-                                <a href="{{ route('annonces.show', $a->id) }}" target="_blank" class="text-[10px] text-pink-600 hover:underline">
+                                <a href="{{ route('annonces.show', $a->id) }}" target="_blank" class="text-[10px] text-gray-800 hover:underline">
                                     Voir →
                                 </a>
                             </td>
@@ -145,7 +145,7 @@
                                 <div class="text-[10px] text-gray-500">{{ Str::limit(optional($a->user)->email ?? '', 25) }}</div>
                             </td>
 
-                            <td class="py-2 px-3 font-bold text-pink-600 text-xs whitespace-nowrap">
+                            <td class="py-2 px-3 font-bold text-gray-800 text-xs whitespace-nowrap">
                                 {{ number_format($a->prix, 0, ',', ' ') }} DA
                             </td>
 
@@ -168,7 +168,7 @@
                                         @method('PATCH')
                                     </form>
                                     <button type="submit" form="toggle-form-{{ $a->id }}" class="px-2 py-1 rounded-lg border text-[10px] font-semibold
-                                        {{ $a->is_active ? 'border-gray-200 text-gray-700 hover:border-pink-500 hover:text-pink-600' : 'border-green-500 text-green-600 hover:bg-green-50' }}">
+                                        {{ $a->is_active ? 'border-gray-200 text-gray-700 hover:border-gray-800 hover:text-gray-800' : 'border-green-500 text-green-600 hover:bg-green-50' }}">
                                         {{ $a->is_active ? 'Désactiver' : 'Activer' }}
                                     </button>
 
@@ -203,13 +203,13 @@
             </div>
 
             <div id="bulk-actions" class="hidden flex gap-2">
-                <select id="bulk-action-select" class="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500">
+                <select id="bulk-action-select" class="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-gray-800">
                     <option value="">— Action groupée —</option>
                     <option value="approve">Activer</option>
                     <option value="reject">Désactiver</option>
                     <option value="delete">Supprimer</option>
                 </select>
-                <button type="button" id="bulk-submit-btn" class="px-4 py-1 rounded-lg bg-pink-600 text-white text-xs font-semibold hover:bg-pink-700">
+                <button type="button" id="bulk-submit-btn" class="px-4 py-1 rounded-lg bg-gray-800 text-white text-xs font-semibold hover:bg-gray-900">
                     Appliquer
                 </button>
             </div>

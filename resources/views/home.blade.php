@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 
@@ -18,19 +18,19 @@
                         <button type="button"
                                 data-type="car"
                                 class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                                       {{ request('vehicle_type', 'car') === 'car' ? 'bg-pink-500 text-white border-pink-500' : 'bg-white text-gray-600 border-gray-200' }}">
+                                       {{ request('vehicle_type', 'car') === 'car' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
                             🚗 Voiture
                         </button>
                         <button type="button"
                                 data-type="van"
                                 class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                                       {{ request('vehicle_type') === 'van' ? 'bg-pink-500 text-white border-pink-500' : 'bg-white text-gray-600 border-gray-200' }}">
+                                       {{ request('vehicle_type') === 'van' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
                             🚐 Utilitaire
                         </button>
                         <button type="button"
                                 data-type="moto"
                                 class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                                       {{ request('vehicle_type') === 'moto' ? 'bg-pink-500 text-white border-pink-500' : 'bg-white text-gray-600 border-gray-200' }}">
+                                       {{ request('vehicle_type') === 'moto' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
                             🏍 Moto
                         </button>
                     </div>
@@ -93,7 +93,7 @@
                     {{-- CTA buttons --}}
                     <div class="pt-2">
                         <button type="submit"
-                                class="w-full py-3 rounded-full bg-pink-600 text-white text-sm font-semibold hover:bg-pink-700">
+                                class="w-full py-3 rounded-full bg-gray-800 text-white text-sm font-semibold hover:bg-gray-900">
                             Rechercher
                         </button>
                     </div>
@@ -121,7 +121,7 @@
                     </div>
                     <div>
                         <a href="{{ route('annonces.create') }}"
-                           class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-pink-600 text-white text-xs md:text-sm font-semibold hover:bg-pink-700">
+                           class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-gray-800 text-white text-xs md:text-sm font-semibold hover:bg-gray-900">
                             Déposer une annonce
                         </a>
                     </div>
@@ -136,7 +136,7 @@
         <div class="bg-white rounded-2xl shadow px-4 py-4 flex flex-wrap gap-3">
             @forelse ($popularMarques as $marque)
                 <a href="{{ route('home', ['marque' => $marque->name]) }}"
-                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-pink-500 hover:text-pink-600">
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
                     {{ $marque->name }} ({{ $marque->annonces_count }})
                 </a>
             @empty
@@ -151,7 +151,7 @@
         <div class="bg-white rounded-2xl shadow px-4 py-4 flex flex-wrap gap-3">
             @forelse ($popularModeles as $modele)
                 <a href="{{ route('home', ['modele' => $modele->name]) }}"
-                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-pink-500 hover:text-pink-600">
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
                     {{ $modele->name }} ({{ $modele->annonces_count }})
                 </a>
             @empty
@@ -201,10 +201,10 @@
                 typeInput.value = type;
 
                 // Update active state
-                typeButtons.forEach(b => b.classList.remove('bg-pink-500', 'text-white', 'border-pink-500'));
+                typeButtons.forEach(b => b.classList.remove('bg-gray-500', 'text-white', 'border-gray-800'));
                 typeButtons.forEach(b => b.classList.add('bg-white', 'text-gray-600', 'border-gray-200'));
                 btn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
-                btn.classList.add('bg-pink-500', 'text-white', 'border-pink-500');
+                btn.classList.add('bg-gray-500', 'text-white', 'border-gray-800');
             });
         });
 

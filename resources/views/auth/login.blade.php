@@ -12,7 +12,7 @@
                 <div class="flex mb-6 border-b border-gray-100">
                     <a href="{{ route('login') }}"
                        class="flex-1 text-center text-sm font-semibold py-2 border-b-2
-                              border-pink-600 text-pink-600">
+                              border-gray-800 text-gray-800">
                         Connexion
                     </a>
                     <a href="{{ route('register') }}"
@@ -73,7 +73,7 @@
                         <label for="email" class="block text-xs font-semibold mb-1">Adresse e-mail</label>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
                                class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
+                                      focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800">
                     </div>
 
                     {{-- Mot de passe --}}
@@ -81,20 +81,20 @@
                         <label for="password" class="block text-xs font-semibold mb-1">Mot de passe</label>
                         <input id="password" type="password" name="password" required
                                class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
+                                      focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800">
                     </div>
 
                     {{-- Se souvenir + mot de passe oublié --}}
                     <div class="flex items-center justify-between text-[11px] md:text-xs text-gray-600">
                         <label class="inline-flex items-center gap-1">
                             <input type="checkbox" name="remember"
-                                   class="rounded border-gray-300 text-pink-600 focus:ring-pink-500">
+                                   class="rounded border-gray-300 text-gray-800 focus:ring-gray-800">
                             <span>Se souvenir de moi</span>
                         </label>
 
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}"
-                               class="text-pink-600 hover:text-pink-700 font-medium">
+                               class="text-gray-800 hover:text-gray-900 font-medium">
                                 Mot de passe oublié
                             </a>
                         @endif
@@ -104,8 +104,8 @@
                     <div class="pt-2">
                         <button type="submit"
                                 class="w-full inline-flex items-center justify-center px-4 py-2
-                                       rounded-full bg-pink-600 text-white text-sm font-semibold
-                                       hover:bg-pink-700">
+                                       rounded-full bg-gray-800 text-white text-sm font-semibold
+                                       hover:bg-gray-900">
                             Se connecter
                         </button>
                     </div>
@@ -114,7 +114,7 @@
                     @if (Route::has('register'))
                         <p class="mt-3 text-[11px] md:text-xs text-gray-500 text-center">
                             Pas encore de compte ?
-                            <a href="{{ route('register') }}" class="text-pink-600 hover:text-pink-700 font-semibold">
+                            <a href="{{ route('register') }}" class="text-gray-800 hover:text-gray-900 font-semibold">
                                 Créer un compte
                             </a>
                         </p>

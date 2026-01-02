@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="max-w-6xl mx-auto py-10">
@@ -8,7 +8,7 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div class="bg-white p-6 rounded-xl shadow">
             <h3 class="text-sm font-semibold text-gray-600 mb-2">Total Annonces</h3>
-            <p class="text-3xl font-bold text-pink-600">{{ $stats['annonces'] ?? 0 }}</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $stats['annonces'] ?? 0 }}</p>
         </div>
 
         <div class="bg-white p-6 rounded-xl shadow">
@@ -30,12 +30,12 @@
     {{-- Quick Actions --}}
     <div class="mb-8 flex justify-center gap-3">
         <a href="{{ route('admin.annonces.index') }}"
-           class="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-sm font-semibold text-gray-700 hover:border-pink-500 hover:text-pink-600 inline-block">
+           class="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-sm font-semibold text-gray-700 hover:border-gray-800 hover:text-gray-800 inline-block">
            Gérer les annonces
         </a>
 
         <a href="{{ route('admin.users.index') }}"
-           class="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-sm font-semibold text-gray-700 hover:border-pink-500 hover:text-pink-600 inline-block">
+           class="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-sm font-semibold text-gray-700 hover:border-gray-800 hover:text-gray-800 inline-block">
            Gérer les utilisateurs
         </a>
     </div>
@@ -75,7 +75,7 @@
                                 <div class="text-xs text-gray-500">{{ $ad->user?->email ?? '' }}</div>
                             </td>
 
-                            <td class="p-3 font-bold text-pink-600">
+                            <td class="p-3 font-bold text-gray-800">
                                 {{ number_format($ad->prix ?? 0, 0, ',', ' ') }} DA
                             </td>
 
@@ -97,7 +97,7 @@
                                         @csrf
                                         @method('PATCH')
                                         <button class="px-2.5 py-1 rounded-lg border text-xs font-semibold
-                                            {{ $ad->is_active ? 'border-gray-200 text-gray-700 hover:border-pink-500 hover:text-pink-600' : 'border-green-500 text-green-600 hover:bg-green-50' }}">
+                                            {{ $ad->is_active ? 'border-gray-200 text-gray-700 hover:border-gray-800 hover:text-gray-800' : 'border-green-500 text-green-600 hover:bg-green-50' }}">
                                             {{ $ad->is_active ? 'Désactiver' : 'Activer' }}
                                         </button>
                                     </form>

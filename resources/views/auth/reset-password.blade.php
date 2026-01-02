@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="min-h-[80vh] flex items-center justify-center px-4 py-10">
@@ -49,7 +49,7 @@
                     <input id="email" type="email" name="email" value="{{ old('email', $request->email) }}" 
                            required autofocus autocomplete="username"
                            class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm bg-gray-50
-                                  focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                                  focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800"
                            readonly>
                 </div>
 
@@ -58,7 +58,7 @@
                     <label for="password" class="block text-xs font-semibold mb-1">Mot de passe</label>
                     <input id="password" type="password" name="password" required autocomplete="new-password"
                            class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm
-                                  focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                                  focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800"
                            placeholder="••••••••">
                 </div>
 
@@ -68,14 +68,14 @@
                     <input id="password_confirmation" type="password" name="password_confirmation" 
                            required autocomplete="new-password"
                            class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm
-                                  focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                                  focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800"
                            placeholder="••••••••">
                 </div>
 
                 {{-- Bouton --}}
                 <div class="pt-2">
                     <button type="submit"
-                            class="w-full bg-pink-600 text-white font-semibold py-2.5 rounded-full hover:bg-pink-700 text-sm">
+                            class="w-full bg-gray-800 text-white font-semibold py-2.5 rounded-full hover:bg-gray-900 text-sm">
                         Réinitialiser le mot de passe
                     </button>
                 </div>

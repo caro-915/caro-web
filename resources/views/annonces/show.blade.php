@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
     @php
@@ -192,7 +192,7 @@
                             <p class="text-xs text-gray-500">Vendeur</p>
 
                             <a href="{{ route('seller.show', $annonce->user) }}"
-                               class="text-base md:text-lg font-extrabold hover:text-pink-600">
+                               class="text-base md:text-lg font-extrabold hover:text-gray-800">
                                 {{ $annonce->user->name }}
                             </a>
 
@@ -212,7 +212,7 @@
                     </div>
 
                     <a href="{{ route('seller.show', $annonce->user) }}"
-                       class="text-sm font-semibold text-pink-600 hover:underline">
+                       class="text-sm font-semibold text-gray-800 hover:underline">
                         Voir toutes les annonces de {{ $annonce->user->name }}
                     </a>
 
@@ -225,8 +225,8 @@
                             <button
                                 @click="showPhone = true; if(window.innerWidth < 800) window.location.href='tel:{{ $seller->phone }}';"
                                 class="w-full inline-flex items-center justify-center px-4 py-3
-                                       rounded-full bg-pink-600 text-white text-sm font-semibold
-                                       hover:bg-pink-700 transition"
+                                       rounded-full bg-gray-800 text-white text-sm font-semibold
+                                       hover:bg-gray-900 transition"
                             >
                                 Appeler le vendeur
                             </button>
@@ -251,7 +251,7 @@
                                 <form method="POST" action="{{ route('messages.start', $annonce) }}">
                                     @csrf
                                     <button type="submit"
-                                            class="w-full py-2 rounded-full border border-gray-200 text-xs font-semibold text-gray-700 hover:border-pink-500 hover:text-pink-600">
+                                            class="w-full py-2 rounded-full border border-gray-200 text-xs font-semibold text-gray-700 hover:border-gray-800 hover:text-gray-800">
                                         Envoyer un message
                                     </button>
                                 </form>
@@ -259,7 +259,7 @@
                         @else
                             <a href="{{ route('login') }}"
                                onclick="event.preventDefault(); sessionStorage.setItem('redirectAfterLogin', '{{ url()->current() }}'); window.location.href='{{ route('login') }}';"
-                               class="w-full inline-flex items-center justify-center py-2 rounded-full border border-gray-200 text-xs font-semibold text-gray-700 hover:border-pink-500 hover:text-pink-600">
+                               class="w-full inline-flex items-center justify-center py-2 rounded-full border border-gray-200 text-xs font-semibold text-gray-700 hover:border-gray-800 hover:text-gray-800">
                                 Envoyer un message
                             </a>
                         @endauth
@@ -277,8 +277,8 @@
                                 <button type="submit"
                                         class="w-full py-2 rounded-full border text-xs font-semibold
                                                {{ $isFavorited
-                                                    ? 'border-pink-500 text-pink-600 hover:bg-pink-50'
-                                                    : 'border-gray-200 text-gray-700 hover:border-pink-500 hover:text-pink-600' }}">
+                                                    ? 'border-gray-800 text-gray-800 hover:bg-gray-50'
+                                                    : 'border-gray-200 text-gray-700 hover:border-gray-800 hover:text-gray-800' }}">
                                     {{ $isFavorited ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
                                 </button>
                             </form>
@@ -359,7 +359,7 @@
                 <div class="relative inline-block w-[92vw] h-[88vh]">
                     <!-- Bouton fermer stylé -->
                     <button onclick="closeLightbox()" 
-                            class="absolute -top-12 right-0 md:top-2 md:right-2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-pink-600 text-white text-xl md:text-2xl font-bold hover:bg-pink-700 hover:scale-110 transition-all duration-200 flex items-center justify-center shadow-2xl"
+                            class="absolute -top-12 right-0 md:top-2 md:right-2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-800 text-white text-xl md:text-2xl font-bold hover:bg-gray-900 hover:scale-110 transition-all duration-200 flex items-center justify-center shadow-2xl"
                             style="z-index: 10000;">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -373,7 +373,7 @@
 
                     <!-- Bouton précédent stylé -->
                     <button id="lightbox_prev_btn" onclick="prevLightboxImage(event)" 
-                            class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/95 hover:bg-pink-600 text-gray-800 hover:text-white text-3xl md:text-4xl font-bold transition-all duration-200 flex items-center justify-center shadow-2xl hover:scale-110"
+                            class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/95 hover:bg-gray-800 text-gray-800 hover:text-white text-3xl md:text-4xl font-bold transition-all duration-200 flex items-center justify-center shadow-2xl hover:scale-110"
                             style="z-index: 10000;">
                         <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/>
@@ -382,7 +382,7 @@
 
                     <!-- Bouton suivant stylé -->
                     <button id="lightbox_next_btn" onclick="nextLightboxImage(event)" 
-                            class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/95 hover:bg-pink-600 text-gray-800 hover:text-white text-3xl md:text-4xl font-bold transition-all duration-200 flex items-center justify-center shadow-2xl hover:scale-110"
+                            class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/95 hover:bg-gray-800 text-gray-800 hover:text-white text-3xl md:text-4xl font-bold transition-all duration-200 flex items-center justify-center shadow-2xl hover:scale-110"
                             style="z-index: 10000;">
                         <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/>
@@ -391,7 +391,7 @@
 
                     <!-- Compteur stylé avec icône -->
                     <div id="lightbox_counter" 
-                         class="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 bg-pink-600 text-white px-4 md:px-5 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-2xl flex items-center gap-2"
+                         class="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 md:px-5 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-2xl flex items-center gap-2"
                          style="z-index: 10000;">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>

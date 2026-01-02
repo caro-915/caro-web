@@ -1,4 +1,4 @@
-<section>
+﻿<section>
     <header class="mb-4">
         <h2 class="text-base font-semibold text-gray-900">
             Suppression du compte
@@ -48,7 +48,7 @@
                             name="password"
                             type="password"
                             placeholder="Mot de passe"
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
                         />
                         @if($errors->userDeletion->has('password'))
                             <p class="mt-1 text-xs text-red-600">{{ $errors->userDeletion->first('password') }}</p>

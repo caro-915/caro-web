@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-6 md:py-8">
@@ -21,7 +21,7 @@
         <input type="text" name="q" value="{{ $q }}"
                class="w-full border rounded-xl px-3 py-2 text-sm"
                placeholder="Rechercher (nom, email)">
-        <button class="px-4 py-2 rounded-xl bg-pink-600 text-white text-sm font-semibold hover:bg-pink-700">
+        <button class="px-4 py-2 rounded-xl bg-gray-800 text-white text-sm font-semibold hover:bg-gray-900">
             Rechercher
         </button>
     </form>
@@ -53,7 +53,7 @@
 
                             <td class="px-4 py-3">
                                 @if($u->is_admin)
-                                    <span class="text-xs px-2 py-1 rounded-full bg-pink-50 text-pink-700 font-semibold">Admin</span>
+                                    <span class="text-xs px-2 py-1 rounded-full bg-gray-50 text-gray-900 font-semibold">Admin</span>
                                 @else
                                     <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-semibold">User</span>
                                 @endif
@@ -70,7 +70,7 @@
                             <td class="px-4 py-3 text-right space-x-3">
                                 <form method="POST" action="{{ route('admin.users.toggleAdmin', $u) }}" class="inline">
                                     @csrf @method('PATCH')
-                                    <button class="text-xs font-semibold text-pink-600 hover:text-pink-700"
+                                    <button class="text-xs font-semibold text-gray-800 hover:text-gray-900"
                                             onclick="return confirm('Changer le rôle admin de cet utilisateur ?');">
                                         {{ $u->is_admin ? 'Retirer admin' : 'Promouvoir admin' }}
                                     </button>

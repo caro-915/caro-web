@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-8">
@@ -7,7 +7,7 @@
             <h1 class="text-2xl md:text-3xl font-bold">Admin · Statistiques</h1>
             <p class="text-sm text-gray-500">Vues, annonces populaires, activité.</p>
         </div>
-        <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-600 hover:text-pink-600">← Dashboard</a>
+        <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-600 hover:text-gray-800">← Dashboard</a>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -38,7 +38,7 @@
                         <div class="text-xs text-gray-500">
                             {{ $a->marque }} • {{ $a->modele }} • Vendeur: {{ optional($a->user)->name ?? '—' }}
                         </div>
-                        <a class="text-xs text-pink-600 hover:underline" href="{{ route('annonces.show', $a->id) }}">
+                        <a class="text-xs text-gray-800 hover:underline" href="{{ route('annonces.show', $a->id) }}">
                             Voir l’annonce
                         </a>
                     </div>

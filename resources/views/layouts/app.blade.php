@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
     <style>
   html { scroll-behavior: smooth; overflow-y: scroll; }
@@ -28,11 +28,11 @@
 
             {{-- Nav --}}
             <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                <a href="{{ route('annonces.search') }}" class="hover:text-pink-600">Occasion</a>
-                <a href="#" class="hover:text-pink-600">Top deals</a>
-                <a href="{{ route('home') }}#about" class="hover:text-pink-600">À propos de nous</a>
-                <a href="{{ route('home') }}#contact-us" class="hover:text-pink-600">Nous contacter</a>
-                <a href="#" class="hover:text-pink-600">Conseils</a>
+                <a href="{{ route('annonces.search') }}" class="hover:text-gray-800">Occasion</a>
+                <a href="#" class="hover:text-gray-800">Top deals</a>
+                <a href="{{ route('home') }}#about" class="hover:text-gray-800">À propos de nous</a>
+                <a href="{{ route('home') }}#contact-us" class="hover:text-gray-800">Nous contacter</a>
+                <a href="#" class="hover:text-gray-800">Conseils</a>
             </nav>
 
             {{-- Actions droite --}}
@@ -52,15 +52,15 @@
 
                     {{-- Bouton Déposer mon annonce --}}
                     <a href="{{ route('annonces.create') }}"
-                       class="bg-pink-600 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-pink-700 whitespace-nowrap">
+                       class="bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-gray-900 whitespace-nowrap">
                         Déposer mon annonce
                     </a>
 
                     {{-- Icône favoris --}}
                     <a href="{{ route('favorites.index') }}"
-                       class="flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 hover:bg-pink-50"
+                       class="flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 hover:bg-gray-50"
                        title="Mes favoris">
-                        <span class="text-pink-600 text-lg">♥</span>
+                        <span class="text-gray-800 text-lg">♥</span>
                     </a>
 
                     {{-- Menu utilisateur --}}
@@ -72,7 +72,7 @@
                             <span>👤 {{ auth()->user()->name }}</span>
 
                             @if($unreadCount > 0)
-                                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-pink-600 text-white text-[11px]">
+                                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-gray-800 text-white text-[11px]">
                                     {{ $unreadCount }}
                                 </span>
                             @endif
@@ -97,7 +97,7 @@
                                class="flex items-center justify-between px-4 py-2 hover:bg-gray-100">
                                 <span>Mes messages</span>
                                 <span id="unread-badge"
-                                    class="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-pink-600 text-white text-[11px]
+                                    class="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-gray-800 text-white text-[11px]
                                             {{ $unreadCount == 0 ? 'hidden' : '' }}">
                                              {{ $unreadCount }}
                                 </span>
@@ -115,7 +115,7 @@
                             </a>
                             @if(auth()->user()->is_admin)
     <a href="{{ route('admin.dashboard') }}"
-       class="block px-4 py-2 hover:bg-gray-100 text-pink-600 font-semibold">
+       class="block px-4 py-2 hover:bg-gray-100 text-gray-800 font-semibold">
         Tableau de bord admin
     </a>
 @endif
@@ -141,15 +141,15 @@
                 @else
                     {{-- Utilisateur non connecté --}}
                     <a href="{{ route('login') }}"
-                       class="text-xs md:text-sm text-gray-700 hover:text-pink-600">
+                       class="text-xs md:text-sm text-gray-700 hover:text-gray-800">
                         Se connecter
                     </a>
                     <a href="{{ route('register') }}"
-                       class="hidden sm:inline-flex items-center justify-center text-xs md:text-sm text-gray-700 hover:text-pink-600">
+                       class="hidden sm:inline-flex items-center justify-center text-xs md:text-sm text-gray-700 hover:text-gray-800">
                         S'inscrire
                     </a>
                     <a href="{{ route('annonces.create') }}"
-                       class="bg-pink-600 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-pink-700 whitespace-nowrap">
+                       class="bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-gray-900 whitespace-nowrap">
                         Déposer mon annonce
                     </a>
                 @endauth

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
@@ -62,14 +62,14 @@
                 <input type="text"
                        name="titre"
                        value="{{ old('titre', $annonce->titre) }}"
-                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
+                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800">
             </div>
             <div>
                 <label class="block text-xs font-semibold mb-1">Prix (DA) <span class="text-red-500">*</span></label>
                 <input type="number"
                        name="prix"
                        value="{{ old('prix', $annonce->prix) }}"
-                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
+                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800">
             </div>
         </div>
 
@@ -173,7 +173,7 @@
                 <input type="checkbox"
                        name="show_phone"
                        value="1"
-                       class="mt-0.5 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+                       class="mt-0.5 rounded border-gray-300 text-gray-800 focus:ring-gray-800"
                        @checked(old('show_phone', $annonce->show_phone))>
                 <span>
                     Afficher mon numéro de téléphone sur l’annonce
@@ -188,7 +188,7 @@
         <div>
             <label class="block text-xs font-semibold mb-1">Description</label>
             <textarea name="description" rows="5"
-                      class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500">{{ old('description', $annonce->description) }}</textarea>
+                      class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800">{{ old('description', $annonce->description) }}</textarea>
         </div>
 
         {{-- Photos --}}
@@ -263,7 +263,7 @@
                 Annuler
             </a>
             <button type="submit"
-                    class="inline-flex items-center justify-center px-6 py-2 rounded-full bg-pink-600 text-white text-xs md:text-sm font-semibold hover:bg-pink-700">
+                    class="inline-flex items-center justify-center px-6 py-2 rounded-full bg-gray-800 text-white text-xs md:text-sm font-semibold hover:bg-gray-900">
                 Enregistrer les modifications
             </button>
         </div>
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
         input.type = 'file';
         input.name = 'images[]';
         input.accept = 'image/*';
-        input.className = 'flex-1 text-xs file:bg-pink-50 file:text-pink-700 file:rounded-lg';
+        input.className = 'flex-1 text-xs file:bg-gray-50 file:text-gray-900 file:rounded-lg';
 
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';

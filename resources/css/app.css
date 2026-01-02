@@ -1,3 +1,77 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Override pink colors to modern slate gray throughout the app */
+:root {
+    --color-nuit-600: #475569;
+    --color-nuit-700: #334155;
+    --color-nuit-800: #1e293b;
+    --color-nuit-900: #0f172a;
+    --color-nuit-500: #64748b;
+    --color-nuit-50: #f8fafc;
+    --color-nuit-100: #f1f5f9;
+}
+
+/* Replace pink-600 with nuit-600 */
+.bg-pink-600, .hover\:bg-pink-600:hover {
+    background-color: var(--color-nuit-600) !important;
+}
+
+.border-pink-600 {
+    border-color: var(--color-nuit-600) !important;
+}
+
+.text-pink-600, .hover\:text-pink-600:hover {
+    color: var(--color-nuit-600) !important;
+}
+
+/* Replace pink-700 with nuit-700 */
+.bg-pink-700, .hover\:bg-pink-700:hover {
+    background-color: var(--color-nuit-700) !important;
+}
+
+/* Replace pink-500 with nuit-600 */
+.bg-pink-500, .hover\:bg-pink-500:hover {
+    background-color: var(--color-nuit-600) !important;
+}
+
+.border-pink-500, .hover\:border-pink-500:hover {
+    border-color: var(--color-nuit-600) !important;
+}
+
+.text-pink-500, .hover\:text-pink-500:hover {
+    color: var(--color-nuit-600) !important;
+}
+
+/* Replace pink-50 with nuit-50 */
+.bg-pink-50, .hover\:bg-pink-50:hover {
+    background-color: var(--color-nuit-50) !important;
+}
+
+/* Replace pink-100 with nuit-100 */
+.hover\:bg-pink-100:hover {
+    background-color: var(--color-nuit-100) !important;
+}
+
+/* Replace pink-700 with nuit-700 */
+.file\:text-pink-700::file-selector-button {
+    color: white !important;
+}
+
+.file\:bg-pink-50::file-selector-button {
+    background-color: var(--color-nuit-50) !important;
+}
+
+.file\:text-pink-700::file-selector-button {
+    color: white !important;
+}
+
+/* Focus ring colors */
+.focus\:ring-pink-500:focus {
+    --tw-ring-color: var(--color-nuit-600) !important;
+}
+
+.focus\:border-pink-500:focus {
+    border-color: var(--color-nuit-600) !important;
+}

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
@@ -52,19 +52,19 @@
                 <button type="button"
                         data-type="Voiture"
                         class="vehicle-type-btn-create flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                               {{ old('vehicle_type') === 'Voiture' ? 'bg-pink-600 text-white border-pink-600' : 'bg-white text-gray-700 border-gray-200' }}">
+                               {{ old('vehicle_type') === 'Voiture' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-200' }}">
                     🚗 Voiture
                 </button>
                 <button type="button"
                         data-type="Utilitaire"
                         class="vehicle-type-btn-create flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                               {{ old('vehicle_type') === 'Utilitaire' ? 'bg-pink-600 text-white border-pink-600' : 'bg-white text-gray-700 border-gray-200' }}">
+                               {{ old('vehicle_type') === 'Utilitaire' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-200' }}">
                     🚐 Utilitaire
                 </button>
                 <button type="button"
                         data-type="Moto"
                         class="vehicle-type-btn-create flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                               {{ old('vehicle_type') === 'Moto' ? 'bg-pink-600 text-white border-pink-600' : 'bg-white text-gray-700 border-gray-200' }}">
+                               {{ old('vehicle_type') === 'Moto' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-200' }}">
                     🏍 Moto
                 </button>
             </div>
@@ -217,7 +217,7 @@
         <div class="mt-2">
             <label class="inline-flex items-center gap-2 text-xs md:text-sm text-gray-700">
                 <input type="checkbox" name="show_phone" value="1"
-                       class="rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+                       class="rounded border-gray-300 text-gray-800 focus:ring-gray-800"
                        {{ old('show_phone', 1) ? 'checked' : '' }}>
                 <span>Afficher mon numéro de téléphone sur l’annonce</span>
             </label>
@@ -253,8 +253,8 @@
                                   file:mr-3 file:py-1 file:px-3
                                   file:rounded-lg file:border-0
                                   file:text-xs file:font-semibold
-                                  file:bg-pink-50 file:text-pink-700
-                                  hover:file:bg-pink-100">
+                                  file:bg-gray-50 file:text-gray-900
+                                  hover:file:bg-gray-100">
                     <button type="button" class="remove-image-btn text-red-500 hover:text-red-700" style="display: none;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -278,7 +278,7 @@
                 Annuler
             </a>
             <button type="submit" id="submitBtn"
-                    class="inline-flex items-center justify-center px-6 py-2 rounded-full bg-pink-600 text-white text-xs md:text-sm font-semibold hover:bg-pink-700">
+                    class="inline-flex items-center justify-center px-6 py-2 rounded-full bg-gray-800 text-white text-xs md:text-sm font-semibold hover:bg-gray-900">
                 <span id="submitText">Publier l'annonce</span>
                 <span id="submitLoader" class="hidden ml-2">
                     <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -438,12 +438,12 @@ document.addEventListener('DOMContentLoaded', function() {
             typeInputCreate.value = type;
 
             typeButtonsCreate.forEach(b => {
-                b.classList.remove('bg-pink-600', 'text-white', 'border-pink-600');
+                b.classList.remove('bg-gray-800', 'text-white', 'border-gray-800');
                 b.classList.add('bg-white', 'text-gray-700', 'border-gray-200');
             });
 
             btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-200');
-            btn.classList.add('bg-pink-600', 'text-white', 'border-pink-600');
+            btn.classList.add('bg-gray-800', 'text-white', 'border-gray-800');
         });
     });
 
@@ -502,8 +502,8 @@ document.addEventListener('DOMContentLoaded', function() {
                           file:mr-3 file:py-1 file:px-3
                           file:rounded-lg file:border-0
                           file:text-xs file:font-semibold
-                          file:bg-pink-50 file:text-pink-700
-                          hover:file:bg-pink-100">
+                          file:bg-gray-50 file:text-gray-900
+                          hover:file:bg-gray-100">
             <button type="button" class="remove-image-btn text-red-500 hover:text-red-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>

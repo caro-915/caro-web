@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,7 +63,7 @@
                                 </div>
 
                                 <a href="{{ route('annonces.show', $annonce) }}"
-                                   class="block font-extrabold text-base leading-tight mt-1 hover:text-pink-600">
+                                   class="block font-extrabold text-base leading-tight mt-1 hover:text-gray-800">
                                     {{ $annonce->titre }}
                                 </a>
 
@@ -88,7 +88,7 @@
 
                                 <div class="text-right">
                                     <a href="{{ route('annonces.show', $annonce) }}"
-                                       class="text-xs font-semibold text-pink-600 hover:underline">
+                                       class="text-xs font-semibold text-gray-800 hover:underline">
                                         Voir le détail
                                     </a>
                                 </div>
