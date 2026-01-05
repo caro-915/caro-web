@@ -7,7 +7,7 @@
     <div class="flex flex-row items-end justify-between gap-2 mb-6">
         <div>
             <h1 class="text-3xl font-bold">
-                <span class="text-pink-600">Voitures d'occasion</span>
+                Voitures d'occasion
                 @if($annonces->total())
                     <span class="text-pink-600 font-extrabold">
                         – {{ number_format($annonces->total(), 0, ',', ' ') }} annonces
