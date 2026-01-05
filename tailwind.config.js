@@ -43,5 +43,16 @@ export default {
         },
     },
 
+    safelist: [
+        'text-pink-600',
+        'text-pink-500',
+        'bg-pink-600',
+        'bg-pink-700',
+        'border-pink-500',
+        'border-pink-600',
+        'hover:text-pink-600',
+        'hover:bg-pink-600',
+    ],
+
     plugins: [forms],
 };
