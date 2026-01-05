@@ -76,3 +76,20 @@
 .focus\:border-pink-500:focus {
     border-color: var(--color-nuit-600) !important;
 }
+
+/* FORCE pink colors for prices - override everything */
+.text-pink-600 {
+    color: #db2777 !important;
+}
+
+.bg-pink-600 {
+    background-color: #db2777 !important;
+}
+
+.border-pink-600 {
+    border-color: #db2777 !important;
+}
+
+.hover\:bg-pink-600:hover {
+    background-color: #db2777 !important;
+}
