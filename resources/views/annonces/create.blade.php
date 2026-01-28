@@ -296,6 +296,40 @@
 document.addEventListener('DOMContentLoaded', function() {
     let formSubmitted = false;
 
+    // Pré-sélectionner "Voiture" par défaut si aucune valeur n'a été définie
+    const vehicleTypeInput = document.getElementById('vehicle_type_input');
+    const vehicleButtons = document.querySelectorAll('.vehicle-type-btn-create');
+    
+    if (!vehicleTypeInput.value) {
+        // Pas de valeur sauvegardée, pré-sélectionner "Voiture"
+        vehicleTypeInput.value = 'Voiture';
+        vehicleButtons.forEach(btn => {
+            if (btn.getAttribute('data-type') === 'Voiture') {
+                btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-200');
+                btn.classList.add('bg-gray-800', 'text-white', 'border-gray-800');
+            } else {
+                btn.classList.remove('bg-gray-800', 'text-white', 'border-gray-800');
+                btn.classList.add('bg-white', 'text-gray-700', 'border-gray-200');
+            }
+        });
+    }
+
+    // Gestion des clics sur les boutons de type de véhicule
+    vehicleButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const type = btn.getAttribute('data-type');
+            vehicleTypeInput.value = type;
+            
+            vehicleButtons.forEach(b => {
+                b.classList.remove('bg-gray-800', 'text-white', 'border-gray-800');
+                b.classList.add('bg-white', 'text-gray-700', 'border-gray-200');
+            });
+            btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-200');
+            btn.classList.add('bg-gray-800', 'text-white', 'border-gray-800');
+        });
+    });
+
     // Validation function
     function validateForm() {
         const errors = [];
