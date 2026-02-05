@@ -152,18 +152,21 @@ class AnnonceController extends Controller
         if ($request->hasFile('images')) {
             \Log::info('Images reçues: ' . count($request->file('images')));
             
-            // Debug S3 config
+            // Debug S3 config - show what we have
             $disk = env('FILESYSTEM_DISK', 's3');
-            \Log::info("Disk being used: $disk");
-            \Log::info("S3 Config Debug", [
-                'AWS_ACCESS_KEY_ID' => env('AWS_ACCESS_KEY_ID') ? '***' . substr(env('AWS_ACCESS_KEY_ID'), -4) : 'NOT SET',
-                'AWS_SECRET_ACCESS_KEY' => env('AWS_SECRET_ACCESS_KEY') ? '***' : 'NOT SET',
-                'AWS_DEFAULT_REGION' => env('AWS_DEFAULT_REGION'),
-                'AWS_BUCKET' => env('AWS_BUCKET'),
-                'AWS_ENDPOINT' => env('AWS_ENDPOINT'),
-                'AWS_USE_PATH_STYLE_ENDPOINT' => env('AWS_USE_PATH_STYLE_ENDPOINT'),
-                'AWS_URL' => env('AWS_URL'),
-            ]);
+            $accessKey = env('AWS_ACCESS_KEY_ID');
+            $secretKey = env('AWS_SECRET_ACCESS_KEY');
+            $region = env('AWS_DEFAULT_REGION');
+            $bucket = env('AWS_BUCKET');
+            $endpoint = env('AWS_ENDPOINT');
+            
+            \Log::info("=== S3 CONFIG DEBUG ===");
+            \Log::info("Disk: $disk");
+            \Log::info("AccessKey: " . ($accessKey ? '✓ SET (last4: ' . substr($accessKey, -4) . ')' : '✗ NOT SET'));
+            \Log::info("SecretKey: " . ($secretKey ? '✓ SET' : '✗ NOT SET'));
+            \Log::info("Region: " . ($region ? $region : '✗ NOT SET'));
+            \Log::info("Bucket: " . ($bucket ? $bucket : '✗ NOT SET'));
+            \Log::info("Endpoint: " . ($endpoint ? $endpoint : '✗ NOT SET'));
             
             foreach ($request->file('images') as $index => $file) {
                 if ($index >= 5) break;
@@ -178,7 +181,7 @@ class AnnonceController extends Controller
                         continue;
                     }
                     
-                    \Log::info("Image $index uploadée: $path");
+                    \Log::info("✓ Image $index uploadée: $path");
                     $uploadedFiles[] = $path;
                     
                     // ✅ Assign to correct slot ONLY if upload succeeded
@@ -188,8 +191,13 @@ class AnnonceController extends Controller
                     if ($index === 3) $imagePaths['image_path_4'] = $path;
                     if ($index === 4) $imagePaths['image_path_5'] = $path;
                 } catch (\Exception $e) {
-                    \Log::error("Image $index upload error: " . $e->getMessage());
-                    \Log::error("Image $index stack: " . $e->getTraceAsString());
+                    \Log::error("✗ Image $index upload FAILED");
+                    \Log::error("Exception: " . get_class($e) . " - " . $e->getMessage());
+                    
+                    // Show root cause if it's a nested exception
+                    if ($e->getPrevious()) {
+                        \Log::error("Root cause: " . $e->getPrevious()->getMessage());
+                    }
                 }
             }
         }
