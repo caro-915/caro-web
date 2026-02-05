@@ -169,15 +169,16 @@ class AnnonceController extends Controller
                     
                     \Log::info("Image $index uploadée: $path");
                     $uploadedFiles[] = $path;
+                    
+                    // ✅ Assign to correct slot ONLY if upload succeeded
+                    if ($index === 0) $imagePaths['image_path']   = $path;
+                    if ($index === 1) $imagePaths['image_path_2'] = $path;
+                    if ($index === 2) $imagePaths['image_path_3'] = $path;
+                    if ($index === 3) $imagePaths['image_path_4'] = $path;
+                    if ($index === 4) $imagePaths['image_path_5'] = $path;
                 } catch (\Exception $e) {
                     \Log::error("Image $index upload error: " . $e->getMessage());
                 }
-
-                if ($index === 0) $imagePaths['image_path']   = $path;
-                if ($index === 1) $imagePaths['image_path_2'] = $path;
-                if ($index === 2) $imagePaths['image_path_3'] = $path;
-                if ($index === 3) $imagePaths['image_path_4'] = $path;
-                if ($index === 4) $imagePaths['image_path_5'] = $path;
             }
         }
 
