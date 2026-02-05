@@ -32,6 +32,7 @@ class ProcessAnnonceImages implements ShouldQueue
      */
     public function handle(): void
     {
+        $disk = env('FILESYSTEM_DISK', 's3');
         $watermark = null;
         $watermarkPath = public_path('watermark.png');
         if (file_exists($watermarkPath)) {
@@ -39,11 +40,11 @@ class ProcessAnnonceImages implements ShouldQueue
         }
 
         foreach ($this->paths as $path) {
-            if (!$path || !Storage::disk('public')->exists($path)) {
+            if (!$path || !Storage::disk($disk)->exists($path)) {
                 continue;
             }
 
-            $stream = Storage::disk('public')->get($path);
+            $stream = Storage::disk($disk)->get($path);
             $image = Image::make($stream)->orientate();
 
             $image->resize(1280, null, function ($c) {
@@ -59,7 +60,7 @@ class ProcessAnnonceImages implements ShouldQueue
                 $image->insert($wm, 'center');
             }
 
-            Storage::disk('public')->put($path, (string) $image->encode('jpg', 70));
+            Storage::disk($disk)->put($path, (string) $image->encode('jpg', 70));
         }
     }
 }

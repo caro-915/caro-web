@@ -153,8 +153,9 @@ class AnnonceController extends Controller
             foreach ($request->file('images') as $index => $file) {
                 if ($index >= 5) break;
 
-                // Stockage brut rapide
-                $path = $file->store('annonces', 'public');
+                // Stockage brut rapide (utilise le disk par défaut de .env)
+                $disk = env('FILESYSTEM_DISK', 's3');
+                $path = $file->store('annonces', $disk);
                 $uploadedFiles[] = $path;
 
                 if ($index === 0) $imagePaths['image_path']   = $path;
@@ -202,6 +203,7 @@ class AnnonceController extends Controller
     $annonce->load('user');
 
     // ✅ Images : 5 slots fixes (filtre null)
+    $disk = env('FILESYSTEM_DISK', 's3');
     $images = collect([
         $annonce->image_path,
         $annonce->image_path_2,
@@ -209,9 +211,16 @@ class AnnonceController extends Controller
         $annonce->image_path_4,
         $annonce->image_path_5,
     ])->filter()->values()
-      ->map(function ($path) {
+      ->map(function ($path) use ($disk) {
           $path = ltrim($path, '/');
           $path = preg_replace('#^storage/#', '', $path); // évite storage/storage
+          
+          // Si on utilise S3 ou autre cloud storage
+          if ($disk !== 'public' && $disk !== 'local') {
+              return Storage::disk($disk)->url($path);
+          }
+          
+          // Sinon, utiliser le storage local
           return asset('storage/' . $path);
       })->values();
 
