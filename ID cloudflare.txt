@@ -1,0 +1,19 @@
+https://pub-64074b45f5384d7cba152b6e5ea21c59.r2.dev    " url public cloudflare"
+
+https://pub-8b79d175e098497b919b6031341b000a.r2.dev    " new url" 
+
+abd28b02d64fac8140c7b458a3be7e02          " id de clé d'accès" 
+
+5c7eec69fd4c5b21e11cfec72dbacbd0095afc3e61b4f4ca489464041673ecb5     " clé d'accès secret" 
+
+https://ace5e932994d0dfa914f130bc2a78136.r2.cloudflarestorage.com      " Endpoint for S3 cmlients"  8
+
+
+FILESYSTEM_DISK=s3
+AWS_ACCESS_KEY_ID=abd28b02d64fac8140c7b458a3be7e02
+AWS_SECRET_ACCESS_KEY=5c7eec69fd4c5b21e11cfec72dbacbd0095afc3e61b4f4ca489464041673ecb5
+AWS_DEFAULT_REGION=auto
+AWS_BUCKET=images de caro
+AWS_ENDPOINT=https:https://ace5e932994d0dfa914f130bc2a78136.r2.cloudflarestorage.com
+AWS_USE_PATH_STYLE_ENDPOINT=false
+AWS_URL=https:https://pub-64074b45f5384d7cba152b6e5ea21c59.r2.dev

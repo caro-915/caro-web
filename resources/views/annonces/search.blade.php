@@ -1,5 +1,9 @@
 ﻿@extends('layouts.app')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
 <!-- Force cache refresh v2 -->
 <div class="max-w-6xl mx-auto px-4 py-6 md:py-8">
@@ -235,15 +239,35 @@
         <main class="space-y-3">
             @if ($annonces->count())
                 @foreach ($annonces as $annonce)
+                    @php
+                        $disk = env('FILESYSTEM_DISK', 's3');
+                        $mainImage = null;
+                        
+                        if ($annonce->image_path) {
+                            $path = ltrim($annonce->image_path, '/');
+                            $path = preg_replace('#^storage/#', '', $path);
+                            
+                            if ($disk !== 'public' && $disk !== 'local') {
+                                $mainImage = Storage::disk($disk)->url($path);
+                            } else {
+                                $mainImage = asset('storage/' . $path);
+                            }
+                        } elseif ($annonce->image_url) {
+                            $mainImage = $annonce->image_url;
+                        } else {
+                            $mainImage = asset('images/placeholder-car.jpg');
+                        }
+                    @endphp
                     {{-- One result card --}}
                     <a href="{{ route('annonces.show', $annonce->id) }}"
                        class="bg-white rounded-2xl shadow flex flex-row overflow-hidden hover:shadow-md transition">
 
                         {{-- Image --}}
                         <img
-                            src="{{ $annonce->image_path ? asset('storage/'.$annonce->image_path) : asset('images/placeholder-car.jpg') }}"
+                            src="{{ $mainImage }}"
                             alt="Photo voiture"
                             class="w-64 h-44 object-cover shrink-0"
+                            onerror="this.src='{{ asset('images/placeholder-car.jpg') }}'"
                         />
 
                         {{-- Content --}}

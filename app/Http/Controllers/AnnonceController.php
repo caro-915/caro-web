@@ -150,54 +150,28 @@ class AnnonceController extends Controller
 
         $uploadedFiles = [];
         if ($request->hasFile('images')) {
-            \Log::info('Images reçues: ' . count($request->file('images')));
-            
-            // Debug S3 config - show what we have
             $disk = env('FILESYSTEM_DISK', 's3');
-            $accessKey = env('AWS_ACCESS_KEY_ID');
-            $secretKey = env('AWS_SECRET_ACCESS_KEY');
-            $region = env('AWS_DEFAULT_REGION');
-            $bucket = env('AWS_BUCKET');
-            $endpoint = env('AWS_ENDPOINT');
-            
-            \Log::info("=== S3 CONFIG DEBUG ===");
-            \Log::info("Disk: $disk");
-            \Log::info("AccessKey: " . ($accessKey ? '✓ SET (last4: ' . substr($accessKey, -4) . ')' : '✗ NOT SET'));
-            \Log::info("SecretKey: " . ($secretKey ? '✓ SET' : '✗ NOT SET'));
-            \Log::info("Region: " . ($region ? $region : '✗ NOT SET'));
-            \Log::info("Bucket: " . ($bucket ? $bucket : '✗ NOT SET'));
-            \Log::info("Endpoint: " . ($endpoint ? $endpoint : '✗ NOT SET'));
             
             foreach ($request->file('images') as $index => $file) {
                 if ($index >= 5) break;
 
                 try {
-                    \Log::info("Upload image $index sur disk: $disk");
-                    
                     $path = $file->store('annonces', $disk);
                     
                     if (!$path) {
-                        \Log::error("Image $index: store() returned empty/false");
+                        \Log::error("Image upload failed for slot $index");
                         continue;
                     }
                     
-                    \Log::info("✓ Image $index uploadée: $path");
                     $uploadedFiles[] = $path;
                     
-                    // ✅ Assign to correct slot ONLY if upload succeeded
                     if ($index === 0) $imagePaths['image_path']   = $path;
                     if ($index === 1) $imagePaths['image_path_2'] = $path;
                     if ($index === 2) $imagePaths['image_path_3'] = $path;
                     if ($index === 3) $imagePaths['image_path_4'] = $path;
                     if ($index === 4) $imagePaths['image_path_5'] = $path;
                 } catch (\Exception $e) {
-                    \Log::error("✗ Image $index upload FAILED");
-                    \Log::error("Exception: " . get_class($e) . " - " . $e->getMessage());
-                    
-                    // Show root cause if it's a nested exception
-                    if ($e->getPrevious()) {
-                        \Log::error("Root cause: " . $e->getPrevious()->getMessage());
-                    }
+                    \Log::error("Image upload exception: " . $e->getMessage());
                 }
             }
         }

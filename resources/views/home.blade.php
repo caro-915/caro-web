@@ -1,6 +1,12 @@
 ﻿@extends('layouts.app')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
+
+
 
     {{-- HERO : Search form + marketing block --}}
     <section class="mb-10">
@@ -127,6 +133,54 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    {{-- SECTION : Dernières annonces --}}
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg md:text-xl font-semibold">Dernières annonces</h2>
+            <a href="{{ route('annonces.search') }}" class="text-xs md:text-sm text-gray-600 hover:text-gray-800">
+                Voir tout →
+            </a>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            @forelse ($latestAds as $ad)
+                @php
+                    $disk = env('FILESYSTEM_DISK', 's3');
+                    $mainImage = null;
+                    
+                    if ($ad->image_path) {
+                        $path = ltrim($ad->image_path, '/');
+                        $path = preg_replace('#^storage/#', '', $path);
+                        
+                        if ($disk !== 'public' && $disk !== 'local') {
+                            $mainImage = Storage::disk($disk)->url($path);
+                        } else {
+                            $mainImage = asset('storage/' . $path);
+                        }
+                    } elseif ($ad->image_url) {
+                        $mainImage = $ad->image_url;
+                    } else {
+                        $mainImage = asset('images/placeholder-car.jpg');
+                    }
+                @endphp
+                <a href="{{ route('annonces.show', $ad->id) }}"
+                   class="bg-white rounded-xl shadow-sm hover:shadow transition overflow-hidden group">
+                    <div class="relative h-24 overflow-hidden bg-gray-100">
+                        <img src="{{ $mainImage }}" 
+                             alt="{{ $ad->titre }}"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='{{ asset('images/placeholder-car.jpg') }}'">
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs font-semibold truncate">{{ $ad->titre }}</p>
+                        <p class="text-xs text-pink-600 font-bold">{{ number_format($ad->prix, 0, ',', ' ') }} DA</p>
+                    </div>
+                </a>
+            @empty
+                <p class="text-xs text-gray-500 col-span-full text-center py-4">Aucune annonce disponible.</p>
+            @endforelse
         </div>
     </section>
 
