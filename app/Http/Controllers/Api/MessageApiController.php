@@ -218,4 +218,5 @@ class MessageApiController extends Controller
             'message' => 'Messages marqués comme lus',
             'updated' => $updated,
         ]);
-    }}
+    }
+}
