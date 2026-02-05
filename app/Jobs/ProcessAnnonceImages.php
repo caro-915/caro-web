@@ -47,11 +47,13 @@ class ProcessAnnonceImages implements ShouldQueue
             $stream = Storage::disk($disk)->get($path);
             $image = Image::make($stream)->orientate();
 
+            // Redimensionner à 1280px (garde aspect ratio)
             $image->resize(1280, null, function ($c) {
                 $c->aspectRatio();
                 $c->upsize();
             });
 
+            // Ajouter le watermark si disponible
             if ($watermark) {
                 $wm = clone $watermark;
                 $wm->resize((int) ($image->width() * 0.18), null, function ($c) {
@@ -60,7 +62,8 @@ class ProcessAnnonceImages implements ShouldQueue
                 $image->insert($wm, 'center');
             }
 
-            Storage::disk($disk)->put($path, (string) $image->encode('jpg', 70));
+            // ✅ Sauvegarder SANS réduire la qualité (garder qualité originale)
+            Storage::disk($disk)->put($path, (string) $image->encode('jpg', 95));
         }
     }
 }

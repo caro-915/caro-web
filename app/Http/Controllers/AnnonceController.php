@@ -182,10 +182,10 @@ class AnnonceController extends Controller
 
         $annonce = Annonce::create($data);
 
-        // ⚠️ DÉSACTIVÉ TEMPORAIREMENT pour déboguer l'upload
-        // if (!empty($uploadedFiles)) {
-        //     ProcessAnnonceImages::dispatch($uploadedFiles)->afterResponse();
-        // }
+        // ✅ Dispatcher le traitement des images (redimensionne 1280px, watermark, qualité 95%)
+        if (!empty($uploadedFiles)) {
+            ProcessAnnonceImages::dispatch($uploadedFiles)->afterResponse();
+        }
 
         return redirect()
             ->route('annonces.show', $annonce->id)
