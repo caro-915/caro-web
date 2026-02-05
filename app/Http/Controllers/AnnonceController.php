@@ -150,12 +150,17 @@ class AnnonceController extends Controller
 
         $uploadedFiles = [];
         if ($request->hasFile('images')) {
+            \Log::info('Images reçues: ' . count($request->file('images')));
+            
             foreach ($request->file('images') as $index => $file) {
                 if ($index >= 5) break;
 
                 // Stockage brut rapide (utilise le disk par défaut de .env)
                 $disk = env('FILESYSTEM_DISK', 's3');
+                \Log::info("Upload image $index sur disk: $disk");
+                
                 $path = $file->store('annonces', $disk);
+                \Log::info("Image $index uploadée: $path");
                 $uploadedFiles[] = $path;
 
                 if ($index === 0) $imagePaths['image_path']   = $path;
