@@ -155,13 +155,23 @@ class AnnonceController extends Controller
             foreach ($request->file('images') as $index => $file) {
                 if ($index >= 5) break;
 
-                // Stockage brut rapide (utilise le disk par défaut de .env)
-                $disk = env('FILESYSTEM_DISK', 's3');
-                \Log::info("Upload image $index sur disk: $disk");
-                
-                $path = $file->store('annonces', $disk);
-                \Log::info("Image $index uploadée: $path");
-                $uploadedFiles[] = $path;
+                try {
+                    // Stockage brut rapide (utilise le disk par défaut de .env)
+                    $disk = env('FILESYSTEM_DISK', 's3');
+                    \Log::info("Upload image $index sur disk: $disk");
+                    
+                    $path = $file->store('annonces', $disk);
+                    
+                    if (!$path) {
+                        \Log::error("Image $index: store() returned empty/false");
+                        continue;
+                    }
+                    
+                    \Log::info("Image $index uploadée: $path");
+                    $uploadedFiles[] = $path;
+                } catch (\Exception $e) {
+                    \Log::error("Image $index upload error: " . $e->getMessage());
+                }
 
                 if ($index === 0) $imagePaths['image_path']   = $path;
                 if ($index === 1) $imagePaths['image_path_2'] = $path;
