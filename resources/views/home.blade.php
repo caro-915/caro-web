@@ -17,14 +17,14 @@
                                 <form method="GET" action="{{ route('annonces.search') }}" class="bg-white rounded-3xl shadow-lg p-5 md:p-6 space-y-4">    
                     {{-- Vehicle type selector --}}
                     <div class="flex items-center gap-2 text-xs md:text-sm">
-                        {{-- Hidden field actually used by backend --}}
-                        <input type="hidden" name="vehicle_type" id="vehicle_type_input" value="{{ request('vehicle_type', 'car') }}">
+                        {{-- Hidden field actually used by backend - default to empty (no filter) --}}
+                        <input type="hidden" name="vehicle_type" id="vehicle_type_input" value="{{ request('vehicle_type', '') }}">
                         
                         {{-- Buttons are only UI helpers that update the hidden field --}}
                         <button type="button"
                                 data-type="car"
                                 class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                                       {{ request('vehicle_type', 'car') === 'car' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
+                                       {{ request('vehicle_type') === 'car' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
                             🚗 Voiture
                         </button>
                         <button type="button"
