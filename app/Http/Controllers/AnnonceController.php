@@ -152,12 +152,23 @@ class AnnonceController extends Controller
         if ($request->hasFile('images')) {
             \Log::info('Images reçues: ' . count($request->file('images')));
             
+            // Debug S3 config
+            $disk = env('FILESYSTEM_DISK', 's3');
+            \Log::info("Disk being used: $disk");
+            \Log::info("S3 Config Debug", [
+                'AWS_ACCESS_KEY_ID' => env('AWS_ACCESS_KEY_ID') ? '***' . substr(env('AWS_ACCESS_KEY_ID'), -4) : 'NOT SET',
+                'AWS_SECRET_ACCESS_KEY' => env('AWS_SECRET_ACCESS_KEY') ? '***' : 'NOT SET',
+                'AWS_DEFAULT_REGION' => env('AWS_DEFAULT_REGION'),
+                'AWS_BUCKET' => env('AWS_BUCKET'),
+                'AWS_ENDPOINT' => env('AWS_ENDPOINT'),
+                'AWS_USE_PATH_STYLE_ENDPOINT' => env('AWS_USE_PATH_STYLE_ENDPOINT'),
+                'AWS_URL' => env('AWS_URL'),
+            ]);
+            
             foreach ($request->file('images') as $index => $file) {
                 if ($index >= 5) break;
 
                 try {
-                    // Stockage brut rapide (utilise le disk par défaut de .env)
-                    $disk = env('FILESYSTEM_DISK', 's3');
                     \Log::info("Upload image $index sur disk: $disk");
                     
                     $path = $file->store('annonces', $disk);
@@ -178,6 +189,7 @@ class AnnonceController extends Controller
                     if ($index === 4) $imagePaths['image_path_5'] = $path;
                 } catch (\Exception $e) {
                     \Log::error("Image $index upload error: " . $e->getMessage());
+                    \Log::error("Image $index stack: " . $e->getTraceAsString());
                 }
             }
         }
