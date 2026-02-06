@@ -114,6 +114,25 @@ Route::middleware(['auth', 'banned'])->group(function () {
     Route::post('/alertes/creer', [\App\Http\Controllers\SearchHistoryController::class, 'createAlert'])->name('search.alert.create');
     Route::delete('/alertes/{id}', [\App\Http\Controllers\SearchHistoryController::class, 'deleteAlert'])->name('search.alert.delete');
 
+    // Route de test temporaire pour déboguer
+    Route::get('/test-search-history', function() {
+        try {
+            $searches = \App\Models\SearchHistory::where('user_id', auth()->id())->latest()->take(10)->get();
+            $alerts = \App\Models\SearchAlert::where('user_id', auth()->id())->where('is_active', true)->latest()->get();
+            return response()->json([
+                'success' => true,
+                'searches_count' => $searches->count(),
+                'alerts_count' => $alerts->count(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ], 500);
+        }
+    });
+
     /*
     |-------------------------
     | Profil (Breeze)
