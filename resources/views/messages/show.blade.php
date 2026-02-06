@@ -49,9 +49,9 @@
 
     {{-- Formulaire d'envoi --}}
     <div class="bg-white rounded-2xl shadow p-4">
-        <form method="POST" action="{{ route('messages.store', $conversation) }}">
+        <form method="POST" action="{{ route('messages.store', $conversation) }}" id="messageForm">
             @csrf
-            <textarea name="body" rows="3"
+            <textarea name="body" rows="3" id="messageBody"
                       class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-gray-800 focus:border-gray-800"
                       placeholder="Votre message..." required></textarea>
 
@@ -66,6 +66,15 @@
 
 @push('scripts')
 <script>
+// Clear message field after submit
+document.getElementById('messageForm').addEventListener('submit', function(e) {
+    // Don't prevent the form submission
+    // Just clear after submit
+    setTimeout(() => {
+        document.getElementById('messageBody').value = '';
+    }, 100);
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('messages-container');
     if (!container) return;

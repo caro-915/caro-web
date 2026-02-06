@@ -98,7 +98,7 @@
         {{-- Marque / modèle / ville --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-                <label class="block text-xs font-semibold mb-1">Marque <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-semibold mb-1">Marque</label>
                 <select name="marque" id="marque_select" class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm {{ $errors->has('marque') ? 'border-red-500' : '' }}">
                     <option value="">Sélectionnez une marque</option>
                     @foreach($brands as $brand)

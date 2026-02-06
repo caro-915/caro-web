@@ -62,14 +62,14 @@
 
                     {{-- Nom --}}
                     <div>
-                        <label for="name" class="block text-xs font-semibold mb-1">Nom / PrÃ©nom</label>
+                        <label for="name" class="block text-xs font-semibold mb-1">Nom / Prénom</label>
                         <input id="name" type="text" name="name" value="{{ old('name') }}" required
                                class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm
                                       focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-gray-800">
                     </div>
                     {{-- phone --}}
                     <div class="mt-4">
-    <label for="phone" class="block text-xs font-semibold mb-1">TÃ©lÃ©phone</label>
+    <label for="phone" class="block text-xs font-semibold mb-1">Téléphone</label>
     <input id="phone" name="phone" type="text"
            class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm
                   focus:outline-none focus:ring-2 focus:ring-gray-800"

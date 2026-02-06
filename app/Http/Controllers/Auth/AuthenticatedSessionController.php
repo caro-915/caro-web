@@ -28,12 +28,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Check if there's a redirect URL in the request
-        if ($request->has('redirect_to') && filter_var($request->redirect_to, FILTER_VALIDATE_URL)) {
-            return redirect($request->redirect_to);
-        }
-
-        return redirect()->intended(route('home', absolute: false));
+        // Redirection après connexion vers la page recherche (home)
+        return redirect()->intended(route('annonces.search', absolute: false));
     }
 
     /**

@@ -23,7 +23,7 @@
 
             {{-- Logo --}}
             <a href="{{ route('home') }}" class="flex items-center">
-                <img src="{{ asset('images/logo.png') }}" alt="Caro" class="h-10 w-auto">
+                <img src="{{ asset('images/logo.png') }}" alt="Caro" class="h-14 w-auto">
             </a>
 
             {{-- Nav --}}
@@ -58,9 +58,9 @@
 
                     {{-- Icône favoris --}}
                     <a href="{{ route('favorites.index') }}"
-                       class="flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 hover:bg-gray-50"
+                       class="flex items-center justify-center w-9 h-9 rounded-full border border-pink-200 hover:bg-pink-50"
                        title="Mes favoris">
-                        <span class="text-gray-800 text-lg">♥</span>
+                        <span class="text-pink-600 text-lg">♥</span>
                     </a>
 
                     {{-- Menu utilisateur --}}
@@ -72,7 +72,7 @@
                             <span>👤 {{ auth()->user()->name }}</span>
 
                             @if($unreadCount > 0)
-                                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-gray-800 text-white text-[11px]">
+                                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-pink-600 text-white text-[11px]">
                                     {{ $unreadCount }}
                                 </span>
                             @endif
