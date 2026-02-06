@@ -63,6 +63,27 @@ Route::get('/create-emergency-admin-account-temp', function() {
     }
 });
 
+// Route temporaire pour clear tous les caches
+Route::get('/clear-all-caches-temp', function() {
+    try {
+        \Artisan::call('config:clear');
+        \Artisan::call('cache:clear');
+        \Artisan::call('view:clear');
+        \Artisan::call('route:clear');
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Tous les caches ont été effacés !',
+            'caches_cleared' => ['config', 'cache', 'view', 'route'],
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
+
 /*
 |--------------------------------------------------------------------------
 | HOME
