@@ -23,13 +23,13 @@
 
             {{-- Logo --}}
             <a href="{{ route('home') }}" class="flex items-center">
-                <img src="{{ asset('images/logo.png') }}" alt="Caro" class="h-14 w-auto">
+                <img src="{{ asset('images/logo.png') }}" alt="Caro" class="h-16 w-auto">
             </a>
 
             {{-- Nav --}}
             <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
                 <a href="{{ route('annonces.search') }}" class="hover:text-gray-800">Occasion</a>
-                <a href="#" class="hover:text-gray-800">Top deals</a>
+                <a href="{{ route('home') }}#top-annonces" class="hover:text-gray-800">Top annonces</a>
                 <a href="{{ route('home') }}#about" class="hover:text-gray-800">À propos de nous</a>
                 <a href="{{ route('home') }}#contact-us" class="hover:text-gray-800">Nous contacter</a>
                 <a href="#" class="hover:text-gray-800">Conseils</a>
@@ -109,9 +109,9 @@
                                 Mes annonces
                             </a>
 
-                            <a href="{{ route('dashboard') }}"
+                            <a href="{{ route('search.history') }}"
                                class="block px-4 py-2 hover:bg-gray-100">
-                                Tableau de bord
+                                Historique de recherche
                             </a>
                             @if(auth()->user()->is_admin)
     <a href="{{ route('admin.dashboard') }}"

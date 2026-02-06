@@ -107,6 +107,15 @@ Route::middleware(['auth', 'banned'])->group(function () {
 
     /*
     |-------------------------
+    | Historique de recherche & Alertes
+    |-------------------------
+    */
+    Route::get('/historique-recherche', [\App\Http\Controllers\SearchHistoryController::class, 'index'])->name('search.history');
+    Route::post('/alertes/creer', [\App\Http\Controllers\SearchHistoryController::class, 'createAlert'])->name('search.alert.create');
+    Route::delete('/alertes/{id}', [\App\Http\Controllers\SearchHistoryController::class, 'deleteAlert'])->name('search.alert.delete');
+
+    /*
+    |-------------------------
     | Profil (Breeze)
     |-------------------------
     */

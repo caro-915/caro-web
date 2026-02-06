@@ -39,10 +39,10 @@ class AnnonceController extends Controller
 
         $latestAds = (clone $filteredQuery)->take(6)->get();
 
-        $topDeals = Annonce::with(['marque', 'modele'])
+        $topAnnonces = Annonce::with(['marque', 'modele'])
             ->where('is_active', true)
-            ->orderBy('prix', 'asc')
-            ->take(6)
+            ->orderBy('views', 'desc')
+            ->take(3)
             ->get();
 
         $popularMarques = Annonce::select(
@@ -71,7 +71,7 @@ class AnnonceController extends Controller
             'marques',
             'modeles',
             'latestAds',
-            'topDeals',
+            'topAnnonces',
             'popularMarques',
             'popularModeles'
         ));
@@ -258,6 +258,23 @@ class AnnonceController extends Controller
 
     public function search(Request $request)
     {
+        // Enregistrer l'historique de recherche si l'utilisateur est connecté
+        if (auth()->check() && $request->hasAny(['marque', 'modele', 'price_max', 'annee_min', 'annee_max', 'km_min', 'km_max', 'carburant', 'wilaya', 'vehicle_type'])) {
+            \App\Models\SearchHistory::create([
+                'user_id' => auth()->id(),
+                'marque' => $request->input('marque'),
+                'modele' => $request->input('modele'),
+                'price_max' => $request->input('price_max'),
+                'annee_min' => $request->input('annee_min'),
+                'annee_max' => $request->input('annee_max'),
+                'km_min' => $request->input('km_min'),
+                'km_max' => $request->input('km_max'),
+                'carburant' => $request->input('carburant'),
+                'wilaya' => $request->input('wilaya'),
+                'vehicle_type' => $request->input('vehicle_type'),
+            ]);
+        }
+
         $query = Annonce::query()->where('is_active', true);
 
         $type = $request->input('vehicle_type');

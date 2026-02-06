@@ -184,6 +184,56 @@
         </div>
     </section>
 
+    {{-- SECTION : Top annonces (plus de vues) --}}
+    <section id="top-annonces" class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg md:text-xl font-semibold">🔥 Top annonces</h2>
+            <span class="text-xs md:text-sm text-gray-500">Les plus consultées</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            @forelse ($topAnnonces as $ad)
+                @php
+                    $disk = env('FILESYSTEM_DISK', 's3');
+                    $mainImage = null;
+                    
+                    if ($ad->image_path) {
+                        $path = ltrim($ad->image_path, '/');
+                        $path = preg_replace('#^storage/#', '', $path);
+                        
+                        if ($disk !== 'public' && $disk !== 'local') {
+                            $mainImage = Storage::disk($disk)->url($path);
+                        } else {
+                            $mainImage = asset('storage/' . $path);
+                        }
+                    } elseif ($ad->image_url) {
+                        $mainImage = $ad->image_url;
+                    } else {
+                        $mainImage = asset('images/placeholder-car.jpg');
+                    }
+                @endphp
+                <a href="{{ route('annonces.show', $ad->id) }}"
+                   class="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden">
+                    <div class="relative h-40 overflow-hidden bg-gray-100">
+                        <img src="{{ $mainImage }}" 
+                             alt="{{ $ad->titre }}"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='{{ asset('images/placeholder-car.jpg') }}'">
+                        <div class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-xs font-semibold text-gray-700">
+                            👁️ {{ $ad->views ?? 0 }} vues
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-xs text-gray-500 mb-1">{{ $ad->marque }} @if($ad->modele)• {{ $ad->modele }}@endif</p>
+                        <p class="text-sm font-semibold truncate mb-2">{{ $ad->titre }}</p>
+                        <p class="text-base text-pink-600 font-bold">{{ number_format($ad->prix, 0, ',', ' ') }} DA</p>
+                    </div>
+                </a>
+            @empty
+                <p class="text-xs text-gray-500 col-span-full text-center py-4">Aucune annonce populaire pour le moment.</p>
+            @endforelse
+        </div>
+    </section>
+
     {{-- SECTION : Marques populaires --}}
     <section class="mb-8">
         <h2 class="text-xl font-semibold mb-4">Marques populaires</h2>
