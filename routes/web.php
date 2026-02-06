@@ -23,6 +23,46 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 
 /*
 |--------------------------------------------------------------------------
+| ROUTE TEMPORAIRE - CRÉER ADMIN (⚠️ SUPPRIMER APRÈS UTILISATION)
+|--------------------------------------------------------------------------
+*/
+Route::get('/create-emergency-admin-account-temp', function() {
+    try {
+        $existing = \App\Models\User::where('email', 'admin@caro.dz')->first();
+        if ($existing) {
+            return response()->json([
+                'status' => 'exists',
+                'message' => 'Le compte admin existe déjà !',
+                'email' => 'admin@caro.dz',
+            ]);
+        }
+
+        $admin = \App\Models\User::create([
+            'name' => 'SuperAdmin',
+            'email' => 'admin@caro.dz',
+            'password' => bcrypt('admin2026caro'),
+            'is_admin' => true,
+            'is_banned' => false,
+            'email_verified_at' => now(),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Compte admin créé avec succès !',
+            'email' => 'admin@caro.dz',
+            'password' => 'admin2026caro',
+            'note' => 'Connecte-toi maintenant puis SUPPRIME cette route !',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
+
+/*
+|--------------------------------------------------------------------------
 | HOME
 |--------------------------------------------------------------------------
 */
