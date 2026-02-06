@@ -84,6 +84,32 @@ Route::get('/clear-all-caches-temp', function() {
     }
 });
 
+// Route de debug pour vérifier l'utilisateur connecté
+Route::get('/debug-user-temp', function() {
+    if (!auth()->check()) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Aucun utilisateur connecté',
+        ]);
+    }
+    
+    $user = auth()->user();
+    return response()->json([
+        'status' => 'success',
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'is_admin' => $user->is_admin,
+            'is_admin_type' => gettype($user->is_admin),
+            'is_admin_raw' => $user->getAttributes()['is_admin'] ?? null,
+            'is_banned' => $user->is_banned,
+        ],
+        'session_id' => session()->getId(),
+        'auth_check' => auth()->check(),
+    ]);
+})->middleware('auth');
+
 /*
 |--------------------------------------------------------------------------
 | HOME
