@@ -30,12 +30,19 @@ Route::get('/create-emergency-admin-account-temp', function() {
     try {
         $existing = \App\Models\User::where('email', 'admin@caro.dz')->first();
         if ($existing) {
-            // S'il existe, s'assurer qu'il est admin
-            $existing->update(['is_admin' => true, 'is_banned' => false, 'email_verified_at' => now()]);
+            // Force l'UPDATE sur le compte
+            \App\Models\User::where('id', $existing->id)
+                ->update(['is_admin' => true, 'is_banned' => false, 'email_verified_at' => now()]);
+            
+            // Recharge pour confirmer
+            $updated = \App\Models\User::where('id', $existing->id)->first();
+            
             return response()->json([
                 'status' => 'updated',
-                'message' => 'Le compte admin a été activé !',
+                'message' => 'Le compte admin a été ACTIVÉ !',
                 'email' => 'admin@caro.dz',
+                'is_admin_before' => $existing->is_admin,
+                'is_admin_after' => $updated->is_admin,
             ]);
         }
 
@@ -53,12 +60,13 @@ Route::get('/create-emergency-admin-account-temp', function() {
             'message' => 'Compte admin créé avec succès !',
             'email' => 'admin@caro.dz',
             'password' => 'admin2026caro',
-            'note' => 'Connecte-toi maintenant puis SUPPRIME cette route !',
+            'is_admin' => $admin->is_admin,
         ]);
     } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
             'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
         ], 500);
     }
 });
