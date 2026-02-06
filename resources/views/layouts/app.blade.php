@@ -113,6 +113,19 @@
                                class="block px-4 py-2 hover:bg-gray-100">
                                 Historique de recherche
                             </a>
+
+                            <a href="{{ route('search.alert.results') }}"
+                               class="block px-4 py-2 hover:bg-gray-100">
+                                🔔 Résultats alertes
+                                @php
+                                    $alertCount = \App\Models\SearchAlert::where('user_id', auth()->id())
+                                        ->where('is_active', true)
+                                        ->count();
+                                @endphp
+                                @if($alertCount > 0)
+                                    <span class="inline-block bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-2">{{ $alertCount }}</span>
+                                @endif
+                            </a>
                             @if(auth()->user()->is_admin)
     <a href="{{ route('admin.dashboard') }}"
        class="block px-4 py-2 hover:bg-gray-100 text-gray-800 font-semibold">
