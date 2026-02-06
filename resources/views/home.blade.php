@@ -74,12 +74,11 @@
                                             class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b">
                                         <span>Peu importe</span>
                                     </button>
-                                    <template x-for="brand in filteredBrands()" :key="brand.name">
+                                    <template x-for="brand in filteredBrands()" :key="brand">
                                         <button type="button"
-                                                @click="selectBrand(brand.name)"
-                                                class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 flex justify-between items-center border-b last:border-b-0">
-                                            <span x-text="brand.name"></span>
-                                            <span class="text-gray-500 text-xs" x-text="'(' + brand.count + ')'" ></span>
+                                                @click="selectBrand(brand)"
+                                                class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
+                                            <span x-text="brand"></span>
                                         </button>
                                     </template>
                                     <div x-show="filteredBrands().length === 0" class="px-3 py-2 text-gray-500 text-xs text-center">
@@ -382,7 +381,7 @@
                 brands: @json($marques),
                 filteredBrands() {
                     return this.search
-                        ? this.brands.filter(b => b.name.toLowerCase().includes(this.search.toLowerCase()))
+                        ? this.brands.filter(b => b.toLowerCase().includes(this.search.toLowerCase()))
                         : this.brands;
                 },
                 selectBrand(value) {

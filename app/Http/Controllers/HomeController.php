@@ -12,7 +12,7 @@ class HomeController extends Controller
         $annonces = Annonce::latest()->take(10)->get();
         
         // Full list of car brands
-        $brandsList = [
+        $marques = [
             'Abarth', 'Acura', 'Aiways', 'Alfa Romeo', 'Alpine', 'Aston Martin', 'Audi',
             'BAIC', 'Bentley', 'BMW', 'Borgward', 'BRP (Can-Am, etc.)', 'Buick', 'BYD',
             'Cadillac', 'Changan', 'Changhe', 'Chevrolet', 'Chrysler', 'Citroën', 'Cupra', 'Chery', 'CFMoto',
@@ -35,15 +35,6 @@ class HomeController extends Controller
             'Wuling', 'Wey',
             'Zeekr', 'Zotye'
         ];
-        
-        $marques = collect($brandsList)->map(function ($brandName) {
-            return [
-                'name' => $brandName,
-                'count' => Annonce::where('marque', $brandName)
-                    ->where('is_active', true)
-                    ->count(),
-            ];
-        });
         
         return view('home', compact('annonces', 'marques'));
     }
