@@ -97,17 +97,49 @@
 
         {{-- Marque / modèle / ville --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
+            <div x-data="brandDropdownCreate()" class="relative">
                 <label class="block text-xs font-semibold mb-1">Marque</label>
-                <input type="text" name="marque" id="marque_input" value="{{ old('marque') }}"
-                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm {{ $errors->has('marque') ? 'border-red-500' : '' }}"
-                       placeholder="ex : Renault, BMW, Toyota"
-                       list="brands_list">
-                <datalist id="brands_list">
-                    @foreach($brands as $brand)
-                        <option value="{{ $brand->name }}"></option>
-                    @endforeach
-                </datalist>
+                
+                <button type="button" @click="open = !open"
+                        class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm text-left bg-white flex justify-between items-center {{ $errors->has('marque') ? 'border-red-500' : '' }}">
+                    <span x-text="selected || 'Sélectionner une marque'"></span>
+                    <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                </button>
+
+                <input type="hidden" name="marque" :value="selected">
+
+                {{-- Dropdown menu --}}
+                <div x-show="open" @click.away="open = false"
+                     class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
+                     style="max-height: 280px;">
+                    
+                    {{-- Barre de recherche --}}
+                    <div class="sticky top-0 p-2 border-b bg-white">
+                        <input type="text" x-model="search" placeholder="Rechercher une marque..."
+                               class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
+                    </div>
+                    
+                    {{-- Liste des marques (scroll après 8 items) --}}
+                    <div class="overflow-y-auto flex-1" style="max-height: 240px;">
+                        <template x-for="brand in filteredBrands()" :key="brand">
+                            <button type="button"
+                                    @click="selectBrand(brand)"
+                                    class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
+                                <span x-text="brand"></span>
+                            </button>
+                        </template>
+                        <div x-show="filteredBrands().length === 0" class="px-3 py-2 text-gray-500 text-xs text-center">
+                            Aucune marque trouvée
+                        </div>
+                    </div>
+                </div>
+
+                <select name="marque" class="hidden">
+                    <option value=""></option>
+                </select>
+
                 @error('marque')
                     <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                 @enderror
@@ -127,7 +159,7 @@
                        placeholder="ex : Alger">
             </div>
         </div>
-
+        
         {{-- Année / km / carburant / boite --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
@@ -548,5 +580,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     imagesContainer.addEventListener('change', updatePreview);
+
+    // Brand Dropdown for Create Annonce (Alpine.js)
+    function brandDropdownCreate() {
+        return {
+            open: false,
+            search: '',
+            selected: '{{ old("marque") }}',
+            brands: @json($brands->map(function($b) { return $b; })),
+            
+            filteredBrands() {
+                return this.brands.filter(brand => 
+                    brand.toLowerCase().includes(this.search.toLowerCase())
+                );
+            },
+            
+            selectBrand(value) {
+                this.selected = value;
+                this.search = value;
+                this.open = false;
+                document.querySelector('select[name="marque"]').value = value;
+            }
+        }
+    }
 </script>
 @endsection

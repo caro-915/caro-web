@@ -75,17 +75,45 @@
 
         {{-- Marque / Modèle / Ville --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
+            <div x-data="brandDropdown('{{ old('marque', $annonce->marque) }}')" class="relative">
                 <label class="block text-xs font-semibold mb-1">Marque</label>
-                <input type="text" name="marque" id="marque_input" value="{{ old('marque', $annonce->marque) }}"
-                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm"
-                       placeholder="ex : Renault, BMW, Toyota"
-                       list="brands_list">
-                <datalist id="brands_list">
-                    @foreach($brands as $brand)
-                        <option value="{{ $brand->name }}"></option>
-                    @endforeach
-                </datalist>
+                
+                {{-- Champ caché pour stocker la valeur --}}
+                <input type="hidden" name="marque" :value="selectedBrand">
+                
+                {{-- Bouton dropdown --}}
+                <button type="button" @click="open = !open"
+                        class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm text-left bg-white flex justify-between items-center">
+                    <span x-text="selectedBrand || 'Sélectionner une marque'"></span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                </button>
+
+                {{-- Dropdown menu --}}
+                <div x-show="open" @click.away="open = false"
+                     class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 max-h-64 flex flex-col">
+                    
+                    {{-- Barre de recherche --}}
+                    <input type="text" x-model="search" placeholder="Rechercher une marque..."
+                           class="px-3 py-2 border-b text-xs md:text-sm focus:outline-none">
+                    
+                    {{-- Liste des marques --}}
+                    <div class="overflow-y-auto flex-1">
+                        <template x-for="brand in filteredBrands" :key="brand">
+                            <label class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2 border-b text-xs md:text-sm">
+                                <input type="checkbox" 
+                                       @change="selectedBrand = brand; open = false;"
+                                       :checked="selectedBrand === brand"
+                                       class="w-4 h-4">
+                                <span x-text="brand"></span>
+                            </label>
+                        </template>
+                        <div x-show="filteredBrands.length === 0" class="px-3 py-2 text-gray-500 text-xs">
+                            Aucune marque trouvée
+                        </div>
+                    </div>
+                </div>
             </div>
             <div>
                 <label class="block text-xs font-semibold mb-1">Modèle</label>
@@ -365,6 +393,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addBtn.addEventListener('click', addNewImageInput);
 });
+
+// Script Alpine.js pour le dropdown de marques
+function brandDropdown(initialBrand = '') {
+    return {
+        open: false,
+        search: '',
+        selectedBrand: initialBrand,
+        brands: [
+            'Abarth', 'Ac', 'Aiways', 'Aixam', 'Alfa romeo', 'Alpina', 'Alpine', 'Apal',
+            'Aston Martin', 'Audi', 'BAIC', 'Bentley', 'BMW', 'Borgward', 'BRP (Can-Am, etc.)',
+            'Buick', 'BYD', 'Cadillac', 'Changan', 'Changhe', 'Chevrolet', 'Chrysler', 'Citroën',
+            'Cupra', 'Chery', 'CFMoto', 'Dacia', 'Daihatsu', 'Dodge', 'DS', 'Denza', 'Ferrari',
+            'Fiat', 'Ford', 'Genesis', 'GMC', 'Great Wall Motors', 'GAC', 'Honda', 'Hummer',
+            'Hyundai', 'Hongqi', 'Infiniti', 'Isuzu', 'Ineos', 'Jaguar', 'Jeep', 'JMC', 'Kia',
+            'Koenigsegg', 'Lada', 'Lamborghini', 'Land Rover', 'Lexus', 'Lucid', 'Lotus',
+            'Maserati', 'Mazda', 'McLaren', 'Mercedes-Benz', 'Mini', 'Mitsubishi', 'MG Motor',
+            'Maxus', 'Nissan', 'Nio', 'Opel', 'Peugeot', 'Porsche', 'Polestar', 'Renault',
+            'Rivian', 'Rolls-Royce', 'Saab', 'SEAT', 'Skoda', 'Smart', 'SsangYong', 'Subaru',
+            'Suzuki', 'Tata Motors', 'Tesla', 'Toyota', 'VinFast', 'Vauxhall', 'Volkswagen',
+            'Volvo', 'Wuling', 'Wey', 'Zeekr', 'Zotye (parfois importé selon marché)'
+        ],
+        get filteredBrands() {
+            return this.search
+                ? this.brands.filter(b => b.toLowerCase().includes(this.search.toLowerCase()))
+                : this.brands;
+        }
+    }
+}
 </script>
 
 @endsection

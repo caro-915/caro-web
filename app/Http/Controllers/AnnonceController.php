@@ -82,7 +82,32 @@ class AnnonceController extends Controller
         // Clean up any existing temp images from previous attempts
         $this->cleanTempImages();
         
-        $brands = CarBrand::orderBy('name')->get();
+        // Full list of car brands
+        $brandsList = [
+            'Abarth', 'Acura', 'Aiways', 'Alfa Romeo', 'Alpine', 'Aston Martin', 'Audi',
+            'BAIC', 'Bentley', 'BMW', 'Borgward', 'BRP (Can-Am, etc.)', 'Buick', 'BYD',
+            'Cadillac', 'Changan', 'Changhe', 'Chevrolet', 'Chrysler', 'Citroën', 'Cupra', 'Chery', 'CFMoto',
+            'Dacia', 'Daihatsu', 'Dodge', 'DS', 'Denza',
+            'Ferrari', 'Fiat', 'Ford',
+            'Genesis', 'GMC', 'Great Wall Motors', 'GAC',
+            'Honda', 'Hummer', 'Hyundai', 'Hongqi',
+            'Infiniti', 'Isuzu', 'Ineos',
+            'Jaguar', 'Jeep', 'JMC',
+            'Kia', 'Koenigsegg',
+            'Lada', 'Lamborghini', 'Land Rover', 'Lexus', 'Lucid', 'Lotus',
+            'Maserati', 'Mazda', 'McLaren', 'Mercedes-Benz', 'Mini', 'Mitsubishi', 'MG Motor', 'Maxus',
+            'Nissan', 'Nio',
+            'Opel',
+            'Peugeot', 'Porsche', 'Polestar',
+            'Renault', 'Rivian', 'Rolls-Royce',
+            'Saab', 'SEAT', 'Skoda', 'Smart', 'SsangYong', 'Subaru', 'Suzuki',
+            'Tata Motors', 'Tesla', 'Toyota',
+            'VinFast', 'Vauxhall', 'Volkswagen', 'Volvo',
+            'Wuling', 'Wey',
+            'Zeekr', 'Zotye'
+        ];
+        
+        $brands = collect($brandsList);
         $models = CarModel::orderBy('name')->get();
 
         return view('annonces.create', compact('brands', 'models'));
