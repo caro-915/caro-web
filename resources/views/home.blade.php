@@ -43,29 +43,86 @@
 
                     {{-- Brand / Model --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
+                        {{-- Marque avec dropdown personnalisé --}}
+                        <div x-data="brandDropdown()" class="relative">
                             <label class="block text-xs font-semibold mb-1">Marque</label>
-                            <select name="marque" id="filter_marque" ...>
-    <option value="">Peu importe</option>
-    @foreach ($marques as $brand)
-       
-             <option value="{{ $brand->name }}">{{ $brand->name }}</option>
-        </option>
-    @endforeach
-</select>
+                            <div class="relative">
+                                <button type="button" 
+                                        @click="open = !open"
+                                        class="w-full border rounded-lg p-2 text-xs md:text-sm text-left flex justify-between items-center bg-white hover:bg-gray-50">
+                                    <span x-text="selected || 'Sélectionnez une marque'" class="truncate"></span>
+                                    <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                    </svg>
+                                </button>
+                                <input type="hidden" name="marque" :value="selected">
+
+                                {{-- Dropdown Menu --}}
+                                <div x-show="open" 
+                                     @click.away="open = false"
+                                     class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 max-h-96 overflow-hidden flex flex-col">
+                                    
+                                    {{-- Search field --}}
+                                    <div class="sticky top-0 p-2 border-b bg-white">
+                                        <input type="text" 
+                                               x-model="search"
+                                               placeholder="Rechercher une marque..." 
+                                               class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                    </div>
+
+                                    {{-- Marques list --}}
+                                    <div class="overflow-y-auto flex-1">
+                                        <template x-for="brand in filteredBrands()" :key="brand.name">
+                                            <button type="button"
+                                                    @click="selected = brand.name; open = false"
+                                                    class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 flex justify-between items-center border-b last:border-b-0">
+                                                <span x-text="brand.name"></span>
+                                                <span class="text-gray-500 text-xs" x-text="'(' + brand.count + ')'"></span>
+                                            </button>
+                                        </template>
+                                        <div x-show="filteredBrands().length === 0" class="p-3 text-xs text-gray-500 text-center">
+                                            Aucune marque trouvée
+                                        </div>
+                                    </div>
+                                </div>
+                            </div onclick="toggleBrandDropdown()"
+                                >
+                                <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg pointer-events-none">▼</span>
+                            </div>
+                            
+                            {{-- Brand dropdown menu --}}
+                            <div id="brand_dropdown_home" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 w-full">
+                                <div class="p-2">
+                                    <input type="text" 
+                                           id="brand_search_home"
+                                           class="w-full border rounded p-2 text-xs mb-2" 
+                                           placeholder="🔍 Rechercher une marque">
+                                </div>
+                                <div id="brand_list_home" class="max-h-64 overflow-y-auto space-y-1 p-2">
+                                    @foreach ($marques as $brand)
+                                        @php
+                                            $count = \App\Models\Annonce::where('marque', $brand->name)
+                                                ->where('is_active', true)
+                                                ->count();
+                                        @endphp
+                                        <label class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer brand-option" data-brand="{{ strtolower($brand->name) }}">
+                                            <input type="checkbox" 
+                                                   value="{{ $brand->name }}" 
+                                                   class="brand-checkbox"
+                                                   {{ request('marque') === $brand->name ? 'checked' : '' }}>
+                                            <span class="ml-2 text-xs flex-1">{{ $brand->name }}</span>
+                                            <span class="text-gray-500 text-xs">({{ $count }})</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-semibold mb-1">Modèle</label>
-                            <select name="modele" id="filter_modele" ...>
-    <option value="">Peu importe</option>
-    @foreach ($modeles as $modele)
-        <option value="{{ $modele->name }}" 
-            {{ request('modele') == $modele->name ? 'selected' : '' }}>
-            {{ $modele->name }}
-        </option>
-    @endforeach
-</select>
+                            <input type="text" name="modele" value="{{ request('modele') }}"
+                                   class="w-full border rounded-lg p-2 text-xs md:text-sm" 
+                                   placeholder="ex : Clio, Megane">
                         </div>
                     </div>
 
@@ -132,6 +189,21 @@
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- SECTION : Marques populaires --}}
+    <section class="mb-12">
+        <h2 class="text-lg md:text-xl font-semibold mb-6">Parcourir par marque</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                @foreach ($marques as $brand)
+                    <a href="{{ route('annonces.search', ['marque' => $brand->name]) }}" 
+                       class="p-3 rounded-lg border border-gray-200 hover:border-pink-600 hover:bg-pink-50 transition text-center text-sm font-medium text-gray-700 hover:text-pink-600">
+                        {{ $brand->name }}
+                    </a>
+                @endforeach
             </div>
         </div>
     </section>
@@ -342,5 +414,57 @@
                     });
             });
         }
+
+        // Brand dropdown functionality (home search)
+        function toggleBrandDropdown() {
+            const dropdown = document.getElementById('brand_dropdown_home');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('brand_dropdown_home');
+            const input = document.getElementById('marque_input_home');
+            if (!e.target.closest('.relative') && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // Search functionality in brand dropdown
+        const brandSearch = document.getElementById('brand_search_home');
+        if (brandSearch) {
+            brandSearch.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const options = document.querySelectorAll('.brand-option');
+                
+                options.forEach(option => {
+                    const brand = option.getAttribute('data-brand');
+                    if (brand.includes(searchTerm)) {
+                        option.style.display = 'flex';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Brand checkbox selection
+        const brandCheckboxes = document.querySelectorAll('.brand-checkbox');
+        brandCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const checkedBrand = document.querySelector('.brand-checkbox:checked');
+                const marqueInput = document.getElementById('marque_input_home');
+                
+                if (checkedBrand) {
+                    marqueInput.value = checkedBrand.value;
+                    // Uncheck other checkboxes (single select)
+                    brandCheckboxes.forEach(cb => {
+                        if (cb !== checkedBrand) cb.checked = false;
+                    });
+                } else {
+                    marqueInput.value = '';
+                }
+            });
+        });
     </script>
 @endsection
