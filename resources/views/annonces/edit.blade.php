@@ -76,21 +76,22 @@
         {{-- Marque / Modèle / Ville --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-                <label class="block text-xs font-semibold mb-1">Marque <span class="text-red-500">*</span></label>
-                <select name="marque" id="marque_select" class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm">
-                    <option value="">Sélectionnez une marque</option>
+                <label class="block text-xs font-semibold mb-1">Marque</label>
+                <input type="text" name="marque" id="marque_input" value="{{ old('marque', $annonce->marque) }}"
+                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm"
+                       placeholder="ex : Renault, BMW, Toyota"
+                       list="brands_list">
+                <datalist id="brands_list">
                     @foreach($brands as $brand)
-                        <option value="{{ $brand->name }}" {{ old('marque', $annonce->marque) === $brand->name ? 'selected' : '' }}>
-                            {{ $brand->name }}
-                        </option>
+                        <option value="{{ $brand->name }}"></option>
                     @endforeach
-                </select>
+                </datalist>
             </div>
             <div>
                 <label class="block text-xs font-semibold mb-1">Modèle</label>
-                <select name="modele" id="modele_select" class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm">
-                    <option value="">Sélectionnez d'abord une marque</option>
-                </select>
+                <input type="text" name="modele" id="modele_input" value="{{ old('modele', $annonce->modele) }}"
+                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm"
+                       placeholder="ex : Clio, Megane">
             </div>
             <div>
                 <label class="block text-xs font-semibold mb-1">Ville / Wilaya</label>

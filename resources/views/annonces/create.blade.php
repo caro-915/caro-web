@@ -99,14 +99,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label class="block text-xs font-semibold mb-1">Marque</label>
-                <select name="marque" id="marque_select" class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm {{ $errors->has('marque') ? 'border-red-500' : '' }}">
-                    <option value="">Sélectionnez une marque</option>
+                <input type="text" name="marque" id="marque_input" value="{{ old('marque') }}"
+                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm {{ $errors->has('marque') ? 'border-red-500' : '' }}"
+                       placeholder="ex : Renault, BMW, Toyota"
+                       list="brands_list">
+                <datalist id="brands_list">
                     @foreach($brands as $brand)
-                        <option value="{{ $brand->name }}" {{ old('marque') === $brand->name ? 'selected' : '' }}>
-                            {{ $brand->name }}
-                        </option>
+                        <option value="{{ $brand->name }}"></option>
                     @endforeach
-                </select>
+                </datalist>
                 @error('marque')
                     <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                 @enderror
@@ -114,9 +115,9 @@
 
             <div>
                 <label class="block text-xs font-semibold mb-1">Modèle</label>
-                <select name="modele" id="modele_select" class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm">
-                    <option value="">Sélectionnez d'abord une marque</option>
-                </select>
+                <input type="text" name="modele" id="modele_input" value="{{ old('modele') }}"
+                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm"
+                       placeholder="ex : Clio, Megane">
             </div>
 
             <div>
@@ -360,16 +361,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Marque
-        const marque = document.querySelector('select[name="marque"]');
-        if (!marque || !marque.value) {
-            errors.push('La marque est obligatoire.');
-            if (marque) {
-                marque.classList.add('border-red-500');
-                errorFields.push(marque);
-            }
-        }
-        
         // Carburant
         const carburant = document.querySelector('select[name="carburant"]');
         if (!carburant || !carburant.value) {
@@ -481,38 +472,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Dynamic models based on brand
-    const marqueSelect = document.getElementById('marque_select');
-    const modeleSelect = document.getElementById('modele_select');
-
-    if (marqueSelect && modeleSelect) {
-        marqueSelect.addEventListener('change', function() {
-            const brand = this.value;
-            modeleSelect.innerHTML = '<option value="">Chargement...</option>';
-
-            if (!brand) {
-                modeleSelect.innerHTML = '<option value="">Sélectionnez d\'abord une marque</option>';
-                return;
-            }
-
-            fetch(`/api/models?brand=${encodeURIComponent(brand)}`)
-                .then(response => response.json())
-                .then(models => {
-                    modeleSelect.innerHTML = '<option value="">Sélectionnez un modèle</option>';
-                    models.forEach(model => {
-                        const option = document.createElement('option');
-                        option.value = model;
-                        option.textContent = model;
-                        modeleSelect.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erreur lors du chargement des modèles:', error);
-                    modeleSelect.innerHTML = '<option value="">Erreur de chargement</option>';
-                });
-        });
-    }
-
+    // Dynamic models based on brand (removed - now using text inputs)
+    
     const imagesContainer = document.getElementById('images_container');
     const addImageBtn = document.getElementById('add_image_btn');
     const imagesPreview = document.getElementById('images_preview');
