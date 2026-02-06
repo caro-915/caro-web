@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class SearchHistory extends Model
 {
@@ -18,6 +19,11 @@ class SearchHistory extends Model
         'carburant',
         'wilaya',
         'vehicle_type',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function user()
