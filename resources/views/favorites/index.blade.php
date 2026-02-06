@@ -1,19 +1,24 @@
 ﻿@extends('layouts.app')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-6 md:py-8">
     <h1 class="text-xl font-bold mb-4">Mes favoris</h1>
 
     @if ($annonces->isEmpty())
         <p class="text-sm text-gray-500">
-            Vous n’avez encore aucune annonce en favori.
+            Vous n'avez encore aucune annonce en favori.
         </p>
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @foreach ($annonces as $annonce)
                 @php
+                    $disk = env('FILESYSTEM_DISK', 's3');
                     $image = $annonce->image_path
-                        ? asset('storage/' . $annonce->image_path)
+                        ? Storage::disk($disk)->url($annonce->image_path)
                         : ($annonce->image_url ?? asset('images/placeholder-car.jpg'));
 
                     $year    = $annonce->annee ?? $annonce->year;

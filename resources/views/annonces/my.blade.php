@@ -1,5 +1,9 @@
 ﻿@extends('layouts.app')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-6 md:py-8">
 
@@ -17,8 +21,9 @@
         <div class="space-y-3">
             @foreach($annonces as $annonce)
                 @php
+                    $disk = env('FILESYSTEM_DISK', 's3');
                     $image = $annonce->image_path
-                        ? asset('storage/'.$annonce->image_path)
+                        ? Storage::disk($disk)->url($annonce->image_path)
                         : ($annonce->image_url ?? asset('images/placeholder-car.jpg'));
 
                     $year    = $annonce->annee ?? $annonce->year;

@@ -310,8 +310,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @foreach($similarAds as $sim)
                         @php
+                            $disk = env('FILESYSTEM_DISK', 's3');
                             $simImage = $sim->image_path
-                                ? asset('storage/' . $sim->image_path)
+                                ? Storage::disk($disk)->url($sim->image_path)
                                 : ($sim->image_url ?? asset('images/placeholder-car.jpg'));
 
                             $simYear    = $sim->annee ?? $sim->year;

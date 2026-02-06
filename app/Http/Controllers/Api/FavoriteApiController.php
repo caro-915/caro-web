@@ -59,12 +59,13 @@ class FavoriteApiController extends Controller
             }
 
             $annonce = $favorite->annonce;
+            $disk = env('FILESYSTEM_DISK', 's3');
             $images = [];
             $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5'];
             
             foreach ($imageFields as $field) {
                 if ($annonce->$field) {
-                    $images[] = url('storage/' . $annonce->$field);
+                    $images[] = Storage::disk($disk)->url($annonce->$field);
                 }
             }
 
@@ -93,7 +94,7 @@ class FavoriteApiController extends Controller
                     'id' => $annonce->user->id,
                     'name' => $annonce->user->name,
                     'phone' => $annonce->show_phone ? $annonce->user->phone : null,
-                    'avatar' => $annonce->user->avatar ? url('storage/' . $annonce->user->avatar) : null,
+                    'avatar' => $annonce->user->avatar ? Storage::disk($disk)->url($annonce->user->avatar) : null,
                 ],
             ];
         })->filter(); // Remove null values

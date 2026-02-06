@@ -417,12 +417,13 @@ class AnnonceApiController extends Controller
      */
     private function formatAnnonce($annonce, $isFavorite = false)
     {
+        $disk = env('FILESYSTEM_DISK', 's3');
         $images = [];
         $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5'];
         
         foreach ($imageFields as $field) {
             if ($annonce->$field) {
-                $images[] = url('storage/' . $annonce->$field);
+                $images[] = Storage::disk($disk)->url($annonce->$field);
             }
         }
 

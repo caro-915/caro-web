@@ -1,5 +1,9 @@
 ﻿@extends('layouts.app')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -38,7 +42,8 @@
             <div class="space-y-4">
                 @foreach($annonces as $annonce)
                     @php
-                        $img = $annonce->image_path ? asset('storage/'.$annonce->image_path) : null;
+                        $disk = env('FILESYSTEM_DISK', 's3');
+                        $img = $annonce->image_path ? Storage::disk($disk)->url($annonce->image_path) : null;
                     @endphp
 
                     <div class="bg-white rounded-2xl shadow hover:shadow-md transition overflow-hidden">
