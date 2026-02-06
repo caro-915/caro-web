@@ -30,9 +30,11 @@ Route::get('/create-emergency-admin-account-temp', function() {
     try {
         $existing = \App\Models\User::where('email', 'admin@caro.dz')->first();
         if ($existing) {
+            // S'il existe, s'assurer qu'il est admin
+            $existing->update(['is_admin' => true, 'is_banned' => false, 'email_verified_at' => now()]);
             return response()->json([
-                'status' => 'exists',
-                'message' => 'Le compte admin existe déjà !',
+                'status' => 'updated',
+                'message' => 'Le compte admin a été activé !',
                 'email' => 'admin@caro.dz',
             ]);
         }
