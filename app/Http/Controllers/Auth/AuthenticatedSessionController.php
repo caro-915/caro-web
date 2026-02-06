@@ -28,8 +28,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Redirection après connexion vers la page recherche (home)
-        return redirect()->intended(route('annonces.search', absolute: false));
+        // Redirection après connexion vers la page home
+        return redirect()->intended(route('home', absolute: false));
     }
 
     /**

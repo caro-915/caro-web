@@ -117,13 +117,13 @@
                                 class="w-full inline-flex items-center justify-center px-4 py-2
                                        rounded-full bg-gray-800 text-white text-sm font-semibold
                                        hover:bg-gray-900">
-                            CrÃ©er mon compte
+                            Créer mon compte
                         </button>
                     </div>
 
                     {{-- Lien Connexion --}}
                     <p class="mt-3 text-[11px] md:text-xs text-gray-500 text-center">
-                        Vous avez dÃ©jÃ  un compte ?
+                        Vous avez déjà un compte ?
                         <a href="{{ route('login') }}" class="text-gray-800 hover:text-gray-900 font-semibold">
                             Se connecter
                         </a>
