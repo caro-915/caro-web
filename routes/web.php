@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AnnonceController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\FavoriteController;
@@ -26,7 +27,7 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 | HOME
 |--------------------------------------------------------------------------
 */
-Route::get('/', [AnnonceController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/domicile', function () {
     return redirect()->route('home');

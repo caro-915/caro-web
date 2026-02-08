@@ -387,8 +387,10 @@
                 selectBrand(value) {
                     this.selected = value;
                     this.open = false;
-                    // Submit the form when brand is selected
-                    this.$el.closest('form').submit();
+                    const input = document.querySelector('input[name="marque"]');
+                    if (input) {
+                        input.value = value;
+                    }
                 }
             };
         }
