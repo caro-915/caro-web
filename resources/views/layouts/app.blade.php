@@ -19,24 +19,24 @@
 
     {{-- HEADER Caro --}}
     <header class="bg-white shadow-sm fixed w-full top-0 left-0 right-0 z-50">
-        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 min-w-0">
+        <div class="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 flex items-center justify-between h-14 sm:h-16">
 
             {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center">
-                <img src="{{ asset('images/logo.png') }}" alt="Caro" class="h-16 w-auto">
+            <a href="{{ route('home') }}" class="flex items-center flex-shrink-0">
+                <img src="{{ asset('images/logo.png') }}" alt="Caro" class="h-10 sm:h-14 w-auto">
             </a>
 
             {{-- Nav --}}
             <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                <a href="{{ route('annonces.search') }}" class="hover:text-gray-800">Occasion</a>
-                <a href="{{ route('home') }}#top-annonces" class="hover:text-gray-800">Top annonces</a>
-                <a href="{{ route('home') }}#about" class="hover:text-gray-800">À propos de nous</a>
-                <a href="{{ route('home') }}#contact-us" class="hover:text-gray-800">Nous contacter</a>
-                <a href="#" class="hover:text-gray-800">Conseils</a>
+                <a href="{{ route('annonces.search') }}" class="hover:text-gray-800 whitespace-nowrap">Occasion</a>
+                <a href="{{ route('home') }}#top-annonces" class="hover:text-gray-800 whitespace-nowrap">Top annonces</a>
+                <a href="{{ route('home') }}#about" class="hover:text-gray-800 whitespace-nowrap">À propos de nous</a>
+                <a href="{{ route('home') }}#contact-us" class="hover:text-gray-800 whitespace-nowrap">Nous contacter</a>
+                <a href="#" class="hover:text-gray-800 whitespace-nowrap">Conseils</a>
             </nav>
 
             {{-- Actions droite --}}
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center gap-1 sm:gap-3 flex-shrink-0">
 
                 @auth
                     {{-- Calcul du nombre de messages non lus --}}
@@ -52,32 +52,33 @@
 
                     {{-- Bouton Déposer mon annonce --}}
                     <a href="{{ route('annonces.create') }}"
-                       class="bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-gray-900 whitespace-nowrap">
+                       class="hidden sm:inline-flex bg-gray-800 text-white text-xs sm:text-sm font-semibold px-2 sm:px-4 py-1.5 sm:py-2 rounded-full hover:bg-gray-900 whitespace-nowrap">
                         Déposer mon annonce
                     </a>
 
                     {{-- Icône favoris --}}
                     <a href="{{ route('favorites.index') }}"
-                       class="flex items-center justify-center w-9 h-9 rounded-full border border-pink-200 hover:bg-pink-50"
+                       class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-pink-200 hover:bg-pink-50 flex-shrink-0"
                        title="Mes favoris">
-                        <span class="text-pink-600 text-lg">♥</span>
+                        <span class="text-pink-600 text-base sm:text-lg">♥</span>
                     </a>
 
                     {{-- Menu utilisateur --}}
-                    <div class="relative" x-data="{ open:false }">
+                    <div class="relative flex-shrink-0" x-data="{ open:false }">
                         <button
                             @click="open = !open"
-                            class="flex items-center gap-2 px-3 py-2 text-xs md:text-sm font-semibold border border-gray-200 rounded-full hover:bg-gray-50 whitespace-nowrap"
+                            class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs md:text-sm font-semibold border border-gray-200 rounded-full hover:bg-gray-50"
                         >
-                            <span>👤 {{ auth()->user()->name }}</span>
+                            <span class="hidden sm:inline">👤</span>
+                            <span class="truncate max-w-[80px] sm:max-w-none">{{ auth()->user()->name }}</span>
 
                             @if($unreadCount > 0)
-                                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-pink-600 text-white text-[11px]">
+                                <span class="inline-flex items-center justify-center min-w-[16px] sm:min-w-[18px] h-[16px] sm:h-[18px] rounded-full bg-pink-600 text-white text-[10px] sm:text-[11px]">
                                     {{ $unreadCount }}
                                 </span>
                             @endif
 
-                            <svg class="w-3 h-3" viewBox="0 0 10 6" fill="none">
+                            <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0" viewBox="0 0 10 6" fill="none">
                                 <path d="M1 1L5 5L9 1"
                                       stroke="currentColor"
                                       stroke-width="1.4"
@@ -154,16 +155,16 @@
                 @else
                     {{-- Utilisateur non connecté --}}
                     <a href="{{ route('login') }}"
-                       class="text-xs md:text-sm text-gray-700 hover:text-gray-800">
+                       class="text-[10px] sm:text-xs md:text-sm text-gray-700 hover:text-gray-800 whitespace-nowrap">
                         Se connecter
                     </a>
                     <a href="{{ route('register') }}"
-                       class="hidden sm:inline-flex items-center justify-center text-xs md:text-sm text-gray-700 hover:text-gray-800">
+                       class="hidden sm:inline-flex items-center justify-center text-xs md:text-sm text-gray-700 hover:text-gray-800 whitespace-nowrap">
                         S'inscrire
                     </a>
                     <a href="{{ route('annonces.create') }}"
-                       class="bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-gray-900 whitespace-nowrap">
-                        Déposer mon annonce
+                       class="bg-gray-800 text-white text-[10px] sm:text-sm font-semibold px-2 sm:px-4 py-1.5 sm:py-2 rounded-full hover:bg-gray-900 whitespace-nowrap">
+                        Déposer
                     </a>
                 @endauth
 
@@ -172,7 +173,7 @@
     </header>
 
     {{-- CONTENU PAGE --}}
-   <main class="pt-20 md:pt-16 py-6 md:py-8">
+   <main class="pt-16 sm:pt-18 py-6 md:py-8">
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen">
         @isset($slot)
             {{ $slot }}
