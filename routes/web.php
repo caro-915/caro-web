@@ -12,7 +12,11 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminAnnonceController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
+use App\Http\Controllers\Admin\PlanController as AdminPlanController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\ProController;
+use App\Http\Controllers\BoostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -143,6 +147,23 @@ Route::middleware(['auth', 'banned'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    /*
+    |-------------------------
+    | PRO Subscription
+    |-------------------------
+    */
+    Route::get('/pro', [ProController::class, 'index'])->name('pro.index');
+    Route::get('/pro/subscribe/{plan}', [ProController::class, 'create'])->name('pro.subscribe.form');
+    Route::post('/pro/subscribe/{plan}', [ProController::class, 'store'])->name('pro.subscribe');
+    Route::get('/pro/status', [ProController::class, 'status'])->name('pro.status');
+
+    /*
+    |-------------------------
+    | Boost Annonce
+    |-------------------------
+    */
+    Route::post('/annonces/{annonce}/boost', [BoostController::class, 'store'])->name('annonces.boost');
 });
 
 /*
@@ -188,6 +209,15 @@ Route::middleware(['auth', 'admin'])
         
         Route::patch('/users/{user}/toggle-ban', [AdminUserController::class, 'toggleBan'])->name('users.toggleBan');
         Route::get('/stats', [\App\Http\Controllers\Admin\AdminStatsController::class, 'index'])->name('stats.index');
+
+        // Plans
+        Route::resource('plans', AdminPlanController::class);
+
+        // Subscriptions
+        Route::get('/subscriptions', [AdminSubscriptionController::class, 'index'])->name('subscriptions.index');
+        Route::get('/subscriptions/{subscription}', [AdminSubscriptionController::class, 'show'])->name('subscriptions.show');
+        Route::patch('/subscriptions/{subscription}/approve', [AdminSubscriptionController::class, 'approve'])->name('subscriptions.approve');
+        Route::patch('/subscriptions/{subscription}/reject', [AdminSubscriptionController::class, 'reject'])->name('subscriptions.reject');
 
     });
 

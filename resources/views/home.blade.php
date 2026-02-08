@@ -147,23 +147,46 @@
                 </p>
 
                 {{-- Marketing block for selling a vehicle --}}
-                <div class="bg-white bg-opacity-80 border border-pink-100 rounded-2xl p-4 md:p-5 inline-flex flex-col md:flex-row md:items-center gap-4">
-                    <div class="flex-1">
-                        <h2 class="text-sm md:text-base font-semibold mb-1">Vendre votre véhicule ?</h2>
-                        <p class="text-xs md:text-sm text-gray-600">
-                            Déposez votre annonce gratuitement et touchez des milliers d’acheteurs potentiels en quelques minutes.
-                        </p>
+                <div class="space-y-3">
+                    {{-- Sell vehicle card --}}
+                    <div class="bg-white bg-opacity-80 border border-pink-100 rounded-2xl p-4 md:p-5 inline-flex flex-col md:flex-row md:items-center gap-4 w-full">
+                        <div class="flex-1">
+                            <h2 class="text-sm md:text-base font-semibold mb-1">Vendre votre véhicule ?</h2>
+                            <p class="text-xs md:text-sm text-gray-600">
+                                Déposez votre annonce gratuitement et touchez des milliers d'acheteurs potentiels en quelques minutes.
+                            </p>
+                        </div>
+                        <div>
+                            <a href="{{ route('annonces.create') }}"
+                               class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-gray-800 text-white text-xs md:text-sm font-semibold hover:bg-gray-900">
+                                Déposer une annonce
+                            </a>
+                        </div>
                     </div>
-                    <div>
-                        <a href="{{ route('annonces.create') }}"
-                           class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-gray-800 text-white text-xs md:text-sm font-semibold hover:bg-gray-900">
-                            Déposer une annonce
-                        </a>
-                    </div>
+
+                    {{-- PRO upgrade card (visible only if not PRO) --}}
+                    @if(auth()->check() && !auth()->user()->isPro())
+                        <div class="bg-gradient-to-r from-pink-50 to-pink-100 border border-pink-300 rounded-2xl p-4 md:p-5 inline-flex flex-col md:flex-row md:items-center gap-4 w-full">
+                            <div class="flex-1">
+                                <h2 class="text-sm md:text-base font-semibold mb-1">✨ Passer en PRO</h2>
+                                <p class="text-xs md:text-sm text-gray-700">
+                                    Débloquez 50 annonces, boostez vos annonces et bénéficiez de fonctionnalités premium.
+                                </p>
+                            </div>
+                            <div>
+                                <a href="{{ route('pro.index') }}"
+                                   class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-pink-600 text-white text-xs md:text-sm font-semibold hover:bg-pink-700">
+                                    💳 Passer au PRO
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </section>
+
+
 
     {{-- SECTION : Dernières annonces --}}
     <section class="mb-8">
@@ -176,7 +199,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             @forelse ($latestAds as $ad)
                 @php
-                    $disk = env('FILESYSTEM_DISK', 's3');
+                    $disk = config('filesystems.default', 'public');
                     $mainImage = null;
                     
                     if ($ad->image_path) {
@@ -222,7 +245,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @forelse ($topAnnonces as $ad)
                 @php
-                    $disk = env('FILESYSTEM_DISK', 's3');
+                    $disk = config('filesystems.default', 'public');
                     $mainImage = null;
                     
                     if ($ad->image_path) {

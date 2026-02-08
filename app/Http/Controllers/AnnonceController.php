@@ -140,6 +140,19 @@ class AnnonceController extends Controller
 
     public function store(Request $request)
     {
+        // ✅ QUOTA CHECK: Vérifier la limite d'annonces (TOUTES, pas seulement actives)
+        $subscriptionService = app(\App\Services\SubscriptionService::class);
+        $features = $subscriptionService->getFeatures(auth()->user());
+        $maxAds = $features['max_active_ads'];
+        $activeCount = auth()->user()->annonces()->count();
+        
+        if ($activeCount >= $maxAds) {
+            return back()->withErrors([
+                'quota' => "Vous avez atteint votre limite de {$maxAds} annonces actives. " . 
+                           ($maxAds === 5 ? "Passez à PRO pour publier jusqu'à 50 annonces !" : "")
+            ])->withInput();
+        }
+
         $data = $request->validate([
             'titre'         => 'required|string|max:255',
             'description'   => 'nullable|string',
@@ -185,7 +198,7 @@ class AnnonceController extends Controller
 
         $uploadedFiles = [];
         if ($request->hasFile('images')) {
-            $disk = env('FILESYSTEM_DISK', 's3');
+            $disk = config('filesystems.default', 'public');
             
             foreach ($request->file('images') as $index => $file) {
                 if ($index >= 5) break;
@@ -248,7 +261,7 @@ class AnnonceController extends Controller
     $annonce->load('user');
 
     // ✅ Images : 5 slots fixes (filtre null)
-    $disk = env('FILESYSTEM_DISK', 's3');
+    $disk = config('filesystems.default', 'public');
     $images = collect([
         $annonce->image_path,
         $annonce->image_path_2,
@@ -363,21 +376,30 @@ class AnnonceController extends Controller
             });
         }
 
+        // ✅ TRI BOOST: Les annonces boostées remontent en premier
+        $query->leftJoin('boosts', function ($join) {
+            $join->on('annonces.id', '=', 'boosts.annonce_id')
+                 ->where('boosts.status', '=', 'active')
+                 ->where('boosts.expires_at', '>', now());
+        })
+        ->orderByRaw('CASE WHEN boosts.id IS NOT NULL THEN 0 ELSE 1 END');
+
         $sort = $request->input('sort', 'latest');
         switch ($sort) {
-            case 'price_asc':  $query->orderBy('prix', 'asc'); break;
-            case 'price_desc': $query->orderBy('prix', 'desc'); break;
-            case 'km_asc':     $query->orderBy('kilometrage', 'asc'); break;
-            case 'km_desc':    $query->orderBy('kilometrage', 'desc'); break;
-            case 'year_asc':   $query->orderBy('annee', 'asc'); break;
-            case 'year_desc':  $query->orderBy('annee', 'desc'); break;
+            case 'price_asc':  $query->orderBy('annonces.prix', 'asc'); break;
+            case 'price_desc': $query->orderBy('annonces.prix', 'desc'); break;
+            case 'km_asc':     $query->orderBy('annonces.kilometrage', 'asc'); break;
+            case 'km_desc':    $query->orderBy('annonces.kilometrage', 'desc'); break;
+            case 'year_asc':   $query->orderBy('annonces.annee', 'asc'); break;
+            case 'year_desc':  $query->orderBy('annonces.annee', 'desc'); break;
             case 'latest':
-            default:           $query->orderBy('created_at', 'desc'); break;
+            default:           $query->orderBy('annonces.created_at', 'desc'); break;
         }
 
         $annonces = $query->select([
-                'id','titre','prix','marque','modele','annee','kilometrage','carburant','boite_vitesse','ville',
-                'image_path','views','created_at','condition'
+                'annonces.id','annonces.titre','annonces.prix','annonces.marque','annonces.modele','annonces.annee',
+                'annonces.kilometrage','annonces.carburant','annonces.boite_vitesse','annonces.ville',
+                'annonces.image_path','annonces.views','annonces.created_at','annonces.condition'
             ])
             ->paginate(15)
             ->withQueryString();

@@ -68,6 +68,31 @@ class Annonce extends Model
         return $this->hasMany(\App\Models\Favorite::class);
     }
 
+    public function boosts()
+    {
+        return $this->hasMany(\App\Models\Boost::class);
+    }
+
+    /**
+     * Get the active boost for this annonce.
+     */
+    public function activeBoost()
+    {
+        return $this->boosts()
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->first();
+    }
+
+    /**
+     * Check if annonce is currently boosted.
+     */
+    public function isBoosted(): bool
+    {
+        return $this->activeBoost() !== null;
+    }
+
     public function scopeFilter($query, array $filters)
     {
         if (!empty($filters['marque'])) {

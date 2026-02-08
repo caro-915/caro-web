@@ -296,6 +296,32 @@
                             </a>
                         @endauth
                     </div>
+
+                    {{-- BOOST BUTTON --}}
+                    @auth
+                        @if(auth()->id() === $annonce->user_id)
+                            {{-- Own annonce - show boost button if PRO --}}
+                            @php
+                                $subscriptionService = app(\App\Services\SubscriptionService::class);
+                                $isPro = $subscriptionService->userIsPro(auth()->user());
+                            @endphp
+                            
+                            @if($isPro)
+                                <form method="POST" action="{{ route('annonces.boost', $annonce) }}" class="mt-2">
+                                    @csrf
+                                    <button type="submit"
+                                            class="w-full py-2 rounded-full bg-pink-600 text-white text-xs font-semibold hover:bg-pink-700 transition">
+                                        ⭐ Booster cette annonce (7 jours)
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" disabled
+                                        class="w-full py-2 rounded-full bg-gray-200 text-gray-500 text-xs font-semibold cursor-not-allowed mt-2">
+                                    ⭐ Booster (PRO requis)
+                                </button>
+                            @endif
+                        @endif
+                    @endauth
                 </div>
 
                 {{-- Info bloc / conseils --}}

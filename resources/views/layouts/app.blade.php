@@ -117,7 +117,7 @@
 
                             <a href="{{ route('search.alert.results') }}"
                                class="block px-4 py-2 hover:bg-gray-100">
-                                🔔 Résultats alertes
+                                Résultats alertes
                                 @php
                                     $alertCount = \App\Models\SearchAlert::where('user_id', auth()->id())
                                         ->where('is_active', true)
@@ -126,6 +126,7 @@
                                 @if($alertCount > 0)
                                     <span class="inline-block bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-2">{{ $alertCount }}</span>
                                 @endif
+                                🔔
                             </a>
                             @if(auth()->user()->is_admin)
     <a href="{{ route('admin.dashboard') }}"

@@ -16,7 +16,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @foreach ($annonces as $annonce)
                 @php
-                    $disk = env('FILESYSTEM_DISK', 's3');
+                    $disk = config('filesystems.default', 'public');
                     $image = $annonce->image_path
                         ? Storage::disk($disk)->url($annonce->image_path)
                         : ($annonce->image_url ?? asset('images/placeholder-car.jpg'));

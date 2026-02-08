@@ -240,9 +240,7 @@
             @if ($annonces->count())
                 @foreach ($annonces as $annonce)
                     @php
-                        $disk = env('FILESYSTEM_DISK', 's3');
-                        $mainImage = null;
-                        
+                            $disk = config('filesystems.default', 'public');
                         if ($annonce->image_path) {
                             $path = ltrim($annonce->image_path, '/');
                             $path = preg_replace('#^storage/#', '', $path);
@@ -278,11 +276,24 @@
                                     <h2 class="text-base font-semibold">
                                         {{ $annonce->titre }}
                                     </h2>
-                                    @if(($annonce->views ?? 0) >= 50)
-                                            <span class="inline-flex mt-1 px-2 py-0.5 rounded-full text-[11px] bg-orange-50 text-orange-700 border border-orange-200">
-                                    🔥 Annonce populaire
-                                             </span>
-                                    @endif
+                                    <div class="flex gap-2 mt-1 flex-wrap">
+                                        @php
+                                            $isBoosted = \App\Models\Boost::where('annonce_id', $annonce->id)
+                                                ->where('status', 'active')
+                                                ->where('expires_at', '>', now())
+                                                ->exists();
+                                        @endphp
+                                        @if($isBoosted)
+                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] bg-pink-50 text-pink-700 border border-pink-200">
+                                                ⭐ À la une
+                                            </span>
+                                        @endif
+                                        @if(($annonce->views ?? 0) >= 50)
+                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] bg-orange-50 text-orange-700 border border-orange-200">
+                                                🔥 Populaire
+                                            </span>
+                                        @endif
+                                    </div>
                                     {{-- Brand / model --}}
                                     <p class="text-xs text-gray-500">
                                         {{ $annonce->marque }}

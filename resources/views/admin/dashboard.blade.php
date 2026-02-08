@@ -5,7 +5,7 @@
     <h1 class="text-3xl font-bold mb-6">Dashboard Admin</h1>
 
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
         <div class="bg-white p-6 rounded-xl shadow">
             <h3 class="text-sm font-semibold text-gray-600 mb-2">Total Annonces</h3>
             <p class="text-3xl font-bold text-gray-800">{{ $stats['annonces'] ?? 0 }}</p>
@@ -25,10 +25,15 @@
             <h3 class="text-sm font-semibold text-gray-600 mb-2">Utilisateurs</h3>
             <p class="text-3xl font-bold text-blue-600">{{ $stats['users'] ?? 0 }}</p>
         </div>
+
+        <div class="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-xl shadow">
+            <h3 class="text-sm font-semibold text-pink-700 mb-2">Utilisateurs PRO</h3>
+            <p class="text-3xl font-bold text-pink-600">{{ $stats['proUsers'] ?? 0 }}</p>
+        </div>
     </div>
 
     {{-- Quick Actions --}}
-    <div class="mb-8 flex justify-center gap-3">
+    <div class="mb-8 flex justify-center gap-3 flex-wrap">
         <a href="{{ route('admin.annonces.index') }}"
            class="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-sm font-semibold text-gray-700 hover:border-gray-800 hover:text-gray-800 inline-block">
            Gérer les annonces
@@ -37,6 +42,17 @@
         <a href="{{ route('admin.users.index') }}"
            class="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-sm font-semibold text-gray-700 hover:border-gray-800 hover:text-gray-800 inline-block">
            Gérer les utilisateurs
+        </a>
+
+        <a href="{{ route('admin.subscriptions.index') }}"
+           class="px-6 py-2.5 rounded-lg border-2 border-pink-300 text-sm font-semibold text-pink-700 hover:border-pink-800 hover:text-pink-800 inline-block relative">
+           💳 Abonnements PRO
+           @php
+               $pendingCount = \App\Models\Subscription::where('payment_status', 'pending')->count();
+           @endphp
+           @if($pendingCount > 0)
+               <span class="absolute top-0 right-0 inline-flex items-center justify-center min-w-[20px] h-[20px] rounded-full bg-pink-600 text-white text-xs font-bold">{{ $pendingCount }}</span>
+           @endif
         </a>
     </div>
 

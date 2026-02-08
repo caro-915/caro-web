@@ -12,6 +12,11 @@ class AdminController extends Controller
     {
         $stats = [
             'users'    => User::count(),
+            'proUsers' => User::whereHas('subscriptions', function($q) { 
+                $q->where('payment_status', 'approved')
+                  ->where('status', 'active')
+                  ->where('expires_at', '>', now()); 
+            })->count(),
             'annonces' => Annonce::count(),
             'active'   => Annonce::where('is_active', true)->count(),
             'pending'  => Annonce::where('is_active', false)->count(),

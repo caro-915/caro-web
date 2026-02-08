@@ -77,6 +77,37 @@ public function annonces()
 {
     return $this->hasMany(\App\Models\Annonce::class);
 }
+
+public function subscriptions()
+{
+    return $this->hasMany(\App\Models\Subscription::class);
+}
+
+public function boosts()
+{
+    return $this->hasMany(\App\Models\Boost::class);
+}
+
+/**
+ * Get the user's active subscription.
+ */
+public function activeSubscription()
+{
+    return $this->subscriptions()
+        ->where('status', 'active')
+        ->where('payment_status', 'approved')
+        ->where('expires_at', '>', now())
+        ->latest()
+        ->first();
+}
+
+/**
+ * Check if user has active PRO subscription.
+ */
+public function isPro(): bool
+{
+    return $this->activeSubscription() !== null;
+}
     
 
 }

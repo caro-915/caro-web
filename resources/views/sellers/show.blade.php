@@ -42,7 +42,7 @@
             <div class="space-y-4">
                 @foreach($annonces as $annonce)
                     @php
-                        $disk = env('FILESYSTEM_DISK', 's3');
+                        $disk = config('filesystems.default', 'public');
                         $img = $annonce->image_path ? Storage::disk($disk)->url($annonce->image_path) : null;
                     @endphp
 

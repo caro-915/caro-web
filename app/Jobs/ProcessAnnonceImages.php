@@ -32,7 +32,7 @@ class ProcessAnnonceImages implements ShouldQueue
      */
     public function handle(): void
     {
-        $disk = env('FILESYSTEM_DISK', 's3');
+        $disk = config('filesystems.default', 'public');
         $watermark = null;
         $watermarkPath = public_path('watermark.png');
         if (file_exists($watermarkPath)) {
