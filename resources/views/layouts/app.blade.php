@@ -15,10 +15,10 @@
     <style>[x-cloak]{ display:none !important; }</style>
     
 </head>
-<body class="bg-gray-50 text-slate-900">
+<body class="bg-gray-50 text-slate-900 overflow-x-hidden">
 
     {{-- HEADER Caro --}}
-    <header class="bg-white shadow-sm">
+    <header class="bg-white shadow-sm fixed w-full top-0 left-0 right-0 z-50">
         <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 min-w-0">
 
             {{-- Logo --}}
@@ -172,8 +172,8 @@
     </header>
 
     {{-- CONTENU PAGE --}}
-   <main class="py-6 md:py-8">
-    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   <main class="pt-20 md:pt-16 py-6 md:py-8">
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen">
         @isset($slot)
             {{ $slot }}
         @else
@@ -181,6 +181,50 @@
         @endisset
     </div>
 </main>
+
+    {{-- FOOTER --}}
+    <footer class="bg-gray-900 text-gray-300 text-xs md:text-sm mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                {{-- About section --}}
+                <div>
+                    <h3 class="font-semibold text-white mb-3">À propos de Caro</h3>
+                    <p class="text-[11px] md:text-xs leading-relaxed">
+                        Caro est une plateforme leader pour l'achat et la vente de véhicules d'occasion en Algérie. 
+                        Découvrez des milliers d'annonces vérifiées.
+                    </p>
+                </div>
+
+                {{-- Legal links --}}
+                <div>
+                    <h3 class="font-semibold text-white mb-3">Informations légales</h3>
+                    <ul class="space-y-1">
+                        <li><a href="#" class="hover:text-white transition">Conditions générales</a></li>
+                        <li><a href="#" class="hover:text-white transition">Politique de confidentialité</a></li>
+                        <li><a href="#" class="hover:text-white transition">Mentions légales</a></li>
+                        <li><a href="#" class="hover:text-white transition">Nous contacter</a></li>
+                    </ul>
+                </div>
+
+                {{-- Contact section --}}
+                <div>
+                    <h3 class="font-semibold text-white mb-3">Nous contacter</h3>
+                    <ul class="space-y-1 text-[11px] md:text-xs">
+                        <li>Email: <a href="mailto:contact@caro.dz" class="hover:text-white transition">contact@caro.dz</a></li>
+                        <li>Tél: <a href="tel:+213XXX" class="hover:text-white transition">+213 XXX XXX XXX</a></li>
+                        <li>Algérie</li>
+                    </ul>
+                </div>
+            </div>
+
+            {{-- Divider --}}
+            <div class="border-t border-gray-700 pt-6">
+                <p class="text-center text-[10px] md:text-xs text-gray-400">
+                    © {{ date('Y') }} Caro. Tous droits réservés. | Plateforme de vente de véhicules d'occasion en Algérie
+                </p>
+            </div>
+        </div>
+    </footer>
 
 
     {{-- ✅ Scripts poussés depuis les vues (ex: polling messages) --}}

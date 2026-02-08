@@ -101,6 +101,13 @@
                     <dl class="grid grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-6 text-xs md:text-sm">
                         
                         <div>
+                            <dt class="text-gray-400">Prix</dt>
+                            <dd class="text-gray-800 font-semibold">
+                                {{ number_format($annonce->prix, 0, ',', ' ') }} DA
+                            </dd>
+                        </div>
+
+                        <div>
                             <dt class="text-gray-400">Année</dt>
                             <dd class="text-gray-800 font-semibold">{{ $year ?? '—' }}</dd>
                         </div>
