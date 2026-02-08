@@ -152,11 +152,53 @@
                        placeholder="ex : Clio, Megane">
             </div>
 
-            <div>
-                <label class="block text-xs font-semibold mb-1">Ville / Wilaya</label>
-                <input type="text" name="ville" value="{{ old('ville') }}"
-                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm"
-                       placeholder="ex : Alger">
+            <div x-data="wilayaDropdownCreate()" class="relative">
+                <label class="block text-xs font-semibold mb-1">Wilaya</label>
+                
+                <button type="button" @click="toggleDropdown()"
+                        class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm text-left bg-white flex justify-between items-center">
+                    <span x-text="selected || 'Sélectionner une wilaya'"></span>
+                    <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                </button>
+
+                <input type="hidden" name="ville" :value="selected">
+
+                {{-- Dropdown menu --}}
+                <div x-show="open" @click.away="open = false"
+                     class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
+                     style="max-height: 280px;">
+                    
+                    {{-- Barre de recherche --}}
+                    <div class="sticky top-0 p-2 border-b bg-white">
+                        <input type="text" x-model="search" placeholder="Rechercher une wilaya..."
+                               class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
+                    </div>
+                    
+                    {{-- Liste des wilayas (scroll après 8 items) --}}
+                    <div class="overflow-y-auto flex-1" style="max-height: 240px;">
+                        <button type="button"
+                                @click="selectWilaya('')"
+                                class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b font-semibold">
+                            <span>Toute l'Algérie (Peu importe)</span>
+                        </button>
+                        <template x-for="wilaya in filteredWilayas()" :key="wilaya">
+                            <button type="button"
+                                    @click="selectWilaya(wilaya)"
+                                    class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
+                                <span x-text="wilaya"></span>
+                            </button>
+                        </template>
+                        <div x-show="filteredWilayas().length === 0" class="px-3 py-2 text-gray-500 text-xs text-center">
+                            Aucune wilaya trouvée
+                        </div>
+                    </div>
+                </div>
+
+                <select name="ville" class="hidden">
+                    <option value=""></option>
+                </select>
             </div>
         </div>
         
@@ -600,6 +642,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.search = value;
                 this.open = false;
                 document.querySelector('select[name="marque"]').value = value;
+            }
+        }
+    }
+
+    // Wilaya Dropdown for Create Annonce (Alpine.js)
+    function wilayaDropdownCreate() {
+        return {
+            open: false,
+            search: '',
+            selected: '{{ old("ville") }}',
+            wilayas: @json($wilayas),
+            
+            filteredWilayas() {
+                return this.wilayas.filter(wilaya => 
+                    wilaya.toLowerCase().includes(this.search.toLowerCase())
+                );
+            },
+            
+            selectWilaya(value) {
+                this.selected = value;
+                this.open = false;
+                document.querySelector('select[name="ville"]').value = value;
+            },
+            
+            toggleDropdown() {
+                this.open = !this.open;
+                if (this.open) {
+                    this.search = ''; // Vider le champ de recherche quand on ouvre le dropdown
+                }
             }
         }
     }
