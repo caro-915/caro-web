@@ -7,7 +7,11 @@
     </a>
 
     <h1 class="text-lg font-bold mt-2">
-        Conversation – {{ $conversation->annonce->titre ?? 'Annonce #'.$conversation->annonce->id }}
+        Conversation – 
+        <a href="{{ route('annonces.show', $conversation->annonce->id) }}" 
+           class="text-gray-800 hover:text-gray-600 hover:underline">
+            {{ $conversation->annonce->titre ?? 'Annonce #'.$conversation->annonce->id }}
+        </a>
     </h1>
 
     @php
@@ -17,7 +21,11 @@
     @endphp
 
     <p class="text-xs text-gray-500 mb-4">
-        Avec <span class="font-medium">{{ $other->name }}</span>
+        Avec 
+        <a href="{{ route('seller.show', $other->id) }}" 
+           class="font-medium text-gray-700 hover:text-gray-900 hover:underline">
+            {{ $other->name }}
+        </a>
     </p>
 
     {{-- Messages --}}
