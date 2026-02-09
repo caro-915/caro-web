@@ -39,7 +39,7 @@ class SubscriptionService
         $defaults = [
             'max_active_ads' => 5,
             'boosts_per_month' => 0,
-            'boost_duration_days' => 0,
+            'boost_duration_days' => 7,
         ];
 
         $subscription = $this->getActiveSubscription($user);
@@ -47,7 +47,9 @@ class SubscriptionService
             return $defaults;
         }
 
-        return $subscription->plan->features;
+        // Merge plan features with defaults to ensure all keys exist
+        $planFeatures = $subscription->plan->features ?? [];
+        return array_merge($defaults, $planFeatures);
     }
 
     /**

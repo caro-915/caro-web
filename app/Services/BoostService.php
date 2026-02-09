@@ -118,12 +118,15 @@ class BoostService
         }
 
         $features = $this->subscriptionService->getFeatures($user);
+        
+        // Default boost duration if not specified
+        $boostDurationDays = $features['boost_duration_days'] ?? 7;
 
         return Boost::create([
             'annonce_id' => $annonce->id,
             'user_id' => $user->id,
             'started_at' => now(),
-            'expires_at' => now()->addDays($features['boost_duration_days']),
+            'expires_at' => now()->addDays($boostDurationDays),
             'status' => 'active',
         ]);
     }
