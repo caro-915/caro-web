@@ -48,6 +48,7 @@ class PlanController extends Controller
             'boosts_per_month.required' => 'Le nombre de boosts par mois est obligatoire.',
             'boosts_per_month.integer' => 'Le nombre de boosts doit être un nombre entier.',
             'boost_duration_days.required' => 'La durée d\'un boost est obligatoire.',
+            'boost_duration_days.integer' => 'La durée d\'un boost doit être un nombre entier.',
             'boost_duration_days.min' => 'La durée d\'un boost doit être au moins 1 jour.',
         ]);
 
@@ -99,6 +100,7 @@ class PlanController extends Controller
             'boosts_per_month.required' => 'Le nombre de boosts par mois est obligatoire.',
             'boosts_per_month.integer' => 'Le nombre de boosts doit être un nombre entier.',
             'boost_duration_days.required' => 'La durée d\'un boost est obligatoire.',
+            'boost_duration_days.integer' => 'La durée d\'un boost doit être un nombre entier.',
             'boost_duration_days.min' => 'La durée d\'un boost doit être au moins 1 jour.',
         ]);
 
