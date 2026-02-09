@@ -149,7 +149,7 @@ class AnnonceController extends Controller
         if ($activeCount >= $maxAds) {
             return back()->withErrors([
                 'quota' => "Vous avez atteint votre limite de {$maxAds} annonces actives. " . 
-                           ($maxAds === 5 ? "Passez à PRO pour publier jusqu'à 50 annonces !" : "")
+                           ($maxAds === 5 ? "Passez à PRO pour publier jusqu'à 10 annonces !" : "")
             ])->withInput();
         }
 

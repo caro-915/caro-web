@@ -170,7 +170,7 @@
                             <div class="flex-1">
                                 <h2 class="text-sm md:text-base font-semibold mb-1">✨ Passer en PRO</h2>
                                 <p class="text-xs md:text-sm text-gray-700">
-                                    Débloquez 50 annonces, boostez vos annonces et bénéficiez de fonctionnalités premium.
+                                    Débloquez 10 annonces, boostez vos annonces et bénéficiez de fonctionnalités premium.
                                 </p>
                             </div>
                             <div>

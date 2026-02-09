@@ -156,7 +156,7 @@
                         <tr class="border-b border-gray-200">
                             <td class="py-4 px-4 text-gray-700">Annonces actives</td>
                             <td class="text-center py-4 px-4">5</td>
-                            <td class="text-center py-4 px-4 font-semibold text-pink-600">50</td>
+                            <td class="text-center py-4 px-4 font-semibold text-pink-600">10</td>
                         </tr>
                         <tr class="border-b border-gray-200">
                             <td class="py-4 px-4 text-gray-700">Boosts par mois</td>

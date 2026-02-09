@@ -18,7 +18,7 @@ class PlanSeeder extends Seeder
                 'price' => 3000.00,
                 'duration_days' => 30,
                 'features' => [
-                    'max_active_ads' => 50,
+                    'max_active_ads' => 10,
                     'boosts_per_month' => 5,
                     'boost_duration_days' => 7,
                 ],
