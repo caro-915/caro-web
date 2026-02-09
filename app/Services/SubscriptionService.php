@@ -15,6 +15,7 @@ class SubscriptionService
     public function getActiveSubscription(User $user): ?Subscription
     {
         return $user->subscriptions()
+            ->with('plan')  // Eager load the plan to avoid N+1 queries
             ->where('status', 'active')
             ->where('payment_status', 'approved')
             ->where('expires_at', '>', now())
@@ -43,12 +44,24 @@ class SubscriptionService
         ];
 
         $subscription = $this->getActiveSubscription($user);
-        if (!$subscription) {
+        if (!$subscription || !$subscription->plan) {
+            \Log::info('🔍 Pas d\'abonnement actif ou plan manquant', [
+                'user_id' => $user->id,
+                'has_subscription' => $subscription !== null,
+                'has_plan' => $subscription?->plan !== null,
+            ]);
             return $defaults;
         }
 
         // Merge plan features with defaults to ensure all keys exist
-        $planFeatures = $subscription->plan->features ?? [];
+        $planFeatures = is_array($subscription->plan->features) ? $subscription->plan->features : [];
+        
+        \Log::info('✅ Features chargées', [
+            'user_id' => $user->id,
+            'plan_name' => $subscription->plan->name,
+            'features' => $planFeatures,
+        ]);
+        
         return array_merge($defaults, $planFeatures);
     }
 

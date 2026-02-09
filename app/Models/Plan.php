@@ -20,6 +20,36 @@ class Plan extends Model
     }
 
     /**
+     * Get the features attribute, ensuring it's always an array.
+     */
+    public function getFeaturesAttribute($value): array
+    {
+        if (is_null($value)) {
+            return [
+                'max_active_ads' => 5,
+                'boosts_per_month' => 0,
+                'boost_duration_days' => 7,
+            ];
+        }
+
+        $decoded = is_string($value) ? json_decode($value, true) : $value;
+        
+        if (!is_array($decoded)) {
+            \Log::warning('⚠️ Features mal formatées pour le plan', [
+                'plan_id' => $this->id ?? 'unknown',
+                'features_raw' => $value,
+            ]);
+            return [
+                'max_active_ads' => 5,
+                'boosts_per_month' => 0,
+                'boost_duration_days' => 7,
+            ];
+        }
+
+        return $decoded;
+    }
+
+    /**
      * Get all subscriptions for this plan.
      */
     public function subscriptions(): HasMany
