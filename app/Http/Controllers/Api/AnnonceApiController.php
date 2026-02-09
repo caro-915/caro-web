@@ -16,7 +16,10 @@ class AnnonceApiController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Annonce::with('user')->where('is_active', true);
+        $allowedVehicleTypes = ['Voiture', 'Moto'];
+        $query = Annonce::with('user')
+            ->where('is_active', true)
+            ->whereIn('vehicle_type', $allowedVehicleTypes);
 
         // Filtres
         if ($request->filled('marque')) {
@@ -138,6 +141,11 @@ class AnnonceApiController extends Controller
      */
     public function store(Request $request)
     {
+        $normalizedType = $this->normalizeVehicleType($request->input('vehicle_type'));
+        if ($normalizedType !== null) {
+            $request->merge(['vehicle_type' => $normalizedType]);
+        }
+
         $data = $request->validate([
             'titre'         => 'required|string|max:255',
             'description'   => 'nullable|string',
@@ -149,7 +157,7 @@ class AnnonceApiController extends Controller
             'carburant'     => 'required|string|max:50',
             'boite_vitesse' => 'required|string|max:50',
             'ville'         => 'nullable|string|max:100',
-            'vehicle_type'  => 'nullable|string|max:50',
+            'vehicle_type'  => 'nullable|in:Voiture,Moto',
             'show_phone'    => 'nullable',
             'couleur'       => 'nullable|string|max:50',
             'document_type' => 'nullable|in:carte_grise,procuration',
@@ -167,7 +175,7 @@ class AnnonceApiController extends Controller
 
         $data['show_phone'] = $request->boolean('show_phone');
         $data['condition'] = $request->input('condition', 'non');
-        $data['vehicle_type'] = $request->input('vehicle_type', 'car'); // Voiture par défaut
+        $data['vehicle_type'] = $request->input('vehicle_type', 'Voiture');
         
         // Upload images
         $imagePaths = [
@@ -325,6 +333,11 @@ class AnnonceApiController extends Controller
             ], 403);
         }
 
+        $normalizedType = $this->normalizeVehicleType($request->input('vehicle_type'));
+        if ($normalizedType !== null) {
+            $request->merge(['vehicle_type' => $normalizedType]);
+        }
+
         // Support both French and English field names (Flutter compatibility)
         $data = $request->validate([
             'titre'         => 'nullable|string|max:255',
@@ -344,7 +357,7 @@ class AnnonceApiController extends Controller
             'gearbox'       => 'nullable|string|max:50',
             'ville'         => 'nullable|string|max:100',
             'wilaya'        => 'nullable|string|max:100',
-            'vehicle_type'  => 'nullable|string|max:50',
+            'vehicle_type'  => 'nullable|in:Voiture,Moto',
             'show_phone'    => 'nullable|boolean',
             'couleur'       => 'nullable|string|max:50',
             'color'         => 'nullable|string|max:50',
@@ -439,10 +452,12 @@ class AnnonceApiController extends Controller
             'fuel' => $annonce->carburant,
             'gearbox' => $annonce->boite_vitesse,
             'wilaya' => $annonce->ville,
+            'vehicleType' => $annonce->vehicle_type,
             'isNew' => $annonce->condition === 'neuf',
             'color' => $annonce->couleur,
             'documentType' => $annonce->document_type,
             'finition' => $annonce->finition,
+            'sellerType' => $annonce->seller_type ?? 'particulier',
             'images' => $images,
             'views' => $annonce->views,
             'createdAt' => $annonce->created_at->toIso8601String(),
@@ -455,5 +470,24 @@ class AnnonceApiController extends Controller
                 'avatar' => $annonce->user->avatar ? url('storage/' . $annonce->user->avatar) : null,
             ],
         ];
+    }
+
+    private function normalizeVehicleType(?string $type): ?string
+    {
+        if (!$type) {
+            return null;
+        }
+
+        $normalized = strtolower(trim($type));
+
+        if (in_array($normalized, ['car', 'voiture'], true)) {
+            return 'Voiture';
+        }
+
+        if ($normalized === 'moto') {
+            return 'Moto';
+        }
+
+        return null;
     }
 }

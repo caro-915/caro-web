@@ -32,6 +32,29 @@
         @csrf
         @method('PUT')
 
+        {{-- Vendeur pro ou particulier ? --}}
+        <div>
+            <p class="text-xs font-semibold mb-2">Vendeur pro ou particulier ? <span class="text-red-500">*</span></p>
+
+            <div class="flex items-center gap-6 text-sm">
+                <label class="inline-flex items-center gap-2">
+                    <input type="radio" name="seller_type" value="particulier"
+                           {{ old('seller_type', $annonce->seller_type ?? 'particulier') === 'particulier' ? 'checked' : '' }}>
+                    <span>Particulier</span>
+                </label>
+
+                <label class="inline-flex items-center gap-2">
+                    <input type="radio" name="seller_type" value="pro"
+                           {{ old('seller_type', $annonce->seller_type ?? 'particulier') === 'pro' ? 'checked' : '' }}>
+                    <span>Pro</span>
+                </label>
+            </div>
+
+            @error('seller_type')
+                <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+            @enderror
+        </div>
+
         {{-- Véhicule neuf ? --}}
         <div>
             <p class="text-xs font-semibold mb-2">Véhicule neuf ? <span class="text-red-500">*</span></p>

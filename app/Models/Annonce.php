@@ -35,6 +35,7 @@ class Annonce extends Model
         'couleur',
         'document_type',
         'finition',
+        'seller_type',
         'is_active',
     ];
 

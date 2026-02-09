@@ -198,10 +198,23 @@
                         <div>
                             <p class="text-xs text-gray-500">Vendeur</p>
 
-                            <a href="{{ route('seller.show', $annonce->user) }}"
-                               class="text-base md:text-lg font-extrabold hover:text-gray-800">
-                                {{ $annonce->user->name }}
-                            </a>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('seller.show', $annonce->user) }}"
+                                   class="text-base md:text-lg font-extrabold hover:text-gray-800">
+                                    {{ $annonce->user->name }}
+                                </a>
+                                @if($annonce->seller_type === 'pro')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold
+                                                 bg-blue-50 text-blue-700 border border-blue-200">
+                                        ⭐ PRO
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold
+                                                 bg-gray-50 text-gray-700 border border-gray-200">
+                                        Particulier
+                                    </span>
+                                @endif
+                            </div>
 
                            <p class="text-[11px] text-gray-400 mt-1">
     Annonce publiée {{ optional($annonce->created_at)->diffForHumans() }}

@@ -7,11 +7,21 @@
 @section('content')
 <!-- Force cache refresh v2 -->
 <div class="max-w-6xl mx-auto px-4 py-6 md:py-8">
+    @php
+        $currentType = request('vehicle_type');
+        $title = "Véhicules d'occasion";
+        if ($currentType === 'Voiture') {
+            $title = "Voitures d'occasion";
+        } elseif ($currentType === 'Moto') {
+            $title = "Motos d'occasion";
+        }
+    @endphp
+
     {{-- Title + total results --}}
     <div class="flex flex-row items-end justify-between gap-2 mb-6">
         <div>
             <h1 class="text-3xl font-bold">
-                Voitures d'occasion
+                {{ $title }}
                 @if($annonces->total())
                     <span class="text-pink-600 font-extrabold">
                         – {{ number_format($annonces->total(), 0, ',', ' ') }} annonces
@@ -82,8 +92,7 @@
                     <label class="text-xs font-semibold block mb-1">Type de véhicule</label>
                     <div class="flex flex-wrap gap-2 text-xs">
                         @php
-                            $types = ['car' => 'Voiture', 'van' => 'Utilitaire', 'moto' => 'Moto'];
-                            $currentType = request('vehicle_type');
+                            $types = ['Voiture' => 'Voiture', 'Moto' => 'Moto'];
                         @endphp
                         @foreach($types as $value => $label)
                             <button type="submit"

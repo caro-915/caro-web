@@ -21,80 +21,86 @@
                         <input type="hidden" name="vehicle_type" id="vehicle_type_input" value="{{ request('vehicle_type', '') }}">
                         
                         {{-- Buttons are only UI helpers that update the hidden field --}}
-                        <button type="button"
-                                data-type="car"
+                           <button type="button"
+                                data-type="Voiture"
                                 class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                                       {{ request('vehicle_type') === 'car' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
+                                    {{ request('vehicle_type') === 'Voiture' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
                             🚗 Voiture
                         </button>
                         <button type="button"
-                                data-type="van"
+                                data-type="Moto"
                                 class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                                       {{ request('vehicle_type') === 'van' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
-                            🚐 Utilitaire
-                        </button>
-                        <button type="button"
-                                data-type="moto"
-                                class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                                       {{ request('vehicle_type') === 'moto' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
+                                    {{ request('vehicle_type') === 'Moto' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
                             🏍 Moto
                         </button>
                     </div>
 
                     {{-- Brand / Model --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div x-data="brandDropdownHome()" class="relative">
+                        <div>
                             <label class="block text-xs font-semibold mb-1">Marque</label>
 
-                            <button type="button" @click="open = !open"
-                                    class="w-full border rounded-lg p-2 text-xs md:text-sm text-left bg-white flex justify-between items-center">
-                                <span x-text="selected || 'Peu importe'"></span>
-                                <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                                </svg>
-                            </button>
+                            <div id="home_brand_dropdown" x-data="brandDropdownHome()" class="relative">
+                                <button type="button" @click="open = !open"
+                                        class="w-full border rounded-lg p-2 text-xs md:text-sm text-left bg-white flex justify-between items-center">
+                                    <span x-text="selected || 'Peu importe'"></span>
+                                    <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                    </svg>
+                                </button>
 
-                            <input type="hidden" name="marque" :value="selected">
+                                <input type="hidden" name="marque" id="home_marque_hidden" :value="selected">
 
-                            {{-- Dropdown menu --}}
-                            <div x-show="open" @click.away="open = false"
-                                 class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
-                                 style="max-height: 280px;">
-                                
-                                {{-- Barre de recherche --}}
-                                <div class="sticky top-0 p-2 border-b bg-white">
-                                    <input type="text" x-model="search" placeholder="Rechercher une marque..."
-                                           class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
-                                </div>
-                                
-                                {{-- Liste des marques (scroll après 8 items) --}}
-                                <div class="overflow-y-auto flex-1" style="max-height: 240px;">
-                                    <button type="button"
-                                            @click="selectBrand('')"
-                                            class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b">
-                                        <span>Peu importe</span>
-                                    </button>
-                                    <template x-for="brand in filteredBrands()" :key="brand">
+                                {{-- Dropdown menu --}}
+                                <div x-show="open" @click.away="open = false"
+                                     class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
+                                     style="max-height: 280px;">
+                                    
+                                    {{-- Barre de recherche --}}
+                                    <div class="sticky top-0 p-2 border-b bg-white">
+                                        <input type="text" x-model="search" placeholder="Rechercher une marque..."
+                                               class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                    </div>
+                                    
+                                    {{-- Liste des marques (scroll après 8 items) --}}
+                                    <div class="overflow-y-auto flex-1" style="max-height: 240px;">
                                         <button type="button"
-                                                @click="selectBrand(brand)"
-                                                class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
-                                            <span x-text="brand"></span>
+                                                @click="selectBrand('')"
+                                                class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b">
+                                            <span>Peu importe</span>
                                         </button>
-                                    </template>
-                                    <div x-show="filteredBrands().length === 0" class="px-3 py-2 text-gray-500 text-xs text-center">
-                                        Aucune marque trouvée
+                                        <template x-for="brand in filteredBrands()" :key="brand">
+                                            <button type="button"
+                                                    @click="selectBrand(brand)"
+                                                    class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
+                                                <span x-text="brand"></span>
+                                            </button>
+                                        </template>
+                                        <div x-show="filteredBrands().length === 0" class="px-3 py-2 text-gray-500 text-xs text-center">
+                                            Aucune marque trouvée
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <input type="text" name="marque" id="home_marque_text"
+                                   data-placeholder-voiture="Peu importe"
+                                   data-placeholder-moto="ex : Yamaha, Honda"
+                                   class="w-full border rounded-lg p-2 text-xs md:text-sm hidden"
+                                   placeholder="ex : Yamaha, Honda"
+                                   disabled>
                         </div>
 
                         <div>
                             <label class="block text-xs font-semibold mb-1">Modèle</label>
                             <input type="text" 
-                                   name="modele" 
-                                   value="{{ request('modele') }}"
-                                   placeholder="Peu importe"
-                                   class="w-full border rounded-lg p-2 text-xs md:text-sm">
+                                name="modele" 
+                                id="home_modele_input"
+                                value="{{ request('modele') }}"
+                                data-placeholder-voiture="Peu importe"
+                                data-placeholder-moto="ex : MT-07, CB500F"
+                                placeholder="Peu importe"
+                                class="w-full border rounded-lg p-2 text-xs md:text-sm">
                         </div>
                     </div>
 
@@ -350,6 +356,59 @@
         // Handle vehicle type button selection
         const typeInput = document.getElementById('vehicle_type_input');
         const typeButtons = document.querySelectorAll('.vehicle-type-btn');
+        const homeBrandDropdown = document.getElementById('home_brand_dropdown');
+        const homeMarqueHidden = document.getElementById('home_marque_hidden');
+        const homeMarqueText = document.getElementById('home_marque_text');
+        const homeModeleInput = document.getElementById('home_modele_input');
+
+        function setActiveHomeTypeButton(type) {
+            typeButtons.forEach(btn => {
+                const isActive = btn.getAttribute('data-type') === type;
+                btn.classList.toggle('bg-gray-500', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('border-gray-800', isActive);
+                btn.classList.toggle('bg-white', !isActive);
+                btn.classList.toggle('text-gray-600', !isActive);
+                btn.classList.toggle('border-gray-200', !isActive);
+            });
+        }
+
+        function applyHomeVehicleTypeUI(type) {
+            const isMoto = type === 'Moto';
+
+            if (homeBrandDropdown) {
+                homeBrandDropdown.classList.toggle('hidden', isMoto);
+            }
+
+            if (homeMarqueHidden) {
+                homeMarqueHidden.disabled = isMoto;
+            }
+
+            if (homeMarqueText) {
+                homeMarqueText.classList.toggle('hidden', !isMoto);
+                homeMarqueText.disabled = !isMoto;
+                const placeholder = isMoto
+                    ? homeMarqueText.dataset.placeholderMoto
+                    : homeMarqueText.dataset.placeholderVoiture;
+                if (placeholder) {
+                    homeMarqueText.placeholder = placeholder;
+                }
+            }
+
+            if (homeModeleInput) {
+                const placeholder = isMoto
+                    ? homeModeleInput.dataset.placeholderMoto
+                    : homeModeleInput.dataset.placeholderVoiture;
+                if (placeholder) {
+                    homeModeleInput.placeholder = placeholder;
+                }
+            }
+        }
+
+        if (typeInput && typeInput.value) {
+            setActiveHomeTypeButton(typeInput.value);
+        }
+        applyHomeVehicleTypeUI(typeInput ? typeInput.value : '');
 
         typeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -357,10 +416,8 @@
                 typeInput.value = type;
 
                 // Update active state
-                typeButtons.forEach(b => b.classList.remove('bg-gray-500', 'text-white', 'border-gray-800'));
-                typeButtons.forEach(b => b.classList.add('bg-white', 'text-gray-600', 'border-gray-200'));
-                btn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
-                btn.classList.add('bg-gray-500', 'text-white', 'border-gray-800');
+                setActiveHomeTypeButton(type);
+                applyHomeVehicleTypeUI(type);
             });
         });
 

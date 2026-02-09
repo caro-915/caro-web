@@ -24,6 +24,26 @@
           class="bg-white rounded-2xl shadow p-4 md:p-6 space-y-6">
         @csrf
 
+        {{-- Vendeur pro ou particulier ? --}}
+        <div>
+            <label class="block text-xs font-semibold mb-2">Vendeur pro ou particulier ? <span class="text-red-500">*</span></label>
+            <div class="flex gap-4 text-xs md:text-sm">
+                <label class="inline-flex items-center gap-2">
+                    <input type="radio" name="seller_type" value="particulier"
+                           {{ old('seller_type', 'particulier') === 'particulier' ? 'checked' : '' }}>
+                    Particulier
+                </label>
+                <label class="inline-flex items-center gap-2">
+                    <input type="radio" name="seller_type" value="pro"
+                           {{ old('seller_type', 'particulier') === 'pro' ? 'checked' : '' }}>
+                    Pro
+                </label>
+            </div>
+            @error('seller_type')
+                <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
         {{-- Véhicule neuf ? --}}
         <div>
             <label class="block text-xs font-semibold mb-2">Véhicule neuf ? <span class="text-red-500">*</span></label>
@@ -56,12 +76,6 @@
                     🚗 Voiture
                 </button>
                 <button type="button"
-                        data-type="Utilitaire"
-                        class="vehicle-type-btn-create flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                               {{ old('vehicle_type') === 'Utilitaire' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-200' }}">
-                    🚐 Utilitaire
-                </button>
-                <button type="button"
                         data-type="Moto"
                         class="vehicle-type-btn-create flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
                                {{ old('vehicle_type') === 'Moto' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-200' }}">
@@ -77,7 +91,9 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
                 <label class="block text-xs font-semibold mb-1">Titre de l'annonce <span class="text-red-500">*</span></label>
-                <input type="text" name="titre" value="{{ old('titre') }}"
+                <input type="text" name="titre" id="titre_input" value="{{ old('titre') }}"
+                       data-placeholder-voiture="ex : Renault Clio 1.5 DCI 2018 très bon état"
+                       data-placeholder-moto="ex : Yamaha MT-07 2021 très bon état"
                        class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm {{ $errors->has('titre') ? 'border-red-500' : '' }}"
                        placeholder="ex : Renault Clio 1.5 DCI 2018 très bon état">
                 @error('titre')
@@ -97,48 +113,57 @@
 
         {{-- Marque / modèle / ville --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div x-data="brandDropdownCreate()" class="relative">
+            <div>
                 <label class="block text-xs font-semibold mb-1">Marque</label>
-                
-                <button type="button" @click="open = !open"
-                        class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm text-left bg-white flex justify-between items-center {{ $errors->has('marque') ? 'border-red-500' : '' }}">
-                    <span x-text="selected || 'Sélectionner une marque'"></span>
-                    <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                    </svg>
-                </button>
 
-                <input type="hidden" name="marque" :value="selected">
+                <div id="brand_dropdown_wrapper" x-data="brandDropdownCreate()" class="relative">
+                    <button type="button" @click="open = !open"
+                            class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm text-left bg-white flex justify-between items-center {{ $errors->has('marque') ? 'border-red-500' : '' }}">
+                        <span x-text="selected || 'Sélectionner une marque'"></span>
+                        <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                    </button>
 
-                {{-- Dropdown menu --}}
-                <div x-show="open" @click.away="open = false"
-                     class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
-                     style="max-height: 280px;">
-                    
-                    {{-- Barre de recherche --}}
-                    <div class="sticky top-0 p-2 border-b bg-white">
-                        <input type="text" x-model="search" placeholder="Rechercher une marque..."
-                               class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
-                    </div>
-                    
-                    {{-- Liste des marques (scroll après 8 items) --}}
-                    <div class="overflow-y-auto flex-1" style="max-height: 240px;">
-                        <template x-for="brand in filteredBrands()" :key="brand">
-                            <button type="button"
-                                    @click="selectBrand(brand)"
-                                    class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
-                                <span x-text="brand"></span>
-                            </button>
-                        </template>
-                        <div x-show="filteredBrands().length === 0" class="px-3 py-2 text-gray-500 text-xs text-center">
-                            Aucune marque trouvée
+                    <input type="hidden" name="marque" id="marque_hidden_input" :value="selected">
+
+                    {{-- Dropdown menu --}}
+                    <div x-show="open" @click.away="open = false"
+                         class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
+                         style="max-height: 280px;">
+                        
+                        {{-- Barre de recherche --}}
+                        <div class="sticky top-0 p-2 border-b bg-white">
+                            <input type="text" x-model="search" placeholder="Rechercher une marque..."
+                                   class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
+                        </div>
+                        
+                        {{-- Liste des marques (scroll après 8 items) --}}
+                        <div class="overflow-y-auto flex-1" style="max-height: 240px;">
+                            <template x-for="brand in filteredBrands()" :key="brand">
+                                <button type="button"
+                                        @click="selectBrand(brand)"
+                                        class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
+                                    <span x-text="brand"></span>
+                                </button>
+                            </template>
+                            <div x-show="filteredBrands().length === 0" class="px-3 py-2 text-gray-500 text-xs text-center">
+                                Aucune marque trouvée
+                            </div>
                         </div>
                     </div>
+
+                    <select name="marque" id="marque_hidden_select" class="hidden">
+                        <option value=""></option>
+                    </select>
                 </div>
 
-                <select name="marque" class="hidden">
-                    <option value=""></option>
-                </select>
+                <input type="text" name="marque" id="marque_text_input" value="{{ old('marque') }}"
+                       data-placeholder-voiture="ex : Renault, Peugeot"
+                       data-placeholder-moto="ex : Yamaha, Honda"
+                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm hidden"
+                       placeholder="ex : Yamaha, Honda"
+                       disabled>
 
                 @error('marque')
                     <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
@@ -148,6 +173,8 @@
             <div>
                 <label class="block text-xs font-semibold mb-1">Modèle</label>
                 <input type="text" name="modele" id="modele_input" value="{{ old('modele') }}"
+                       data-placeholder-voiture="ex : Clio, Megane"
+                       data-placeholder-moto="ex : MT-07, CB500F"
                        class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm"
                        placeholder="ex : Clio, Megane">
             </div>
@@ -220,7 +247,7 @@
 
             <div>
                 <label class="block text-xs font-semibold mb-1">Carburant <span class="text-red-500">*</span></label>
-                <select name="carburant" class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm {{ $errors->has('carburant') ? 'border-red-500' : '' }}">
+                <select name="carburant" id="carburant_select" class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm {{ $errors->has('carburant') ? 'border-red-500' : '' }}">
                     <option value="">Sélectionnez</option>
                     @foreach(['Essence','Diesel','Hybride','Électrique'] as $fuel)
                         <option value="{{ $fuel }}" {{ old('carburant') === $fuel ? 'selected' : '' }}>
@@ -235,7 +262,7 @@
 
             <div>
                 <label class="block text-xs font-semibold mb-1">Boîte de vitesses <span class="text-red-500">*</span></label>
-                <select name="boite_vitesse" class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm {{ $errors->has('boite_vitesse') ? 'border-red-500' : '' }}">
+                <select name="boite_vitesse" id="boite_vitesse_select" class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm {{ $errors->has('boite_vitesse') ? 'border-red-500' : '' }}">
                     <option value="">Sélectionnez</option>
                     @foreach(['Manuelle','Automatique'] as $gear)
                         <option value="{{ $gear }}" {{ old('boite_vitesse') === $gear ? 'selected' : '' }}>
@@ -281,7 +308,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold mb-1">Finition</label>
-                    <input type="text" name="finition" value="{{ old('finition') }}"
+                    <input type="text" name="finition" id="finition_input" value="{{ old('finition') }}"
                            class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm"
                            placeholder="Ex : Allure, GT Line, Titanium">
                 </div>
@@ -374,20 +401,106 @@ document.addEventListener('DOMContentLoaded', function() {
     // Pré-sélectionner "Voiture" par défaut si aucune valeur n'a été définie
     const vehicleTypeInput = document.getElementById('vehicle_type_input');
     const vehicleButtons = document.querySelectorAll('.vehicle-type-btn-create');
+    const brandDropdownWrapper = document.getElementById('brand_dropdown_wrapper');
+    const marqueHiddenInput = document.getElementById('marque_hidden_input');
+    const marqueHiddenSelect = document.getElementById('marque_hidden_select');
+    const marqueTextInput = document.getElementById('marque_text_input');
+    const titreInput = document.getElementById('titre_input');
+    const modeleInput = document.getElementById('modele_input');
+
+    function setActiveVehicleButton(type) {
+        vehicleButtons.forEach(btn => {
+            const isActive = btn.getAttribute('data-type') === type;
+            btn.classList.toggle('bg-gray-800', isActive);
+            btn.classList.toggle('text-white', isActive);
+            btn.classList.toggle('border-gray-800', isActive);
+            btn.classList.toggle('bg-white', !isActive);
+            btn.classList.toggle('text-gray-700', !isActive);
+            btn.classList.toggle('border-gray-200', !isActive);
+        });
+    }
+
+    function applyVehicleTypeUI(type) {
+        const isMoto = type === 'Moto';
+
+        if (brandDropdownWrapper) {
+            brandDropdownWrapper.classList.toggle('hidden', isMoto);
+        }
+
+        if (marqueTextInput) {
+            marqueTextInput.classList.toggle('hidden', !isMoto);
+            marqueTextInput.disabled = !isMoto;
+            const placeholder = isMoto
+                ? marqueTextInput.dataset.placeholderMoto
+                : marqueTextInput.dataset.placeholderVoiture;
+            if (placeholder) {
+                marqueTextInput.placeholder = placeholder;
+            }
+        }
+
+        if (marqueHiddenInput) {
+            marqueHiddenInput.disabled = isMoto;
+        }
+
+        if (marqueHiddenSelect) {
+            marqueHiddenSelect.disabled = isMoto;
+        }
+
+        if (titreInput) {
+            const placeholder = isMoto
+                ? titreInput.dataset.placeholderMoto
+                : titreInput.dataset.placeholderVoiture;
+            if (placeholder) {
+                titreInput.placeholder = placeholder;
+            }
+        }
+
+        if (modeleInput) {
+            const placeholder = isMoto
+                ? modeleInput.dataset.placeholderMoto
+                : modeleInput.dataset.placeholderVoiture;
+            if (placeholder) {
+                modeleInput.placeholder = placeholder;
+            }
+        }
+
+        // Griser les champs boite_vitesse et finition pour Moto
+        const boiteVitesseSelect = document.getElementById('boite_vitesse_select');
+        const finitionInput = document.getElementById('finition_input');
+
+        if (boiteVitesseSelect) {
+            boiteVitesseSelect.disabled = isMoto;
+            boiteVitesseSelect.classList.toggle('opacity-50', isMoto);
+            boiteVitesseSelect.classList.toggle('cursor-not-allowed', isMoto);
+        }
+
+        if (finitionInput) {
+            finitionInput.disabled = isMoto;
+            finitionInput.classList.toggle('opacity-50', isMoto);
+            finitionInput.classList.toggle('cursor-not-allowed', isMoto);
+        }
+
+        // Masquer/afficher l'option Hybride dans le carburant selon le type
+        const carburantSelect = document.getElementById('carburant_select');
+        if (carburantSelect) {
+            const hybridOption = Array.from(carburantSelect.options).find(opt => opt.value === 'Hybride');
+            if (hybridOption) {
+                hybridOption.hidden = isMoto;
+                // Si Hybride était sélectionné et on passe à Moto, réinitialiser
+                if (isMoto && carburantSelect.value === 'Hybride') {
+                    carburantSelect.value = '';
+                }
+            }
+        }
+    }
     
     if (!vehicleTypeInput.value) {
         // Pas de valeur sauvegardée, pré-sélectionner "Voiture"
         vehicleTypeInput.value = 'Voiture';
-        vehicleButtons.forEach(btn => {
-            if (btn.getAttribute('data-type') === 'Voiture') {
-                btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-200');
-                btn.classList.add('bg-gray-800', 'text-white', 'border-gray-800');
-            } else {
-                btn.classList.remove('bg-gray-800', 'text-white', 'border-gray-800');
-                btn.classList.add('bg-white', 'text-gray-700', 'border-gray-200');
-            }
-        });
     }
+
+    setActiveVehicleButton(vehicleTypeInput.value);
+    applyVehicleTypeUI(vehicleTypeInput.value);
 
     // Gestion des clics sur les boutons de type de véhicule
     vehicleButtons.forEach(btn => {
@@ -395,13 +508,8 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const type = btn.getAttribute('data-type');
             vehicleTypeInput.value = type;
-            
-            vehicleButtons.forEach(b => {
-                b.classList.remove('bg-gray-800', 'text-white', 'border-gray-800');
-                b.classList.add('bg-white', 'text-gray-700', 'border-gray-200');
-            });
-            btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-200');
-            btn.classList.add('bg-gray-800', 'text-white', 'border-gray-800');
+            setActiveVehicleButton(type);
+            applyVehicleTypeUI(type);
         });
     });
 
@@ -528,24 +636,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
-    const typeInputCreate = document.getElementById('vehicle_type_input');
-    const typeButtonsCreate = document.querySelectorAll('.vehicle-type-btn-create');
-
-    typeButtonsCreate.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const type = btn.getAttribute('data-type');
-            typeInputCreate.value = type;
-
-            typeButtonsCreate.forEach(b => {
-                b.classList.remove('bg-gray-800', 'text-white', 'border-gray-800');
-                b.classList.add('bg-white', 'text-gray-700', 'border-gray-200');
-            });
-
-            btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-200');
-            btn.classList.add('bg-gray-800', 'text-white', 'border-gray-800');
-        });
-    });
-
     // Dynamic models based on brand (removed - now using text inputs)
     
     const imagesContainer = document.getElementById('images_container');

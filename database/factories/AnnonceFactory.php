@@ -29,7 +29,7 @@ class AnnonceFactory extends Factory
             'carburant' => fake()->randomElement(['Essence', 'Diesel', 'Hybride', 'Électrique']),
             'boite_vitesse' => fake()->randomElement(['Manuelle', 'Automatique']),
             'ville' => fake()->randomElement(['Alger', 'Oran', 'Constantine', 'Tlemcen']),
-            'vehicle_type' => fake()->randomElement(['Voiture', 'Utilitaire', 'Moto']),
+            'vehicle_type' => fake()->randomElement(['Voiture', 'Moto']),
             'image_path' => null,
             'image_path_2' => null,
             'image_path_3' => null,

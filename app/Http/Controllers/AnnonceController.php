@@ -17,11 +17,13 @@ class AnnonceController extends Controller
 {
     public function index(Request $request)
     {
+        $allowedVehicleTypes = ['Voiture', 'Moto'];
         $marques = CarBrand::orderBy('name')->get();
         $modeles = CarModel::orderBy('name')->get();
 
         $baseQuery = Annonce::query()
             ->where('is_active', true)
+            ->whereIn('vehicle_type', $allowedVehicleTypes)
             ->latest();
 
         $filteredQuery = (clone $baseQuery)->filter($request->only([
@@ -41,6 +43,7 @@ class AnnonceController extends Controller
 
         $topAnnonces = Annonce::with(['marque', 'modele'])
             ->where('is_active', true)
+            ->whereIn('vehicle_type', $allowedVehicleTypes)
             ->orderBy('views', 'desc')
             ->take(3)
             ->get();
@@ -51,6 +54,7 @@ class AnnonceController extends Controller
             )
             ->where('is_active', true)
             ->whereNotNull('marque')
+            ->whereIn('vehicle_type', $allowedVehicleTypes)
             ->groupBy('marque')
             ->orderByDesc('annonces_count')
             ->take(8)
@@ -62,6 +66,7 @@ class AnnonceController extends Controller
             )
             ->where('is_active', true)
             ->whereNotNull('modele')
+            ->whereIn('vehicle_type', $allowedVehicleTypes)
             ->groupBy('modele')
             ->orderByDesc('annonces_count')
             ->take(8)
@@ -165,7 +170,7 @@ class AnnonceController extends Controller
             'carburant'     => 'required|string|max:50',
             'boite_vitesse' => 'required|string|max:50',
             'ville'         => 'nullable|string|max:100',
-            'vehicle_type'  => 'required|string|max:50',
+            'vehicle_type'  => 'required|in:Voiture,Moto',
 
             'show_phone'    => ['nullable', 'boolean'],
             'couleur'       => ['nullable', 'string', 'max:50'],
@@ -174,6 +179,7 @@ class AnnonceController extends Controller
 
             // ✅ Véhicule neuf ? oui/non
             'condition'     => ['required', 'in:oui,non'],
+            'seller_type'   => ['nullable', 'in:particulier,pro'],
         ], [
             'marque.required' => 'La marque est obligatoire.',
             'titre.required' => 'Le titre est obligatoire.',
@@ -186,6 +192,7 @@ class AnnonceController extends Controller
 
         $data['show_phone'] = $request->boolean('show_phone');
         $data['condition']  = $request->input('condition', 'non');
+        $data['seller_type'] = $request->input('seller_type', 'particulier');
 
         // Upload rapide (sans traitement) puis traitement async après réponse
         $imagePaths = [
@@ -306,6 +313,7 @@ class AnnonceController extends Controller
 
     public function search(Request $request)
     {
+        $allowedVehicleTypes = ['Voiture', 'Moto'];
         // Enregistrer l'historique de recherche si l'utilisateur est connecté
         if (auth()->check() && $request->hasAny(['marque', 'modele', 'price_max', 'annee_min', 'annee_max', 'km_min', 'km_max', 'carburant', 'wilaya', 'vehicle_type'])) {
             \App\Models\SearchHistory::create([
@@ -323,10 +331,12 @@ class AnnonceController extends Controller
             ]);
         }
 
-        $query = Annonce::query()->where('is_active', true);
+        $query = Annonce::query()
+            ->where('is_active', true)
+            ->whereIn('vehicle_type', $allowedVehicleTypes);
 
         $type = $request->input('vehicle_type');
-        if ($type && $type !== 'any') {
+        if ($type && $type !== 'any' && in_array($type, $allowedVehicleTypes, true)) {
             $query->where('vehicle_type', $type);
         }
 
@@ -449,7 +459,7 @@ class AnnonceController extends Controller
             'carburant'     => 'required|string|max:50',
             'boite_vitesse' => 'required|string|max:50',
             'ville'         => 'nullable|string|max:100',
-            'vehicle_type'  => 'nullable|string|max:50',
+            'vehicle_type'  => 'nullable|in:Voiture,Moto',
 
             'show_phone'    => 'nullable|boolean',
             'couleur'       => ['nullable', 'string', 'max:50'],
@@ -458,6 +468,7 @@ class AnnonceController extends Controller
 
             // ✅ Véhicule neuf ? oui/non
             'condition'     => ['required', 'in:oui,non'],
+            'seller_type'   => ['nullable', 'in:particulier,pro'],
 
             // ✅ suppression images existantes : delete_images[slot] = 0/1
             'delete_images'   => 'nullable|array',
