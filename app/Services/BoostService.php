@@ -119,8 +119,14 @@ class BoostService
 
         $features = $this->subscriptionService->getFeatures($user);
         
-        // Default boost duration if not specified
-        $boostDurationDays = $features['boost_duration_days'] ?? 7;
+        // Force conversion to int (even if stored as string in JSON)
+        $boostDurationDays = (int) ($features['boost_duration_days'] ?? 7);
+        
+        \Log::info('📅 Création boost', [
+            'boost_duration_days_raw' => $features['boost_duration_days'] ?? 'not set',
+            'boost_duration_days_converted' => $boostDurationDays,
+            'type' => gettype($boostDurationDays),
+        ]);
 
         return Boost::create([
             'annonce_id' => $annonce->id,
