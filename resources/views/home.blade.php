@@ -14,38 +14,44 @@
             
             {{-- LEFT : Search card --}}
             <div class="w-full md:max-w-md">
-                                <form method="GET" action="{{ route('annonces.search') }}" class="bg-white rounded-3xl shadow-lg p-5 md:p-6 space-y-4">    
-                    {{-- Vehicle type selector --}}
-                    <div class="flex items-center gap-2 text-xs md:text-sm">
-                        {{-- Hidden field actually used by backend - default to empty (no filter) --}}
-                        <input type="hidden" name="vehicle_type" id="vehicle_type_input" value="{{ request('vehicle_type', '') }}">
-                        {{-- Text search OR brand/model --}}
-                        <div class="space-y-2 w-full">
-                            <label class="block text-xs font-semibold mb-1">Recherche texte</label>
-                            <input type="text"
-                                   name="q"
-                                   value="{{ request('q') }}"
-                                   placeholder="Marque, modèle, mot-clé..."
-                                   class="w-full border rounded-lg p-2 text-xs md:text-sm">
-                        </div>
+                                <form method="GET" action="{{ route('annonces.search') }}" class="bg-white rounded-3xl shadow-lg p-5 md:p-6 space-y-4">
+                                    {{-- Hidden field actually used by backend - default to empty (no filter) --}}
+                                    <input type="hidden" name="vehicle_type" id="vehicle_type_input" value="{{ request('vehicle_type', '') }}">
 
-                        <p class="text-center text-[11px] uppercase tracking-wide text-gray-400 w-full">Ou</p>
+                                    {{-- Vehicle type first, then text search --}}
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="block text-xs font-semibold mb-1">Type de véhicule</label>
+                                            <div class="flex items-center gap-2 text-xs md:text-sm">
+                                                {{-- Buttons act as UI helpers that update the hidden field --}}
+                                                <button type="button"
+                                                        data-type="Voiture"
+                                                        class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
+                                                            {{ request('vehicle_type') === 'Voiture' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
+                                                    🚗 Voiture
+                                                </button>
+                                                <button type="button"
+                                                        data-type="Moto"
+                                                        class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
+                                                            {{ request('vehicle_type') === 'Moto' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
+                                                    🏍 Moto
+                                                </button>
+                                            </div>
+                                        </div>
 
-                        
-                        {{-- Buttons are only UI helpers that update the hidden field --}}
-                           <button type="button"
-                                data-type="Voiture"
-                                class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                                    {{ request('vehicle_type') === 'Voiture' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
-                            🚗 Voiture
-                        </button>
-                        <button type="button"
-                                data-type="Moto"
-                                class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
-                                    {{ request('vehicle_type') === 'Moto' ? 'bg-gray-500 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200' }}">
-                            🏍 Moto
-                        </button>
-                    </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold mb-1">Recherche texte</label>
+                                            <input type="text"
+                                                   name="home_q"
+                                                   value="{{ request('home_q') }}"
+                                                   placeholder="Marque, modèle, mot-clé..."
+                                                   class="w-full border rounded-lg p-2 text-xs md:text-sm">
+                                        </div>
+
+                                        <div class="flex items-center justify-center">
+                                            <span class="px-2 py-1 text-[10px] uppercase tracking-wide text-gray-500 bg-gray-100 rounded-full">ou</span>
+                                        </div>
+                                    </div>
 
                     {{-- Brand / Model --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -67,13 +73,12 @@
                                 <div x-show="open" @click.away="open = false"
                                      class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
                                      style="max-height: 280px;">
-                                    
                                     {{-- Barre de recherche --}}
                                     <div class="sticky top-0 p-2 border-b bg-white">
                                         <input type="text" x-model="search" placeholder="Rechercher une marque..."
                                                class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
                                     </div>
-                                    
+
                                     {{-- Liste des marques (scroll après 8 items) --}}
                                     <div class="overflow-y-auto flex-1" style="max-height: 240px;">
                                         <button type="button"
@@ -88,32 +93,23 @@
                                                 <span x-text="brand"></span>
                                             </button>
                                         </template>
-                                <input type="text" 
-                                       name="modele" 
-                                       id="home_modele_input"
-                                       value="{{ request('modele') }}"
-                                       data-placeholder-voiture="Peu importe"
-                                       data-placeholder-moto="ex : MT-07, CB500F"
-                                       placeholder="Peu importe"
-                                       list="home_model_options"
-                                       class="w-full border rounded-lg p-2 text-xs md:text-sm">
-                                <datalist id="home_model_options"></datalist>
-                                   placeholder="ex : Yamaha, Honda"
-                                   disabled>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-semibold mb-1">Modèle</label>
                             <input type="text"
-                                name="modele"
-                                id="home_modele_input"
-                                value="{{ request('modele') }}"
-                                list="home_model_options"
-                                autocomplete="off"
-                                data-placeholder-voiture="Peu importe"
-                                data-placeholder-moto="ex : MT-07, CB500F"
-                                placeholder="Peu importe"
-                                class="w-full border rounded-lg p-2 text-xs md:text-sm">
+                                   name="modele"
+                                   id="home_modele_input"
+                                   value="{{ request('modele') }}"
+                                   list="home_model_options"
+                                   autocomplete="off"
+                                   data-placeholder-voiture="Peu importe"
+                                   data-placeholder-moto="ex : MT-07, CB500F"
+                                   placeholder="Peu importe"
+                                   class="w-full border rounded-lg p-2 text-xs md:text-sm">
                             <datalist id="home_model_options"></datalist>
                         </div>
                     </div>
@@ -127,14 +123,14 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold mb-1">Carburant</label>
-<select name="carburant"
-        class="w-full border rounded-lg p-2 text-xs md:text-sm">
-    <option value="any">Peu importe</option>
-    <option value="Essence"  {{ request('carburant') === 'Essence' ? 'selected' : '' }}>Essence</option>
-    <option value="Diesel"   {{ request('carburant') === 'Diesel' ? 'selected' : '' }}>Diesel</option>
-    <option value="Hybride"  {{ request('carburant') === 'Hybride' ? 'selected' : '' }}>Hybride</option>
-    <option value="Électrique" {{ request('carburant') === 'Électrique' ? 'selected' : '' }}>Électrique</option>
-</select>
+                            <select name="carburant"
+                                    class="w-full border rounded-lg p-2 text-xs md:text-sm">
+                                <option value="any">Peu importe</option>
+                                <option value="Essence"  {{ request('carburant') === 'Essence' ? 'selected' : '' }}>Essence</option>
+                                <option value="Diesel"   {{ request('carburant') === 'Diesel' ? 'selected' : '' }}>Diesel</option>
+                                <option value="Hybride"  {{ request('carburant') === 'Hybride' ? 'selected' : '' }}>Hybride</option>
+                                <option value="Électrique" {{ request('carburant') === 'Électrique' ? 'selected' : '' }}>Électrique</option>
+                            </select>
                         </div>
                     </div>
 

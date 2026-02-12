@@ -396,10 +396,15 @@ class AnnonceController extends Controller
             $query->where('prix', '<=', (int) $priceMax);
         }
 
-        if ($q = $request->input('q')) {
-            $query->where(function ($qb) use ($q) {
-                $qb->where('titre', 'like', '%' . $q . '%')
-                   ->orWhere('marque', 'like', '%' . $q . '%');
+        $keyword = trim((string) $request->input('q', ''));
+        if ($keyword === '') {
+            $keyword = trim((string) $request->input('home_q', ''));
+        }
+
+        if ($keyword !== '') {
+            $query->where(function ($qb) use ($keyword) {
+                $qb->where('titre', 'like', '%' . $keyword . '%')
+                   ->orWhere('marque', 'like', '%' . $keyword . '%');
             });
         }
 
