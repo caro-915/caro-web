@@ -19,6 +19,20 @@
                     <div class="flex items-center gap-2 text-xs md:text-sm">
                         {{-- Hidden field actually used by backend - default to empty (no filter) --}}
                         <input type="hidden" name="vehicle_type" id="vehicle_type_input" value="{{ request('vehicle_type', '') }}">
+                        {{-- Text search OR brand/model --}}
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold mb-1">Recherche texte</label>
+                            <input type="text"
+                                   name="q"
+                                   value="{{ request('q') }}"
+                                   placeholder="Marque, modèle, mot-clé..."
+                                   class="w-full border rounded-lg p-2 text-xs md:text-sm">
+                        </div>
+
+                        <div class="flex items-center justify-center text-[11px] text-gray-400 font-semibold">
+                            <span class="px-2 py-1 bg-gray-100 rounded-full">ou</span>
+                        </div>
+
                         
                         {{-- Buttons are only UI helpers that update the hidden field --}}
                            <button type="button"
@@ -76,17 +90,16 @@
                                                 <span x-text="brand"></span>
                                             </button>
                                         </template>
-                                        <div x-show="filteredBrands().length === 0" class="px-3 py-2 text-gray-500 text-xs text-center">
-                                            Aucune marque trouvée
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <input type="text" name="marque" id="home_marque_text"
-                                   data-placeholder-voiture="Peu importe"
-                                   data-placeholder-moto="ex : Yamaha, Honda"
-                                   class="w-full border rounded-lg p-2 text-xs md:text-sm hidden"
+                                <input type="text" 
+                                       name="modele" 
+                                       id="home_modele_input"
+                                       value="{{ request('modele') }}"
+                                       data-placeholder-voiture="Peu importe"
+                                       data-placeholder-moto="ex : MT-07, CB500F"
+                                       placeholder="Peu importe"
+                                       list="home_model_options"
+                                       class="w-full border rounded-lg p-2 text-xs md:text-sm">
+                                <datalist id="home_model_options"></datalist>
                                    placeholder="ex : Yamaha, Honda"
                                    disabled>
                         </div>

@@ -216,6 +216,7 @@ Route::middleware(['auth', 'admin'])
         // Subscriptions
         Route::get('/subscriptions', [AdminSubscriptionController::class, 'index'])->name('subscriptions.index');
         Route::get('/subscriptions/{subscription}', [AdminSubscriptionController::class, 'show'])->name('subscriptions.show');
+        Route::get('/subscriptions/{subscription}/proof', [AdminSubscriptionController::class, 'proof'])->name('subscriptions.proof');
         Route::patch('/subscriptions/{subscription}/approve', [AdminSubscriptionController::class, 'approve'])->name('subscriptions.approve');
         Route::patch('/subscriptions/{subscription}/reject', [AdminSubscriptionController::class, 'reject'])->name('subscriptions.reject');
 
