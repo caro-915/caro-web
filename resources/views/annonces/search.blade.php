@@ -65,7 +65,7 @@
     {{-- Main layout: filters / results / side panel --}}
     <div class="grid gap-6 lg:grid-cols-[260px,minmax(0,1fr),260px]">
         {{-- LEFT COLUMN – Filters --}}
-        <aside class="bg-white rounded-2xl shadow p-4 space-y-4 order-1">
+        <aside class="bg-white rounded-2xl shadow p-4 space-y-4">
             <h2 class="text-sm font-semibold mb-1">Filtres</h2>
 
             {{-- Filters form --}}
@@ -245,7 +245,7 @@
         </aside>
 
         {{-- CENTER COLUMN – Results list --}}
-        <main class="space-y-3 order-2 lg:order-none">
+        <main class="space-y-3">
             @if ($annonces->count())
                 @foreach ($annonces as $annonce)
                     @php
@@ -407,7 +407,7 @@
         </main>
 
         {{-- RIGHT COLUMN – Side panel (ads / info placeholders) --}}
-        <aside class="space-y-4 order-3 lg:order-none lg:ml-0">
+        <aside class="space-y-4">
             <div class="bg-white rounded-2xl shadow p-4">
                 <p class="text-xs uppercase font-semibold text-gray-400 mb-1">Publicité</p>
                 <div class="bg-gradient-to-br from-gray-800 to-purple-600 rounded-xl p-4 text-white text-sm">
