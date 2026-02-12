@@ -339,7 +339,7 @@
 
                 {{-- Info bloc / conseils --}}
                 <div class="bg-white rounded-2xl shadow p-4 text-xs text-gray-600 space-y-2">
-                    <p class="font-semibold text-gray-800">Conseils Caro</p>
+                    <p class="font-semibold text-gray-800">Conseils ElSayara</p>
                     <ul class="list-disc list-inside space-y-1">
                         <li>Vérifiez l’historique du véhicule.</li>
                         <li>Essayez la voiture sur route.</li>

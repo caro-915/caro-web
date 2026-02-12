@@ -177,11 +177,59 @@
 
             <div>
                 <label class="block text-xs font-semibold mb-1">Modèle</label>
-                <input type="text" name="modele" id="modele_input" value="{{ old('modele') }}"
+                
+                <div id="model_dropdown_wrapper" x-data="modelDropdownCreate()" class="relative">
+                    <button type="button" 
+                            @click="open = !open"
+                            :disabled="!availableModels.length"
+                            :class="{ 'opacity-50 cursor-not-allowed': !availableModels.length }"
+                            class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm text-left bg-white flex justify-between items-center">
+                        <span x-text="selected || (availableModels.length ? 'Sélectionner un modèle' : 'Choisissez une marque d\'abord')"></span>
+                        <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                    </button>
+
+                    <input type="hidden" name="modele" id="modele_hidden_input" :value="selected">
+
+                    {{-- Dropdown menu --}}
+                    <div x-show="open" @click.away="open = false"
+                         class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
+                         style="max-height: 280px;">
+                        
+                        {{-- Barre de recherche --}}
+                        <div class="sticky top-0 p-2 border-b bg-white">
+                            <input type="text" x-model="search" placeholder="Rechercher un modèle..."
+                                   class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
+                        </div>
+                        
+                        {{-- Liste des modèles --}}
+                        <div class="overflow-y-auto flex-1" style="max-height: 240px;">
+                            <button type="button"
+                                    @click="selectModel('')"
+                                    class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b font-semibold">
+                                <span>Peu importe</span>
+                            </button>
+                            <template x-for="model in filteredModels()" :key="model">
+                                <button type="button"
+                                        @click="selectModel(model)"
+                                        class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
+                                    <span x-text="model"></span>
+                                </button>
+                            </template>
+                            <div x-show="filteredModels().length === 0" class="px-3 py-2 text-gray-500 text-xs text-center">
+                                Aucun modèle trouvé
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="text" name="modele" id="modele_text_input" value="{{ old('modele') }}"
                        data-placeholder-voiture="ex : Clio, Megane"
                        data-placeholder-moto="ex : MT-07, CB500F"
-                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm"
-                       placeholder="ex : Clio, Megane">
+                       class="w-full border rounded-lg px-3 py-2 text-xs md:text-sm hidden"
+                       placeholder="ex : MT-07, CB500F"
+                       disabled>
             </div>
 
             <div x-data="wilayaDropdownCreate()" class="relative">
@@ -329,7 +377,7 @@
                 <span>Afficher mon numéro de téléphone sur l’annonce</span>
             </label>
             <p class="mt-1 text-[11px] text-gray-400">
-                Si vous décochez, les acheteurs pourront uniquement vous envoyer des messages via Caro.
+                Si vous décochez, les acheteurs pourront uniquement vous envoyer des messages via ElSayara.
             </p>
         </div>
 
@@ -416,11 +464,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const vehicleTypeInput = document.getElementById('vehicle_type_input');
     const vehicleButtons = document.querySelectorAll('.vehicle-type-btn-create');
     const brandDropdownWrapper = document.getElementById('brand_dropdown_wrapper');
+    const modelDropdownWrapper = document.getElementById('model_dropdown_wrapper');
     const marqueHiddenInput = document.getElementById('marque_hidden_input');
     const marqueHiddenSelect = document.getElementById('marque_hidden_select');
     const marqueTextInput = document.getElementById('marque_text_input');
+    const modeleTextInput = document.getElementById('modele_text_input');
     const titreInput = document.getElementById('titre_input');
-    const modeleInput = document.getElementById('modele_input');
 
     function setActiveVehicleButton(type) {
         vehicleButtons.forEach(btn => {
@@ -437,8 +486,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function applyVehicleTypeUI(type) {
         const isMoto = type === 'Moto';
 
+        // Pour les motos, on cache les dropdowns marque/modèle et affiche les champs texte
         if (brandDropdownWrapper) {
             brandDropdownWrapper.classList.toggle('hidden', isMoto);
+        }
+
+        if (modelDropdownWrapper) {
+            modelDropdownWrapper.classList.toggle('hidden', isMoto);
         }
 
         if (marqueTextInput) {
@@ -452,8 +506,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        if (modeleTextInput) {
+            modeleTextInput.classList.toggle('hidden', !isMoto);
+            modeleTextInput.disabled = !isMoto;
+            const placeholder = isMoto
+                ? modeleTextInput.dataset.placeholderMoto
+                : modeleTextInput.dataset.placeholderVoiture;
+            if (placeholder) {
+                modeleTextInput.placeholder = placeholder;
+            }
+        }
+
         if (marqueHiddenInput) {
             marqueHiddenInput.disabled = isMoto;
+            if (isMoto) {
+                // Réinitialiser les dropdowns Alpine
+                const brandDropdown = Alpine.$data(brandDropdownWrapper);
+                if (brandDropdown) {
+                    brandDropdown.selected = '';
+                }
+                
+                const modelDropdown = Alpine.$data(modelDropdownWrapper);
+                if (modelDropdown) {
+                    modelDropdown.selected = '';
+                    modelDropdown.availableModels = [];
+                }
+            }
         }
 
         if (marqueHiddenSelect) {
@@ -466,15 +544,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 : titreInput.dataset.placeholderVoiture;
             if (placeholder) {
                 titreInput.placeholder = placeholder;
-            }
-        }
-
-        if (modeleInput) {
-            const placeholder = isMoto
-                ? modeleInput.dataset.placeholderMoto
-                : modeleInput.dataset.placeholderVoiture;
-            if (placeholder) {
-                modeleInput.placeholder = placeholder;
             }
         }
 
@@ -736,6 +805,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     imagesContainer.addEventListener('change', updatePreview);
 
+    // Alpine.js: Données partagées pour marque/modèle
+    const brandModelsData = @json($brandModelsMap);
+
     // Brand Dropdown for Create Annonce (Alpine.js)
     function brandDropdownCreate() {
         return {
@@ -755,6 +827,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.search = value;
                 this.open = false;
                 document.querySelector('select[name="marque"]').value = value;
+                
+                // Mettre à jour les modèles disponibles
+                const modelDropdown = Alpine.$data(document.getElementById('model_dropdown_wrapper'));
+                if (modelDropdown) {
+                    modelDropdown.updateAvailableModels(value);
+                    modelDropdown.selected = '';
+                }
+            }
+        }
+    }
+
+    // Model Dropdown for Create Annonce (Alpine.js)
+    function modelDropdownCreate() {
+        return {
+            open: false,
+            search: '',
+            selected: '{{ old("modele") }}',
+            availableModels: [],
+            init() {
+                const selectedBrand = document.querySelector('input[name="marque"]')?.value || '{{ old("marque") }}';
+                if (selectedBrand) {
+                    this.updateAvailableModels(selectedBrand);
+                }
+            },
+            updateAvailableModels(brand) {
+                if (brand && brandModelsData[brand]) {
+                    this.availableModels = brandModelsData[brand];
+                } else {
+                    this.availableModels = [];
+                    this.selected = '';
+                }
+            },
+            filteredModels() {
+                return this.search
+                    ? this.availableModels.filter(m => m.toLowerCase().includes(this.search.toLowerCase()))
+                    : this.availableModels;
+            },
+            selectModel(value) {
+                this.selected = value;
+                this.open = false;
             }
         }
     }

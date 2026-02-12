@@ -25,7 +25,7 @@
                 <div class="mb-5">
                     <h1 class="text-2xl md:text-3xl font-bold mb-1">Créer un compte</h1>
                     <p class="text-xs md:text-sm text-gray-500">
-                        En créant votre compte Caro, vous pourrez déposer et gérer vos annonces facilement.
+                        En créant votre compte ElSayara, vous pourrez déposer et gérer vos annonces facilement.
                     </p>
                 </div>
 
@@ -107,7 +107,7 @@
                         <input type="checkbox" required
                                class="mt-0.5 rounded border-gray-300 text-gray-800 focus:ring-gray-800">
                         <span>
-                            J'accepte les conditions d'utilisation de Caro.
+                            J'accepte les conditions d'utilisation de ElSayara.
                         </span>
                     </div>
 
@@ -136,7 +136,7 @@
     <div class="w-full rounded-3xl overflow-hidden shadow-lg">
         <img
             src="{{ asset('images/auth-hero.png') }}"
-            alt="Caro"
+            alt="ElSayara"
             class="w-full h-80 md:h-[520px] object-cover"
         >
     </div>

@@ -26,7 +26,7 @@
                 <div class="mb-5">
                     <h1 class="text-2xl md:text-3xl font-bold mb-1">Bienvenue</h1>
                     <p class="text-xs md:text-sm text-gray-500">
-                        Inscrivez-vous ou connectez-vous pour profiter de toutes les fonctionnalités de Caro.
+                        Inscrivez-vous ou connectez-vous pour profiter de toutes les fonctionnalités de ElSayara.
                     </p>
                 </div>
 
@@ -128,7 +128,7 @@
     <div class="w-full rounded-3xl overflow-hidden shadow-lg">
         <img
             src="{{ asset('images/auth-hero.png') }}"
-            alt="Caro"
+            alt="ElSayara"
             class="w-full h-80 md:h-[520px] object-cover"
         >
     </div>

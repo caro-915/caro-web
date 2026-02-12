@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Caro – Trouvez votre voiture d'occasion</title>
+    <title>ElSayara – Trouvez votre voiture d'occasion</title>
 
     {{-- Tailwind + JS compilés par Vite (Breeze) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -17,13 +17,13 @@
 </head>
 <body class="bg-gray-50 text-slate-900 overflow-x-hidden">
 
-    {{-- HEADER Caro --}}
+    {{-- HEADER ElSayara --}}
     <header class="bg-white shadow-sm fixed w-full top-0 left-0 right-0 z-50">
         <div class="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 flex items-center justify-between h-14 sm:h-16">
 
             {{-- Logo --}}
             <a href="{{ route('home') }}" class="flex items-center flex-shrink-0">
-                <img src="{{ asset('images/logo.png') }}" alt="Caro" class="h-10 sm:h-14 w-auto">
+                <span class="text-2xl sm:text-3xl font-black bg-gradient-to-r from-gray-800 via-gray-900 to-slate-800 bg-clip-text text-transparent tracking-wider drop-shadow-sm">ELSAYARA</span>
             </a>
 
             {{-- Nav --}}
@@ -204,9 +204,9 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 {{-- About section --}}
                 <div>
-                    <h3 class="font-semibold text-white mb-3">À propos de Caro</h3>
+                    <h3 class="font-semibold text-white mb-3">À propos de ElSayara</h3>
                     <p class="text-[11px] md:text-xs leading-relaxed">
-                        Caro est une plateforme leader pour l'achat et la vente de véhicules d'occasion en Algérie. 
+                        ElSayara est une plateforme leader pour l'achat et la vente de véhicules d'occasion en Algérie. 
                         Découvrez des milliers d'annonces vérifiées.
                     </p>
                 </div>
@@ -226,7 +226,7 @@
                 <div>
                     <h3 class="font-semibold text-white mb-3">Nous contacter</h3>
                     <ul class="space-y-1 text-[11px] md:text-xs">
-                        <li>Email: <a href="mailto:contact@caro.dz" class="hover:text-white transition">contact@caro.dz</a></li>
+                        <li>Email: <a href="mailto:contact@elsayara.dz" class="hover:text-white transition">contact@elsayara.dz</a></li>
                         <li>Tél: <a href="tel:+213XXX" class="hover:text-white transition">+213 XXX XXX XXX</a></li>
                         <li>Algérie</li>
                     </ul>
@@ -236,7 +236,7 @@
             {{-- Divider --}}
             <div class="border-t border-gray-700 pt-6">
                 <p class="text-center text-[10px] md:text-xs text-gray-400">
-                    © {{ date('Y') }} Caro. Tous droits réservés. | Plateforme de vente de véhicules d'occasion en Algérie
+                    © {{ date('Y') }} ElSayara. Tous droits réservés. | Plateforme de vente de véhicules d'occasion en Algérie
                 </p>
             </div>
         </div>

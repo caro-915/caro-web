@@ -100,17 +100,47 @@
 
                         <div>
                             <label class="block text-xs font-semibold mb-1">Modèle</label>
-                            <input type="text"
-                                   name="modele"
-                                   id="home_modele_input"
-                                   value="{{ request('modele') }}"
-                                   list="home_model_options"
-                                   autocomplete="off"
-                                   data-placeholder-voiture="Peu importe"
-                                   data-placeholder-moto="ex : MT-07, CB500F"
-                                   placeholder="Peu importe"
-                                   class="w-full border rounded-lg p-2 text-xs md:text-sm">
-                            <datalist id="home_model_options"></datalist>
+                            <div id="home_model_dropdown" x-data="modelDropdownHome()" class="relative">
+                                <button type="button" 
+                                        @click="open = !open"
+                                        :disabled="!availableModels.length"
+                                        :class="{ 'opacity-50 cursor-not-allowed': !availableModels.length }"
+                                        class="w-full border rounded-lg p-2 text-xs md:text-sm text-left bg-white flex justify-between items-center">
+                                    <span x-text="selected || (availableModels.length ? 'Peu importe' : 'Choisissez une marque d\'abord')"></span>
+                                    <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                    </svg>
+                                </button>
+
+                                <input type="hidden" name="modele" id="home_modele_hidden" :value="selected">
+
+                                {{-- Dropdown menu --}}
+                                <div x-show="open" @click.away="open = false"
+                                     class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
+                                     style="max-height: 280px;">
+                                    {{-- Barre de recherche --}}
+                                    <div class="sticky top-0 p-2 border-b bg-white">
+                                        <input type="text" x-model="search" placeholder="Rechercher un modèle..."
+                                               class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                    </div>
+
+                                    {{-- Liste des modèles --}}
+                                    <div class="overflow-y-auto flex-1" style="max-height: 240px;">
+                                        <button type="button"
+                                                @click="selectModel('')"
+                                                class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b">
+                                            <span>Peu importe</span>
+                                        </button>
+                                        <template x-for="model in filteredModels()" :key="model">
+                                            <button type="button"
+                                                    @click="selectModel(model)"
+                                                    class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
+                                                <span x-text="model"></span>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -336,7 +366,7 @@
     @if(!empty($brandModelMap))
         <section class="mb-12">
             <h2 class="text-xl font-semibold mb-2">Catalogue marques & modèles</h2>
-            <p class="text-xs md:text-sm text-gray-500 mb-4">Choisissez une marque pour voir tous les modèles associés déjà intégrés sur Caro.</p>
+            <p class="text-xs md:text-sm text-gray-500 mb-4">Choisissez une marque pour voir tous les modèles associés déjà intégrés sur ElSayara.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 @foreach($brandModelMap as $entry)
                     <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" @if(request('marque') === $entry['brand']) open @endif>
@@ -360,10 +390,10 @@
 
 
     <section id="about" class="mt-16 bg-white rounded-2xl shadow p-6 md:p-8">
-    <h2 class="text-2xl font-bold mb-3">À propos de Caro</h2>
+    <h2 class="text-2xl font-bold mb-3">À propos de ElSayara</h2>
 
     <p class="text-sm md:text-base text-gray-600 leading-relaxed">
-        Caro est une plateforme algérienne dédiée à la vente et à l'achat de véhicules
+        ElSayara est une plateforme algérienne dédiée à la vente et à l'achat de véhicules
         entre particuliers et professionnels.
         Notre objectif est de proposer une expérience simple, fiable et rapide pour
         trouver le véhicule idéal.
@@ -379,7 +409,7 @@
     </p>
 
     <ul class="text-sm md:text-base text-gray-700 space-y-2">
-        <li>📧 Email : <strong>contact@caro.dz</strong></li>
+        <li>📧 Email : <strong>contact@elsayara.dz</strong></li>
         <li>📞 Téléphone : <strong>05 00 00 00 00</strong></li>
     </ul>
 </section>
@@ -394,29 +424,7 @@
         const typeButtons = document.querySelectorAll('.vehicle-type-btn');
         const homeBrandDropdown = document.getElementById('home_brand_dropdown');
         const homeMarqueHidden = document.getElementById('home_marque_hidden');
-        const homeMarqueText = document.getElementById('home_marque_text');
-        const homeModeleInput = document.getElementById('home_modele_input');
-        const homeModelDatalist = document.getElementById('home_model_options');
-
-        const brandModelData = @json($brandModelMap);
-        const brandModelLookup = Array.isArray(brandModelData)
-            ? Object.fromEntries(brandModelData.map(entry => [entry.brand, entry.models]))
-            : {};
-
-        function updateHomeModelOptions(brand) {
-            if (!homeModelDatalist) {
-                return;
-            }
-
-            homeModelDatalist.innerHTML = '';
-            const models = brand ? (brandModelLookup[brand] || []) : [];
-
-            models.forEach(model => {
-                const option = document.createElement('option');
-                option.value = model;
-                homeModelDatalist.appendChild(option);
-            });
-        }
+        const homeModelDropdown = document.getElementById('home_model_dropdown');
 
         function setActiveHomeTypeButton(type) {
             typeButtons.forEach(btn => {
@@ -433,44 +441,29 @@
         function applyHomeVehicleTypeUI(type) {
             const isMoto = type === 'Moto';
 
+            // Pour les motos, on cache les dropdowns marque/modèle
+            // La recherche se fait via le champ texte libre "home_q"
             if (homeBrandDropdown) {
                 homeBrandDropdown.classList.toggle('hidden', isMoto);
             }
 
-            if (homeMarqueHidden) {
-                homeMarqueHidden.disabled = isMoto;
-                if (isMoto) {
-                    homeMarqueHidden.value = '';
-                }
+            if (homeModelDropdown) {
+                homeModelDropdown.classList.toggle('hidden', isMoto);
             }
 
-            if (homeMarqueText) {
-                homeMarqueText.classList.toggle('hidden', !isMoto);
-                homeMarqueText.disabled = !isMoto;
-                const placeholder = isMoto
-                    ? homeMarqueText.dataset.placeholderMoto
-                    : homeMarqueText.dataset.placeholderVoiture;
-                if (placeholder) {
-                    homeMarqueText.placeholder = placeholder;
+            if (isMoto && homeMarqueHidden) {
+                homeMarqueHidden.value = '';
+                // Réinitialiser les dropdowns Alpine
+                const brandDropdownData = Alpine.$data(homeBrandDropdown);
+                if (brandDropdownData) {
+                    brandDropdownData.selected = '';
                 }
-            }
-
-            if (homeModeleInput) {
-                const placeholder = isMoto
-                    ? homeModeleInput.dataset.placeholderMoto
-                    : homeModeleInput.dataset.placeholderVoiture;
-                if (placeholder) {
-                    homeModeleInput.placeholder = placeholder;
+                
+                const modelDropdownData = Alpine.$data(homeModelDropdown);
+                if (modelDropdownData) {
+                    modelDropdownData.selected = '';
+                    modelDropdownData.availableModels = [];
                 }
-                if (isMoto) {
-                    homeModeleInput.value = '';
-                }
-            }
-
-            if (isMoto) {
-                updateHomeModelOptions('');
-            } else if (homeMarqueHidden && homeMarqueHidden.value) {
-                updateHomeModelOptions(homeMarqueHidden.value);
             }
         }
 
@@ -521,6 +514,9 @@
             });
         }
 
+        // Alpine.js: Données partagées pour marque/modèle
+        const brandModelsData = @json($brandModelsMap);
+
         // Alpine.js dropdown for brand (home)
         function brandDropdownHome() {
             return {
@@ -536,20 +532,48 @@
                 selectBrand(value) {
                     this.selected = value;
                     this.open = false;
-                    const input = document.querySelector('input[name="marque"]');
-                    if (input) {
-                        input.value = value;
+                    
+                    // Mettre à jour les modèles disponibles
+                    const modelDropdown = Alpine.$data(document.getElementById('home_model_dropdown'));
+                    if (modelDropdown) {
+                        modelDropdown.updateAvailableModels(value);
+                        modelDropdown.selected = '';
                     }
-                    if (homeModeleInput) {
-                        homeModeleInput.value = '';
-                    }
-                    updateHomeModelOptions(value);
                 }
             };
         }
 
-        if (homeMarqueHidden && homeMarqueHidden.value) {
-            updateHomeModelOptions(homeMarqueHidden.value);
+        // Alpine.js dropdown for model (home)
+        function modelDropdownHome() {
+            return {
+                open: false,
+                search: '',
+                selected: "{{ request('modele') }}",
+                availableModels: [],
+                init() {
+                    const selectedBrand = document.querySelector('input[name="marque"]')?.value || "{{ request('marque') }}";
+                    if (selectedBrand) {
+                        this.updateAvailableModels(selectedBrand);
+                    }
+                },
+                updateAvailableModels(brand) {
+                    if (brand && brandModelsData[brand]) {
+                        this.availableModels = brandModelsData[brand];
+                    } else {
+                        this.availableModels = [];
+                        this.selected = '';
+                    }
+                },
+                filteredModels() {
+                    return this.search
+                        ? this.availableModels.filter(m => m.toLowerCase().includes(this.search.toLowerCase()))
+                        : this.availableModels;
+                },
+                selectModel(value) {
+                    this.selected = value;
+                    this.open = false;
+                }
+            };
         }
     </script>
 @endsection

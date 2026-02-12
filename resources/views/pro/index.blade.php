@@ -30,7 +30,7 @@
                 </div>
             @else
                 <div class="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <p class="text-blue-900">Vous n'êtes pas encore PRO. Découvrez nos plans ci-dessous.</p>
+                    <p class="text-blue-900">Découvrez nos plans d'abonnement ci-dessous.</p>
                 </div>
             @endif
         @else
