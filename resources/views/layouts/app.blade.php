@@ -28,11 +28,10 @@
 
             {{-- Nav --}}
             <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                <a href="{{ route('annonces.search') }}" class="hover:text-gray-800 whitespace-nowrap">Occasion</a>
+                <a href="{{ route('annonces.search') }}" class="hover:text-gray-800 whitespace-nowrap">Annonces</a>
                 <a href="{{ route('home') }}#top-annonces" class="hover:text-gray-800 whitespace-nowrap">Top annonces</a>
                 <a href="{{ route('home') }}#about" class="hover:text-gray-800 whitespace-nowrap">À propos de nous</a>
                 <a href="{{ route('home') }}#contact-us" class="hover:text-gray-800 whitespace-nowrap">Nous contacter</a>
-                <a href="#" class="hover:text-gray-800 whitespace-nowrap">Conseils</a>
             </nav>
 
             {{-- Actions droite --}}
@@ -41,6 +40,18 @@
                 @auth
                     {{-- Calcul du nombre de messages non lus --}}
                     @php
+                        $subscriptionServiceHeader = app(\App\Services\SubscriptionService::class);
+                        $activeSubscriptionHeader = $subscriptionServiceHeader->getActiveSubscription(auth()->user());
+                        $planIconHeader = null;
+                        if ($activeSubscriptionHeader && $activeSubscriptionHeader->plan) {
+                            $planNameLower = strtolower((string) $activeSubscriptionHeader->plan->name);
+                            if (str_contains($planNameLower, 'premium')) {
+                                $planIconHeader = '⚡';
+                            } elseif (str_contains($planNameLower, 'pro')) {
+                                $planIconHeader = '👑';
+                            }
+                        }
+
                         $unreadCount = \App\Models\Message::whereHas('conversation', function ($q) {
                                 $q->where('buyer_id', auth()->id())
                                   ->orWhere('seller_id', auth()->id());
@@ -70,6 +81,9 @@
                             class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs md:text-sm font-semibold border border-gray-200 rounded-full hover:bg-gray-50"
                         >
                             <span class="hidden sm:inline">👤</span>
+                            @if($planIconHeader)
+                                <span class="text-base sm:text-lg">{{ $planIconHeader }}</span>
+                            @endif
                             <span class="truncate max-w-[80px] sm:max-w-none">{{ auth()->user()->name }}</span>
 
                             @if($unreadCount > 0)

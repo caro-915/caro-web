@@ -39,6 +39,36 @@ class HomeController extends Controller
         
         // Models for old compatibility
         $modeles = CarModel::orderBy('name')->get();
+
+        $brandModelMap = CarBrand::with(['models' => function ($query) {
+                $query->orderBy('name');
+            }])
+            ->orderBy('name')
+            ->get()
+            ->map(function (CarBrand $brand) {
+                $models = $brand->models
+                    ->pluck('name')
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                return $models->isNotEmpty()
+                    ? [
+                        'brand' => $brand->name,
+                        'models' => $models->all(),
+                    ]
+                    : null;
+            })
+            ->filter()
+            ->values()
+            ->all();
+
+        $marques = array_values(array_unique(array_merge(
+            $marques,
+            array_map(static fn (array $entry) => $entry['brand'], $brandModelMap)
+        )));
+
+        sort($marques, SORT_NATURAL | SORT_FLAG_CASE);
         
         // Query annonces
         $baseQuery = Annonce::query()
@@ -94,7 +124,8 @@ class HomeController extends Controller
             'latestAds',
             'topAnnonces',
             'popularMarques',
-            'popularModeles'
+            'popularModeles',
+            'brandModelMap'
         ));
     }
 }

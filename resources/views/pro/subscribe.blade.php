@@ -87,11 +87,16 @@
 
                     <div id="selectedFile" class="mt-4 hidden">
                         <p class="text-sm text-gray-600 mb-2">Fichier sélectionné :</p>
-                        <div class="flex items-center bg-green-50 border border-green-200 rounded p-3">
-                            <svg class="w-5 h-5 text-green-600 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                            </svg>
-                            <span id="fileName" class="text-green-900 font-semibold"></span>
+                        <div class="flex flex-col sm:flex-row sm:items-center bg-green-50 border border-green-200 rounded p-3 gap-3">
+                            <div class="flex items-center flex-1">
+                                <svg class="w-5 h-5 text-green-600 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                                <span id="fileName" class="text-green-900 font-semibold truncate"></span>
+                            </div>
+                            <button type="button" id="removeFileButton" class="inline-flex items-center justify-center px-3 py-1.5 rounded bg-red-100 text-red-600 text-sm font-semibold hover:bg-red-200">
+                                Supprimer la pièce jointe
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -146,6 +151,7 @@
     const selectedFileDiv = document.getElementById('selectedFile');
     const fileNameSpan = document.getElementById('fileName');
     const fileInputContainer = document.getElementById('fileInputContainer');
+    const removeFileButton = document.getElementById('removeFileButton');
 
     // Click to select
     dropZone.addEventListener('click', () => fileInput.click());
@@ -169,6 +175,12 @@
 
     fileInput.addEventListener('change', handleFileSelect);
 
+    if (removeFileButton) {
+        removeFileButton.addEventListener('click', () => {
+            clearSelectedFile();
+        });
+    }
+
     function handleFileSelect() {
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
@@ -176,6 +188,13 @@
             fileInputContainer.classList.add('hidden');
             selectedFileDiv.classList.remove('hidden');
         }
+    }
+
+    function clearSelectedFile() {
+        fileInput.value = '';
+        fileInputContainer.classList.remove('hidden');
+        selectedFileDiv.classList.add('hidden');
+        fileNameSpan.textContent = '';
     }
 </script>
 @endsection

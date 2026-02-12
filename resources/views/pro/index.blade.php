@@ -42,31 +42,37 @@
             </div>
         @endif
 
+        @php
+            $premiumPlans = $plans->filter(fn ($plan) => str_contains(strtolower((string) $plan->name), 'premium'));
+            $proPlans = $plans->filter(fn ($plan) => str_contains(strtolower((string) $plan->name), 'pro') && !str_contains(strtolower((string) $plan->name), 'premium'));
+            $otherPlans = $plans->reject(fn ($plan) => $premiumPlans->contains('id', $plan->id) || $proPlans->contains('id', $plan->id));
+        @endphp
+
         <!-- Plans Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
             <!-- Free Plan (Informationnel) -->
-            <div class="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition">
+            <div class="border border-gray-200 rounded-2xl p-6 bg-white hover:shadow-lg transition">
                 <h3 class="text-2xl font-bold text-gray-900 mb-2">Gratuit</h3>
-                <p class="text-gray-600 text-sm mb-6">Pour débuter</p>
-                
+                <p class="text-gray-600 text-sm mb-6">Pour publier vos premières annonces.</p>
+
                 <div class="text-3xl font-bold text-gray-900 mb-6">
                     Gratuit
                 </div>
 
-                <ul class="space-y-4 mb-6">
-                    <li class="flex items-center text-gray-700">
+                <ul class="space-y-4 mb-6 text-gray-700 text-sm">
+                    <li class="flex items-center">
                         <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                         </svg>
                         Jusqu'à 5 annonces actives
                     </li>
-                    <li class="flex items-center text-gray-700">
+                    <li class="flex items-center">
                         <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                         </svg>
-                        Visibilité basique
+                        Visibilité standard
                     </li>
-                    <li class="flex items-center text-gray-700">
+                    <li class="flex items-center">
                         <svg class="w-5 h-5 text-red-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
@@ -74,64 +80,180 @@
                     </li>
                 </ul>
 
-                <button disabled class="w-full py-2 px-4 border border-gray-300 rounded-lg text-gray-700 font-semibold opacity-50 cursor-not-allowed">
-                    Actuellement gratuit
-                </button>
+                <span class="block w-full text-center py-2 px-4 border border-gray-300 rounded-lg text-gray-500 font-semibold">
+                    Inclus automatiquement
+                </span>
             </div>
 
-            <!-- PRO Plan -->
-            @foreach($plans as $plan)
-                <div class="border-2 border-pink-600 rounded-lg p-6 shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1">
-                    <div class="inline-block bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm font-semibold mb-4">
-                        Populaire
+            <!-- Premium Plans -->
+            @foreach($premiumPlans as $plan)
+                <div class="border-2 border-yellow-400 rounded-2xl p-6 bg-gradient-to-br from-yellow-50 via-white to-white shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1">
+                    <div class="inline-flex items-center bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold mb-4">
+                        ⚡ Offre Premium
                     </div>
-                    
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $plan->name }}</h3>
-                    <p class="text-gray-600 text-sm mb-6">{{ $plan->duration_days }} jours d'accès illimité</p>
-                    
-                    <div class="text-4xl font-bold text-pink-600 mb-6">
+
+                    <h3 class="text-2xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+                        <span class="text-2xl">⚡</span>{{ $plan->name }}
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-6">{{ $plan->duration_days }} jours de visibilité boostée.</p>
+
+                    <div class="text-4xl font-bold text-yellow-600 mb-6">
                         {{ number_format($plan->price, 0, ',', ' ') }} <span class="text-lg text-gray-600">DZD</span>
                     </div>
 
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-center text-gray-700">
+                    <ul class="space-y-4 mb-8 text-gray-700 text-sm">
+                        <li class="flex items-center">
                             <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
                             Jusqu'à {{ $plan->features['max_active_ads'] }} annonces actives
                         </li>
-                        <li class="flex items-center text-gray-700">
+                        <li class="flex items-center">
                             <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
                             {{ $plan->features['boosts_per_month'] }} boosts par mois
                         </li>
-                        <li class="flex items-center text-gray-700">
+                        <li class="flex items-center">
                             <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
                             Chaque boost dure {{ $plan->features['boost_duration_days'] }} jours
                         </li>
-                        <li class="flex items-center text-gray-700">
+                        <li class="flex items-center">
                             <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                            Support prioritaire
+                            Priorité dans les résultats
                         </li>
                     </ul>
 
                     @if(auth()->user())
-                        @if($userSubscription)
-                            <button disabled class="w-full py-3 px-4 bg-pink-100 text-pink-600 rounded-lg font-semibold opacity-50 cursor-not-allowed">
-                                Déjà actif
+                        @if($userSubscription && $userSubscription->plan_id === $plan->id)
+                            <button disabled class="w-full py-3 px-4 bg-yellow-100 text-yellow-700 rounded-lg font-semibold opacity-80 cursor-not-allowed">
+                                Offre en cours
                             </button>
                         @else
-                            <a href="{{ route('pro.subscribe.form', $plan->id) }}" class="block w-full text-center py-3 px-4 bg-pink-600 text-white rounded-lg font-semibold hover:bg-pink-700 transition">
-                                S'abonner maintenant
+                            <a href="{{ route('pro.subscribe.form', $plan->id) }}" class="block w-full text-center py-3 px-4 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition">
+                                Choisir l'offre Premium
                             </a>
                         @endif
                     @else
-                        <a href="{{ route('login') }}" class="block w-full text-center py-3 px-4 bg-pink-600 text-white rounded-lg font-semibold hover:bg-pink-700 transition">
+                        <a href="{{ route('login') }}" class="block w-full text-center py-3 px-4 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition">
+                            Se connecter
+                        </a>
+                    @endif
+                </div>
+            @endforeach
+
+            <!-- Pro Plans -->
+            @foreach($proPlans as $plan)
+                <div class="border-2 border-purple-500 rounded-2xl p-6 bg-gradient-to-br from-purple-50 via-white to-white shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1">
+                    <div class="inline-flex items-center bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold mb-4">
+                        👑 Offre Pro
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+                        <span class="text-2xl">👑</span>{{ $plan->name }}
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-6">{{ $plan->duration_days }} jours avec toutes les options PRO.</p>
+
+                    <div class="text-4xl font-bold text-purple-600 mb-6">
+                        {{ number_format($plan->price, 0, ',', ' ') }} <span class="text-lg text-gray-600">DZD</span>
+                    </div>
+
+                    <ul class="space-y-4 mb-8 text-gray-700 text-sm">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Jusqu'à {{ $plan->features['max_active_ads'] }} annonces actives
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            {{ $plan->features['boosts_per_month'] }} boosts par mois
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Chaque boost dure {{ $plan->features['boost_duration_days'] }} jours
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Support prioritaire + assistance dédiée
+                        </li>
+                    </ul>
+
+                    @if(auth()->user())
+                        @if($userSubscription && $userSubscription->plan_id === $plan->id)
+                            <button disabled class="w-full py-3 px-4 bg-purple-100 text-purple-700 rounded-lg font-semibold opacity-80 cursor-not-allowed">
+                                Offre en cours
+                            </button>
+                        @else
+                            <a href="{{ route('pro.subscribe.form', $plan->id) }}" class="block w-full text-center py-3 px-4 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition">
+                                Choisir l'offre Pro
+                            </a>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}" class="block w-full text-center py-3 px-4 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition">
+                            Se connecter
+                        </a>
+                    @endif
+                </div>
+            @endforeach
+
+            <!-- Autres plans -->
+            @foreach($otherPlans as $plan)
+                <div class="border-2 border-gray-300 rounded-2xl p-6 bg-white shadow hover:shadow-xl transition">
+                    <div class="inline-flex items-center bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-semibold mb-4">
+                        Offre {{ $plan->name }}
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $plan->name }}</h3>
+                    <p class="text-gray-600 text-sm mb-6">{{ $plan->duration_days }} jours avec fonctionnalités dédiées.</p>
+
+                    <div class="text-4xl font-bold text-gray-800 mb-6">
+                        {{ number_format($plan->price, 0, ',', ' ') }} <span class="text-lg text-gray-500">DZD</span>
+                    </div>
+
+                    <ul class="space-y-4 mb-8 text-gray-700 text-sm">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Jusqu'à {{ $plan->features['max_active_ads'] }} annonces actives
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            {{ $plan->features['boosts_per_month'] }} boosts par mois
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Chaque boost dure {{ $plan->features['boost_duration_days'] }} jours
+                        </li>
+                    </ul>
+
+                    @if(auth()->user())
+                        @if($userSubscription && $userSubscription->plan_id === $plan->id)
+                            <button disabled class="w-full py-3 px-4 bg-gray-100 text-gray-600 rounded-lg font-semibold opacity-80 cursor-not-allowed">
+                                Offre en cours
+                            </button>
+                        @else
+                            <a href="{{ route('pro.subscribe.form', $plan->id) }}" class="block w-full text-center py-3 px-4 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition">
+                                Choisir cette offre
+                            </a>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}" class="block w-full text-center py-3 px-4 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition">
                             Se connecter
                         </a>
                     @endif

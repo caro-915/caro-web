@@ -32,9 +32,9 @@
         @csrf
         @method('PUT')
 
-        {{-- Vendeur pro ou particulier ? --}}
+        {{-- Vendeur professionnel ou particulier ? --}}
         <div>
-            <p class="text-xs font-semibold mb-2">Vendeur pro ou particulier ? <span class="text-red-500">*</span></p>
+            <p class="text-xs font-semibold mb-2">Vendeur professionnel ou particulier ? <span class="text-red-500">*</span></p>
 
             <div class="flex items-center gap-6 text-sm">
                 <label class="inline-flex items-center gap-2">
@@ -46,7 +46,7 @@
                 <label class="inline-flex items-center gap-2">
                     <input type="radio" name="seller_type" value="pro"
                            {{ old('seller_type', $annonce->seller_type ?? 'particulier') === 'pro' ? 'checked' : '' }}>
-                    <span>Pro</span>
+                    <span>Professionnel</span>
                 </label>
             </div>
 

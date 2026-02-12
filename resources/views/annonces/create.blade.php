@@ -29,9 +29,9 @@
           class="bg-white rounded-2xl shadow p-4 md:p-6 space-y-6">
         @csrf
 
-        {{-- Vendeur pro ou particulier ? --}}
+        {{-- Vendeur professionnel ou particulier ? --}}
         <div>
-            <label class="block text-xs font-semibold mb-2">Vendeur pro ou particulier ? <span class="text-red-500">*</span></label>
+            <label class="block text-xs font-semibold mb-2">Vendeur professionnel ou particulier ? <span class="text-red-500">*</span></label>
             <div class="flex gap-4 text-xs md:text-sm">
                 <label class="inline-flex items-center gap-2">
                     <input type="radio" name="seller_type" value="particulier"
@@ -41,7 +41,7 @@
                 <label class="inline-flex items-center gap-2">
                     <input type="radio" name="seller_type" value="pro"
                            {{ old('seller_type', 'particulier') === 'pro' ? 'checked' : '' }}>
-                    Pro
+                    Professionnel
                 </label>
             </div>
             @error('seller_type')

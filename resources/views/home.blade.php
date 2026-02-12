@@ -93,14 +93,17 @@
 
                         <div>
                             <label class="block text-xs font-semibold mb-1">Modèle</label>
-                            <input type="text" 
-                                name="modele" 
+                            <input type="text"
+                                name="modele"
                                 id="home_modele_input"
                                 value="{{ request('modele') }}"
+                                list="home_model_options"
+                                autocomplete="off"
                                 data-placeholder-voiture="Peu importe"
                                 data-placeholder-moto="ex : MT-07, CB500F"
                                 placeholder="Peu importe"
                                 class="w-full border rounded-lg p-2 text-xs md:text-sm">
+                            <datalist id="home_model_options"></datalist>
                         </div>
                     </div>
 
@@ -322,6 +325,32 @@
         </div>
     </section>
 
+    {{-- SECTION : Catalogue marques & modèles --}}
+    @if(!empty($brandModelMap))
+        <section class="mb-12">
+            <h2 class="text-xl font-semibold mb-2">Catalogue marques & modèles</h2>
+            <p class="text-xs md:text-sm text-gray-500 mb-4">Choisissez une marque pour voir tous les modèles associés déjà intégrés sur Caro.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                @foreach($brandModelMap as $entry)
+                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" @if(request('marque') === $entry['brand']) open @endif>
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>{{ $entry['brand'] }}</span>
+                            <span class="text-xs text-gray-400">{{ count($entry['models']) }} modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                            @foreach($entry['models'] as $model)
+                                <a href="{{ route('annonces.search', ['marque' => $entry['brand'], 'modele' => $model]) }}"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    {{ $model }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </details>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
 
     <section id="about" class="mt-16 bg-white rounded-2xl shadow p-6 md:p-8">
     <h2 class="text-2xl font-bold mb-3">À propos de Caro</h2>
@@ -360,6 +389,27 @@
         const homeMarqueHidden = document.getElementById('home_marque_hidden');
         const homeMarqueText = document.getElementById('home_marque_text');
         const homeModeleInput = document.getElementById('home_modele_input');
+        const homeModelDatalist = document.getElementById('home_model_options');
+
+        const brandModelData = @json($brandModelMap);
+        const brandModelLookup = Array.isArray(brandModelData)
+            ? Object.fromEntries(brandModelData.map(entry => [entry.brand, entry.models]))
+            : {};
+
+        function updateHomeModelOptions(brand) {
+            if (!homeModelDatalist) {
+                return;
+            }
+
+            homeModelDatalist.innerHTML = '';
+            const models = brand ? (brandModelLookup[brand] || []) : [];
+
+            models.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model;
+                homeModelDatalist.appendChild(option);
+            });
+        }
 
         function setActiveHomeTypeButton(type) {
             typeButtons.forEach(btn => {
@@ -382,6 +432,9 @@
 
             if (homeMarqueHidden) {
                 homeMarqueHidden.disabled = isMoto;
+                if (isMoto) {
+                    homeMarqueHidden.value = '';
+                }
             }
 
             if (homeMarqueText) {
@@ -402,6 +455,15 @@
                 if (placeholder) {
                     homeModeleInput.placeholder = placeholder;
                 }
+                if (isMoto) {
+                    homeModeleInput.value = '';
+                }
+            }
+
+            if (isMoto) {
+                updateHomeModelOptions('');
+            } else if (homeMarqueHidden && homeMarqueHidden.value) {
+                updateHomeModelOptions(homeMarqueHidden.value);
             }
         }
 
@@ -471,8 +533,16 @@
                     if (input) {
                         input.value = value;
                     }
+                    if (homeModeleInput) {
+                        homeModeleInput.value = '';
+                    }
+                    updateHomeModelOptions(value);
                 }
             };
+        }
+
+        if (homeMarqueHidden && homeMarqueHidden.value) {
+            updateHomeModelOptions(homeMarqueHidden.value);
         }
     </script>
 @endsection
