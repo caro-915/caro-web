@@ -177,6 +177,11 @@ class AnnonceApiController extends Controller
         $data['condition'] = $request->input('condition', 'non');
         $data['vehicle_type'] = $request->input('vehicle_type', 'Voiture');
         
+        // Déterminer le nombre max d'images selon le statut PRO
+        $subscriptionService = app(\App\Services\SubscriptionService::class);
+        $isPro = $subscriptionService->userIsPro($request->user());
+        $maxImages = $isPro ? 8 : 4;
+        
         // Upload images
         $imagePaths = [
             'image_path'   => null,
@@ -184,11 +189,15 @@ class AnnonceApiController extends Controller
             'image_path_3' => null,
             'image_path_4' => null,
             'image_path_5' => null,
+            'image_path_6' => null,
+            'image_path_7' => null,
+            'image_path_8' => null,
         ];
 
         if ($request->hasFile('images')) {
+            $imageCount = 0;
             foreach ($request->file('images') as $index => $file) {
-                if ($index >= 5) break;
+                if ($imageCount >= $maxImages) break;
                 
                 $path = $file->store('annonces', 'public');
                 
@@ -197,6 +206,11 @@ class AnnonceApiController extends Controller
                 if ($index === 2) $imagePaths['image_path_3'] = $path;
                 if ($index === 3) $imagePaths['image_path_4'] = $path;
                 if ($index === 4) $imagePaths['image_path_5'] = $path;
+                if ($index === 5) $imagePaths['image_path_6'] = $path;
+                if ($index === 6) $imagePaths['image_path_7'] = $path;
+                if ($index === 7) $imagePaths['image_path_8'] = $path;
+                
+                $imageCount++;
             }
         }
 
@@ -245,7 +259,7 @@ class AnnonceApiController extends Controller
         }
 
         // Delete images from storage
-        $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5'];
+        $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5', 'image_path_6', 'image_path_7', 'image_path_8'];
         foreach ($imageFields as $field) {
             if ($annonce->$field) {
                 Storage::disk('public')->delete($annonce->$field);
@@ -398,12 +412,24 @@ class AnnonceApiController extends Controller
             $mappedData['show_phone'] = $request->boolean('show_phone');
         }
 
+        // Check PRO status for image limits
+        $subscriptionService = app(\App\Services\SubscriptionService::class);
+        $isPro = $subscriptionService->userIsPro($request->user());
+        $maxImages = $isPro ? 8 : 4;
+
         // Upload new images if provided
         if ($request->hasFile('images')) {
-            $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5'];
+            $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5', 'image_path_6', 'image_path_7', 'image_path_8'];
             
+            // Count existing images to enforce limit
+            $existingImageCount = 0;
+            foreach ($imageFields as $field) {
+                if ($annonce->$field) $existingImageCount++;
+            }
+            
+            $imageCount = 0;
             foreach ($request->file('images') as $index => $file) {
-                if ($index >= 5) break;
+                if ($imageCount >= $maxImages) break;
                 
                 // Delete old image if exists
                 $fieldName = $index === 0 ? 'image_path' : 'image_path_' . ($index + 1);
@@ -414,6 +440,7 @@ class AnnonceApiController extends Controller
                 // Upload new image
                 $path = $file->store('annonces', 'public');
                 $mappedData[$fieldName] = $path;
+                $imageCount++;
             }
         }
 
@@ -432,7 +459,7 @@ class AnnonceApiController extends Controller
     {
         $disk = env('FILESYSTEM_DISK', 's3');
         $images = [];
-        $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5'];
+        $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5', 'image_path_6', 'image_path_7', 'image_path_8'];
         
         foreach ($imageFields as $field) {
             if ($annonce->$field) {

@@ -1,11 +1,16 @@
 ﻿@extends('layouts.app')
 
 @section('content')
+@php
+    $subscriptionServiceIntro = app(\App\Services\SubscriptionService::class);
+    $isProIntro = auth()->check() ? $subscriptionServiceIntro->userIsPro(auth()->user()) : false;
+    $maxImagesIntro = $isProIntro ? 8 : 4;
+@endphp
 <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
     <div class="mb-6">
         <h1 class="text-2xl md:text-3xl font-bold mb-1">Déposer une annonce</h1>
         <p class="text-xs md:text-sm text-gray-500">
-            Remplissez les informations de votre vehicule et ajoutez jusqu'à 5 photos.
+            Remplissez les informations de votre vehicule et ajoutez jusqu'à {{ $maxImagesIntro }} photos{{ $isProIntro ? ' (Compte PRO)' : '' }}.
         </p>
     </div>
 
@@ -338,8 +343,17 @@
 
         {{-- Images --}}
         <div>
+            @php
+                $subscriptionService = app(\App\Services\SubscriptionService::class);
+                $isPro = auth()->check() ? $subscriptionService->userIsPro(auth()->user()) : false;
+                $maxImages = $isPro ? 8 : 4;
+            @endphp
             <label class="block text-xs font-semibold mb-1">
-                Photos du vehicule <span class="text-gray-400">(jusqu'à 5 photos)</span>
+                Photos du vehicule 
+                <span class="text-gray-400">(jusqu'à {{ $maxImages }} photos{{ $isPro ? ' - Compte PRO' : '' }})</span>
+                @if(!$isPro)
+                    <span class="text-pink-600 text-[10px] ml-1">→ Passez PRO pour 8 photos!</span>
+                @endif
             </label>
             <p class="text-[11px] text-gray-500 mb-2">
                 Formats acceptés : JPG, JPEG, PNG, WEBP. Taille max : 4 Mo par photo.
@@ -642,11 +656,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const addImageBtn = document.getElementById('add_image_btn');
     const imagesPreview = document.getElementById('images_preview');
 
+    const MAX_IMAGES = {{ $maxImages ?? 4 }};
+    const IS_PRO = {{ $isPro ? 'true' : 'false' }};
     let imageCount = 1;
 
+    console.log('=== IMAGE UPLOAD CONFIG ===');
+    console.log('MAX_IMAGES:', MAX_IMAGES);
+    console.log('IS_PRO:', IS_PRO);
+    console.log('Initial imageCount:', imageCount);
+
     addImageBtn.addEventListener('click', () => {
-        if (imageCount >= 5) {
-            alert('Vous pouvez ajouter au maximum 5 photos.');
+        console.log('Click ajouter - imageCount actuel:', imageCount, '/ MAX_IMAGES:', MAX_IMAGES);
+        if (imageCount >= MAX_IMAGES) {
+            alert('Vous pouvez ajouter au maximum ' + MAX_IMAGES + ' photos.' + 
+                  (IS_PRO ? '' : ' Passez PRO pour 8 photos!'));
             return;
         }
 

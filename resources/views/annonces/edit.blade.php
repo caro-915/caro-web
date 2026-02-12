@@ -245,11 +245,14 @@
 
         {{-- Photos --}}
         <div>
-            <label class="block text-xs font-semibold mb-2">Photos actuelles</label>
-
             @php
-                $slots = ['image_path','image_path_2','image_path_3','image_path_4','image_path_5'];
+                $subscriptionService = app(\App\Services\SubscriptionService::class);
+                $isPro = auth()->check() ? $subscriptionService->userIsPro(auth()->user()) : false;
+                $maxImages = $isPro ? 8 : 4;
+                $slots = ['image_path','image_path_2','image_path_3','image_path_4','image_path_5','image_path_6','image_path_7','image_path_8'];
             @endphp
+            
+            <label class="block text-xs font-semibold mb-2">Photos actuelles</label>
 
             @if(collect($slots)->filter(fn($s) => !empty($annonce->$s))->count())
                 <div id="existing_images_grid" class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4 justify-center mx-auto max-w-3xl">
@@ -290,7 +293,11 @@
             @endif
 
             <label class="block text-xs font-semibold mb-1">
-                Ajouter des photos <span class="text-gray-400">(jusqu'à 5 photos au total)</span>
+                Ajouter des photos 
+                <span class="text-gray-400">(jusqu'à {{ $maxImages }} photos au total{{ $isPro ? ' - Compte PRO' : '' }})</span>
+                @if(!$isPro)
+                    <span class="text-pink-600 text-[10px] ml-1">→ Passez PRO pour 8 photos!</span>
+                @endif
             </label>
             <p class="text-[11px] text-gray-500 mb-2">
                 Formats acceptés : JPG, JPEG, PNG, WEBP. Taille max : 4 Mo par photo.
@@ -329,7 +336,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const addBtn = document.getElementById('add_image_btn');
     const imagesContainer = document.getElementById('images_container');
     const imagesPreview = document.getElementById('images_preview');
-    const MAX = 5;
+    const MAX = {{ $maxImages ?? 4 }};
+    const IS_PRO = {{ $isPro ? 'true' : 'false' }};
 
     function remainingExistingCount() {
         const blocks = document.querySelectorAll('.annonce-image-block');
@@ -376,7 +384,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addNewImageInput() {
         if (!canAddMore()) {
-            alert('Maximum 5 photos au total.');
+            alert('Maximum ' + MAX + ' photos au total.' + 
+                  (IS_PRO ? '' : ' Passez PRO pour 8 photos!'));
             return;
         }
 

@@ -151,6 +151,10 @@ class AnnonceController extends Controller
         $maxAds = $features['max_active_ads'];
         $activeCount = auth()->user()->annonces()->count();
         
+        // Déterminer le nombre max d'images selon le statut PRO
+        $isPro = $subscriptionService->userIsPro(auth()->user());
+        $maxImages = $isPro ? 8 : 4;
+        
         if ($activeCount >= $maxAds) {
             return back()->withErrors([
                 'quota' => "Vous avez atteint votre limite de {$maxAds} annonces actives. " . 
@@ -201,14 +205,19 @@ class AnnonceController extends Controller
             'image_path_3' => null,
             'image_path_4' => null,
             'image_path_5' => null,
+            'image_path_6' => null,
+            'image_path_7' => null,
+            'image_path_8' => null,
         ];
 
         $uploadedFiles = [];
         if ($request->hasFile('images')) {
             $disk = config('filesystems.default', 'public');
+            $imageCount = 0;
             
             foreach ($request->file('images') as $index => $file) {
-                if ($index >= 5) break;
+                // Limiter selon le statut PRO
+                if ($imageCount >= $maxImages) break;
 
                 try {
                     $path = $file->store('annonces', $disk);
@@ -225,6 +234,11 @@ class AnnonceController extends Controller
                     if ($index === 2) $imagePaths['image_path_3'] = $path;
                     if ($index === 3) $imagePaths['image_path_4'] = $path;
                     if ($index === 4) $imagePaths['image_path_5'] = $path;
+                    if ($index === 5) $imagePaths['image_path_6'] = $path;
+                    if ($index === 6) $imagePaths['image_path_7'] = $path;
+                    if ($index === 7) $imagePaths['image_path_8'] = $path;
+                    
+                    $imageCount++;
                 } catch (\Exception $e) {
                     \Log::error("Image upload exception: " . $e->getMessage());
                 }
@@ -267,7 +281,7 @@ class AnnonceController extends Controller
 
     $annonce->load('user');
 
-    // ✅ Images : 5 slots fixes (filtre null)
+    // ✅ Images : 8 slots fixes (filtre null)
     $disk = config('filesystems.default', 'public');
     $images = collect([
         $annonce->image_path,
@@ -275,6 +289,9 @@ class AnnonceController extends Controller
         $annonce->image_path_3,
         $annonce->image_path_4,
         $annonce->image_path_5,
+        $annonce->image_path_6,
+        $annonce->image_path_7,
+        $annonce->image_path_8,
     ])->filter()->values()
       ->map(function ($path) use ($disk) {
           $path = ltrim($path, '/');
@@ -438,6 +455,11 @@ class AnnonceController extends Controller
             abort(403, 'Vous ne pouvez modifier que vos propres annonces.');
         }
 
+        // Déterminer le nombre max d'images selon le statut PRO
+        $subscriptionService = app(\App\Services\SubscriptionService::class);
+        $isPro = $subscriptionService->userIsPro(auth()->user());
+        $maxImages = $isPro ? 8 : 4;
+
         // Nettoyer fichiers vides
         if ($request->hasFile('images')) {
             $request->merge([
@@ -474,15 +496,16 @@ class AnnonceController extends Controller
             'delete_images'   => 'nullable|array',
             'delete_images.*' => 'in:0,1',
 
-            'images'        => 'nullable|array|max:5',
+            'images'        => "nullable|array|max:{$maxImages}",
             'images.*'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+        ], [
+            'images.max' => "Vous pouvez uploader maximum {$maxImages} images " . ($isPro ? '(compte PRO)' : '(compte gratuit - passez à PRO pour 8 images)') . '.',
         ]);
 
         $data['show_phone'] = $request->boolean('show_phone');
         $data['condition']  = $request->input('condition', $annonce->condition ?? 'non');
 
-        $slots = ['image_path','image_path_2','image_path_3','image_path_4','image_path_5'];
-        $maxImages = 5;
+        $slots = ['image_path','image_path_2','image_path_3','image_path_4','image_path_5','image_path_6','image_path_7','image_path_8'];
 
         // 1) Suppression demandée (delete_images[slot]=1)
         $deleteMap = $request->input('delete_images', []);
@@ -500,7 +523,7 @@ class AnnonceController extends Controller
             $watermarkBase = Image::make($watermarkPath)->opacity(45);
         }
 
-        // 3) ajout nouvelles images (sans dépasser 5 total)
+        // 3) ajout nouvelles images (sans dépasser la limite)
         if ($request->hasFile('images')) {
 
             // compter images restantes après suppressions
@@ -576,6 +599,9 @@ class AnnonceController extends Controller
             $annonce->image_path_3,
             $annonce->image_path_4,
             $annonce->image_path_5,
+            $annonce->image_path_6,
+            $annonce->image_path_7,
+            $annonce->image_path_8,
         ];
 
         foreach ($images as $path) {

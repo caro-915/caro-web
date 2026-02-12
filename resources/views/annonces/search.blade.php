@@ -63,7 +63,8 @@
     </div>
 
     {{-- Main layout: filters / results / side panel --}}
-    <div class="grid grid-cols-1 md:grid-cols-[260px,minmax(0,1fr)] lg:grid-cols-[260px,minmax(0,1fr),260px] gap-4 md:gap-6">
+    <div class="overflow-x-auto md:overflow-visible pb-2">
+        <div class="min-w-[72rem] grid grid-cols-[260px,minmax(0,1fr),260px] gap-4 md:gap-6">
         {{-- LEFT COLUMN – Filters --}}
         <aside class="bg-white rounded-2xl shadow p-4 space-y-4">
             <h2 class="text-sm font-semibold mb-1">Filtres</h2>
@@ -407,7 +408,7 @@
         </main>
 
         {{-- RIGHT COLUMN – Side panel (ads / info placeholders) --}}
-        <aside class="hidden lg:block space-y-4">
+        <aside class="space-y-4">
             <div class="bg-white rounded-2xl shadow p-4">
                 <p class="text-xs uppercase font-semibold text-gray-400 mb-1">Publicité</p>
                 <div class="bg-gradient-to-br from-gray-800 to-purple-600 rounded-xl p-4 text-white text-sm">
@@ -428,6 +429,7 @@
                 </ul>
             </div>
         </aside>
+        </div>
     </div>
 </div>
 @endsection

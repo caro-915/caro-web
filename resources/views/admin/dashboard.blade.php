@@ -5,7 +5,7 @@
     <h1 class="text-3xl font-bold mb-6">Dashboard Admin</h1>
 
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div class="bg-white p-6 rounded-xl shadow">
             <h3 class="text-sm font-semibold text-gray-600 mb-2">Total Annonces</h3>
             <p class="text-3xl font-bold text-gray-800">{{ $stats['annonces'] ?? 0 }}</p>
@@ -24,11 +24,6 @@
         <div class="bg-white p-6 rounded-xl shadow">
             <h3 class="text-sm font-semibold text-gray-600 mb-2">Utilisateurs</h3>
             <p class="text-3xl font-bold text-blue-600">{{ $stats['users'] ?? 0 }}</p>
-        </div>
-
-        <div class="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-xl shadow">
-            <h3 class="text-sm font-semibold text-pink-700 mb-2">Utilisateurs PRO</h3>
-            <p class="text-3xl font-bold text-pink-600">{{ $stats['proUsers'] ?? 0 }}</p>
         </div>
     </div>
 
