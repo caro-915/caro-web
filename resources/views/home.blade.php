@@ -20,7 +20,7 @@
                         {{-- Hidden field actually used by backend - default to empty (no filter) --}}
                         <input type="hidden" name="vehicle_type" id="vehicle_type_input" value="{{ request('vehicle_type', '') }}">
                         {{-- Text search OR brand/model --}}
-                        <div class="space-y-2">
+                        <div class="space-y-2 w-full">
                             <label class="block text-xs font-semibold mb-1">Recherche texte</label>
                             <input type="text"
                                    name="q"
@@ -29,9 +29,7 @@
                                    class="w-full border rounded-lg p-2 text-xs md:text-sm">
                         </div>
 
-                        <div class="flex items-center justify-center text-[11px] text-gray-400 font-semibold">
-                            <span class="px-2 py-1 bg-gray-100 rounded-full">ou</span>
-                        </div>
+                        <p class="text-center text-[11px] uppercase tracking-wide text-gray-400 w-full">Ou</p>
 
                         
                         {{-- Buttons are only UI helpers that update the hidden field --}}
