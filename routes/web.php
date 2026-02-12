@@ -176,10 +176,10 @@ Route::get('/annonces/{annonce}', [AnnonceController::class, 'show'])->name('ann
 
 /*
 |--------------------------------------------------------------------------
-| DASHBOARD (Breeze) - auth + verified
+| DASHBOARD (Breeze) - auth only (email verification disabled)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
