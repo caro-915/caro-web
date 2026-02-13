@@ -63,7 +63,7 @@
                                             📄 Voir le PDF
                                         </a>
                                     @else
-                                        <a href="{{ route('admin.subscriptions.proof', $subscription->id) }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm text-gray-700 font-semibold transition">
+                                        <a href="{{ asset('storage/' . $subscription->payment_proof_path) }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm text-gray-700 font-semibold transition">
                                             🖼️ Voir l'image
                                         </a>
                                     @endif

@@ -123,4 +123,20 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Watermark Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration du watermark appliqué aux images d'annonces.
+    | - opacity: Opacité du watermark (0.10 = 10%, 0.18 = 18%)
+    | - width_ratio: Largeur du watermark en % de l'image (0.65 = 65%)
+    | - position: Position du watermark ('center' ou 'bottom-right')
+    |
+    */
+
+    'watermark_opacity' => env('WATERMARK_OPACITY', 0.20), // 20% par défaut
+    'watermark_width' => env('WATERMARK_WIDTH', 0.65), // 65% de la largeur
+    'watermark_position' => env('WATERMARK_POSITION', 'center'), // center ou bottom-right
+
 ];

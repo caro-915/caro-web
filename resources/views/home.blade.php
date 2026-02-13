@@ -103,10 +103,8 @@
                             <div id="home_model_dropdown" x-data="modelDropdownHome()" class="relative">
                                 <button type="button" 
                                         @click="open = !open"
-                                        :disabled="!availableModels.length"
-                                        :class="{ 'opacity-50 cursor-not-allowed': !availableModels.length }"
                                         class="w-full border rounded-lg p-2 text-xs md:text-sm text-left bg-white flex justify-between items-center">
-                                    <span x-text="selected || (availableModels.length ? 'Peu importe' : 'Choisissez une marque d\'abord')"></span>
+                                    <span x-text="selected || 'Peu importe'"></span>
                                     <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
                                     </svg>
@@ -545,11 +543,19 @@
 
         // Alpine.js dropdown for model (home)
         function modelDropdownHome() {
+            // Extraire tous les modèles de toutes les marques
+            const allModelsSet = new Set();
+            Object.values(brandModelsData).forEach(models => {
+                models.forEach(model => allModelsSet.add(model));
+            });
+            const allModels = Array.from(allModelsSet).sort();
+
             return {
                 open: false,
                 search: '',
                 selected: "{{ request('modele') }}",
-                availableModels: [],
+                availableModels: allModels,
+                allModels: allModels,
                 init() {
                     const selectedBrand = document.querySelector('input[name="marque"]')?.value || "{{ request('marque') }}";
                     if (selectedBrand) {
@@ -560,8 +566,8 @@
                     if (brand && brandModelsData[brand]) {
                         this.availableModels = brandModelsData[brand];
                     } else {
-                        this.availableModels = [];
-                        this.selected = '';
+                        // Aucune marque sélectionnée → afficher tous les modèles
+                        this.availableModels = this.allModels;
                     }
                 },
                 filteredModels() {

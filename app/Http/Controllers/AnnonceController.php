@@ -234,6 +234,11 @@ class AnnonceController extends Controller
         $data['condition']  = $request->input('condition', 'non');
         $data['seller_type'] = $request->input('seller_type', 'particulier');
 
+        // Déterminer le nombre max d'images selon le statut PRO
+        $subscriptionService = app(\App\Services\SubscriptionService::class);
+        $isPro = auth()->check() ? $subscriptionService->userIsPro(auth()->user()) : false;
+        $maxImages = $isPro ? 8 : 4;
+
         // Upload rapide (sans traitement) puis traitement async après réponse
         $imagePaths = [
             'image_path'   => null,
@@ -557,14 +562,7 @@ class AnnonceController extends Controller
             }
         }
 
-        // 2) watermark chargé une seule fois
-        $watermarkBase = null;
-        $watermarkPath = public_path('watermark.png');
-        if (file_exists($watermarkPath)) {
-            $watermarkBase = Image::make($watermarkPath)->opacity(45);
-        }
-
-        // 3) ajout nouvelles images (sans dépasser la limite)
+        // 2) ajout nouvelles images (sans dépasser la limite)
         if ($request->hasFile('images')) {
 
             // compter images restantes après suppressions
@@ -590,14 +588,42 @@ class AnnonceController extends Controller
                     $c->upsize();
                 });
 
-                if ($watermarkBase) {
-                    $wm = clone $watermarkBase;
-                    $wm->resize((int) ($image->width() * 0.18), null, function ($c) {
-                        $c->aspectRatio();
-                    });
-                    // Placer le watermark au centre de l'image
-                    $image->insert($wm, 'center');
+                // Ajouter le watermark texte "ELSAYARA" (style LaCentrale)
+                // Config: config/app.php - watermark_opacity (défaut: 0.20 = 20%)
+                //                        - watermark_width (défaut: 0.65 = 65%)
+                $watermarkOpacity = config('app.watermark_opacity', 0.20);
+                $watermarkWidth = config('app.watermark_width', 0.65);
+                
+                // Calculer la taille de police pour que le texte fasse 65% de la largeur
+                // Pour "ELSAYARA" (8 chars), ratio approximatif: fontSize = targetWidth / 4.8
+                $targetTextWidth = $image->width() * $watermarkWidth;
+                $fontSize = (int) ($targetTextWidth / 4.8);
+                
+                // Utiliser Arial Bold (système Windows/Linux)
+                $fontPath = null;
+                $possibleFonts = [
+                    'C:/Windows/Fonts/arialbd.ttf',  // Windows Arial Bold
+                    'C:/Windows/Fonts/arial.ttf',    // Windows Arial Regular
+                    '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',  // Linux Liberation Sans Bold
+                    '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',         // Linux DejaVu Sans Bold
+                ];
+                
+                foreach ($possibleFonts as $font) {
+                    if (file_exists($font)) {
+                        $fontPath = $font;
+                        break;
+                    }
                 }
+                
+                $image->text('ELSAYARA', $image->width() / 2, $image->height() / 2, function($font) use ($fontSize, $watermarkOpacity, $fontPath) {
+                    if ($fontPath) {
+                        $font->file($fontPath);
+                    }
+                    $font->size($fontSize);
+                    $font->color([255, 255, 255, $watermarkOpacity]); // Blanc avec opacité configurable
+                    $font->align('center');
+                    $font->valign('middle');
+                });
 
                 Storage::disk('public')->put($filename, (string) $image->encode('jpg', 70));
                 $stored[] = $filename;

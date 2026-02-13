@@ -24,22 +24,6 @@ class SubscriptionController extends Controller
     {
         $pendingSubscriptions = Subscription::where('payment_status', 'pending')
             ->with(['user', 'plan'])
-
-    /**
-     * Stream the payment proof for admins.
-     */
-    public function proof(Subscription $subscription)
-    {
-        abort_unless($subscription->payment_proof_path, 404);
-
-        $disk = 'public';
-
-        if (!Storage::disk($disk)->exists($subscription->payment_proof_path)) {
-            abort(404);
-        }
-
-        return Storage::disk($disk)->response($subscription->payment_proof_path);
-    }
             ->latest()
             ->paginate(15);
 
@@ -57,6 +41,22 @@ class SubscriptionController extends Controller
     public function show(Subscription $subscription)
     {
         return view('admin.subscriptions.show', compact('subscription'));
+    }
+
+    /**
+     * Stream the payment proof for admins.
+     */
+    public function proof(Subscription $subscription)
+    {
+        abort_unless($subscription->payment_proof_path, 404);
+
+        $disk = 'public';
+
+        if (!Storage::disk($disk)->exists($subscription->payment_proof_path)) {
+            abort(404);
+        }
+
+        return Storage::disk($disk)->response($subscription->payment_proof_path);
     }
 
     /**
