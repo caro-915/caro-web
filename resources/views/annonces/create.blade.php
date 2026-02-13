@@ -3,7 +3,7 @@
 @section('content')
 @php
     $subscriptionServiceIntro = app(\App\Services\SubscriptionService::class);
-    $features = $subscriptionService->getFeatures(auth()->user());
+    $features = $subscriptionServiceIntro->getFeatures(auth()->user());
     $maxImagesIntro = $features['max_images_per_ad'] ?? 4;
 @endphp
 <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
