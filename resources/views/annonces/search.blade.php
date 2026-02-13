@@ -269,20 +269,20 @@
                     <a href="{{ route('annonces.show', $annonce->id) }}"
                        class="bg-white rounded-2xl shadow flex flex-row overflow-hidden hover:shadow-md transition">
 
-                        {{-- Image --}}
+                        {{-- Image - Responsive: petit sur mobile, plus grand sur desktop --}}
                         <img
                             src="{{ $mainImage }}"
                             alt="Photo voiture"
-                            class="w-64 h-44 object-cover shrink-0"
+                            class="w-32 h-32 sm:w-40 sm:h-36 lg:w-52 lg:h-40 object-cover shrink-0"
                             onerror="this.src='{{ asset('images/placeholder-car.jpg') }}'"
                         />
 
                         {{-- Content --}}
-                        <div class="flex-1 p-4 flex flex-col justify-between gap-2">
+                        <div class="flex-1 p-3 sm:p-4 flex flex-col justify-between gap-1 sm:gap-2">
                             <div class="flex flex-row justify-between items-start gap-2">
-                                <div>
-                                    {{-- Title --}}
-                                    <h2 class="text-base font-semibold">
+                                <div class="min-w-0 flex-1">
+                                    {{-- Title - Responsive text size --}}
+                                    <h2 class="text-sm sm:text-base font-semibold line-clamp-2">
                                         {{ $annonce->titre }}
                                     </h2>
                                     <div class="flex gap-2 mt-1 flex-wrap">
@@ -293,26 +293,26 @@
                                                 ->exists();
                                         @endphp
                                         @if($isBoosted)
-                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] bg-pink-50 text-pink-700 border border-pink-200">
+                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] bg-pink-50 text-pink-700 border border-pink-200">
                                                 ⭐ À la une
                                             </span>
                                         @endif
                                         @if(($annonce->views ?? 0) >= 50)
-                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] bg-orange-50 text-orange-700 border border-orange-200">
+                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] bg-orange-50 text-orange-700 border border-orange-200">
                                                 🔥 Populaire
                                             </span>
                                         @endif
                                     </div>
                                     {{-- Brand / model --}}
-                                    <p class="text-xs text-gray-500">
+                                    <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">
                                         {{ $annonce->marque }}
                                         @if($annonce->modele)
                                             • {{ $annonce->modele }}
                                         @endif
                                     </p>
 
-                                    {{-- Specs --}}
-                                    <p class="text-xs text-gray-400 mt-1">
+                                    {{-- Specs - Hide on very small screens, show abbreviated on mobile --}}
+                                    <p class="hidden sm:block text-xs text-gray-400 mt-1">
                                         @if($annonce->annee)
                                             {{ $annonce->annee }} •
                                         @endif
@@ -331,18 +331,18 @@
                                         {{ $annonce->views ?? 0 }} vue(s)
                                     </p>
 
-                                    {{-- Short description --}}
-                                    <p class="mt-2 text-xs text-gray-600 line-clamp-2">
+                                    {{-- Short description - Hide on mobile --}}
+                                    <p class="hidden md:block mt-2 text-xs text-gray-600 line-clamp-2">
                                         {{ \Illuminate\Support\Str::limit($annonce->description, 150) }}
                                     </p>
                                 </div>
 
-                                {{-- Price & city --}}
-                                <div class="text-right min-w-[120px]">
-                                    <p class="text-lg font-bold text-pink-600">
+                                {{-- Price & city - More compact on mobile --}}
+                                <div class="text-right shrink-0">
+                                    <p class="text-base sm:text-lg font-bold text-pink-600">
                                         {{ number_format($annonce->prix, 0, ',', ' ') }} DA
                                     </p>
-                                    <p class="text-xs text-gray-500 mt-1">
+                                    <p class="text-[10px] sm:text-xs text-gray-500 mt-1">
                                         {{ $annonce->ville ?? '—' }}
                                     </p>
                                 </div>
