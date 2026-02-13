@@ -185,11 +185,8 @@ class AnnonceController extends Controller
         $subscriptionService = app(\App\Services\SubscriptionService::class);
         $features = $subscriptionService->getFeatures(auth()->user());
         $maxAds = $features['max_active_ads'];
+        $maxImages = $features['max_images_per_ad'] ?? 4;
         $activeCount = auth()->user()->annonces()->count();
-        
-        // Déterminer le nombre max d'images selon le statut PRO
-        $isPro = $subscriptionService->userIsPro(auth()->user());
-        $maxImages = $isPro ? 8 : 4;
         
         if ($activeCount >= $maxAds) {
             return back()->withErrors([
@@ -208,7 +205,7 @@ class AnnonceController extends Controller
             'annee'         => 'nullable|integer|min:1980|max:' . (date('Y') + 1),
             'kilometrage'   => 'nullable|integer|min:0',
             'carburant'     => 'required|string|max:50',
-            'boite_vitesse' => 'required|string|max:50',
+            'boite_vitesse' => 'required_if:vehicle_type,Voiture|nullable|string|max:50',
             'ville'         => 'nullable|string|max:100',
             'vehicle_type'  => 'required|in:Voiture,Moto',
 
@@ -233,6 +230,11 @@ class AnnonceController extends Controller
         $data['show_phone'] = $request->boolean('show_phone');
         $data['condition']  = $request->input('condition', 'non');
         $data['seller_type'] = $request->input('seller_type', 'particulier');
+        
+        // Si Moto et boite_vitesse vide, mettre N/A par défaut
+        if ($data['vehicle_type'] === 'Moto' && empty($data['boite_vitesse'])) {
+            $data['boite_vitesse'] = 'N/A';
+        }
 
         // Vérifier que l'utilisateur a un numéro de téléphone si show_phone est activé
         if ($data['show_phone'] && empty(auth()->user()->phone)) {
@@ -240,11 +242,6 @@ class AnnonceController extends Controller
                 'show_phone' => 'Vous devez ajouter un numéro de téléphone dans votre profil avant de pouvoir l\'afficher dans vos annonces.'
             ])->withInput();
         }
-
-        // Déterminer le nombre max d'images selon les features de l'abonnement
-        $subscriptionService = app(\App\Services\SubscriptionService::class);
-        $features = $subscriptionService->getFeatures(auth()->user());
-        $maxImages = $features['max_images_per_ad'] ?? 4;  // 4 par défaut pour compte gratuit
 
         // Upload rapide (sans traitement) puis traitement async après réponse
         $imagePaths = [
@@ -532,7 +529,7 @@ class AnnonceController extends Controller
             'annee'         => 'nullable|integer|min:1980|max:' . (date('Y') + 1),
             'kilometrage'   => 'nullable|integer|min:0',
             'carburant'     => 'required|string|max:50',
-            'boite_vitesse' => 'required|string|max:50',
+            'boite_vitesse' => 'required_if:vehicle_type,Voiture|nullable|string|max:50',
             'ville'         => 'nullable|string|max:100',
             'vehicle_type'  => 'nullable|in:Voiture,Moto',
 
@@ -552,11 +549,16 @@ class AnnonceController extends Controller
             'images'        => "nullable|array|max:{$maxImages}",
             'images.*'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ], [
-            'images.max' => "Vous pouvez uploader maximum {$maxImages} images " . ($isPro ? '(compte PRO)' : '(compte gratuit - passez à PRO pour 8 images)') . '.',
+            'images.max' => "Vous pouvez uploader maximum {$maxImages} images selon votre plan.",
         ]);
 
         $data['show_phone'] = $request->boolean('show_phone');
         $data['condition']  = $request->input('condition', $annonce->condition ?? 'non');
+        
+        // Si Moto et boite_vitesse vide, mettre N/A par défaut
+        if (($data['vehicle_type'] ?? $annonce->vehicle_type) === 'Moto' && empty($data['boite_vitesse'])) {
+            $data['boite_vitesse'] = 'N/A';
+        }
 
         $slots = ['image_path','image_path_2','image_path_3','image_path_4','image_path_5','image_path_6','image_path_7','image_path_8'];
 

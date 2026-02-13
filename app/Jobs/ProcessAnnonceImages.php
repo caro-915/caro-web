@@ -34,10 +34,25 @@ class ProcessAnnonceImages implements ShouldQueue
     {
         $disk = config('filesystems.default', 'public');
 
-        foreach ($this->paths as $path) {
+        \Log::info('🎨 ProcessAnnonceImages: Début traitement', [
+            'total_images' => count($this->paths),
+            'paths' => $this->paths,
+        ]);
+
+        foreach ($this->paths as $index => $path) {
             if (!$path || !Storage::disk($disk)->exists($path)) {
+                \Log::warning('⚠️ Image inexistante ou path vide', [
+                    'index' => $index,
+                    'path' => $path,
+                    'exists' => $path ? Storage::disk($disk)->exists($path) : false,
+                ]);
                 continue;
             }
+
+            \Log::info('🖼️ Traitement image', [
+                'index' => $index,
+                'path' => $path,
+            ]);
 
             $stream = Storage::disk($disk)->get($path);
             $image = Image::make($stream)->orientate();
@@ -87,6 +102,17 @@ class ProcessAnnonceImages implements ShouldQueue
 
             // ✅ Sauvegarder SANS réduire la qualité (garder qualité originale)
             Storage::disk($disk)->put($path, (string) $image->encode('jpg', 95));
+            
+            \Log::info('✅ Image traitée avec succès', [
+                'index' => $index,
+                'path' => $path,
+                'width' => $image->width(),
+                'height' => $image->height(),
+            ]);
         }
+        
+        \Log::info('🎨 ProcessAnnonceImages: Fin traitement', [
+            'total_traité' => count($this->paths),
+        ]);
     }
 }

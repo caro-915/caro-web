@@ -155,7 +155,7 @@ class AnnonceApiController extends Controller
             'annee'         => 'nullable|integer|min:1980|max:' . (date('Y') + 1),
             'kilometrage'   => 'nullable|integer|min:0',
             'carburant'     => 'required|string|max:50',
-            'boite_vitesse' => 'required|string|max:50',
+            'boite_vitesse' => 'required_if:vehicle_type,Voiture|nullable|string|max:50',
             'ville'         => 'nullable|string|max:100',
             'vehicle_type'  => 'nullable|in:Voiture,Moto',
             'show_phone'    => 'nullable',
@@ -176,6 +176,11 @@ class AnnonceApiController extends Controller
         $data['show_phone'] = $request->boolean('show_phone');
         $data['condition'] = $request->input('condition', 'non');
         $data['vehicle_type'] = $request->input('vehicle_type', 'Voiture');
+        
+        // Si Moto et boite_vitesse vide, mettre N/A par défaut
+        if ($data['vehicle_type'] === 'Moto' && empty($data['boite_vitesse'])) {
+            $data['boite_vitesse'] = 'N/A';
+        }
         
         // Vérifier que l'utilisateur a un numéro de téléphone si show_phone est activé
         if ($data['show_phone'] && empty($request->user()->phone)) {
