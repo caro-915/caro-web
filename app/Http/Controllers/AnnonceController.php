@@ -234,10 +234,17 @@ class AnnonceController extends Controller
         $data['condition']  = $request->input('condition', 'non');
         $data['seller_type'] = $request->input('seller_type', 'particulier');
 
-        // Déterminer le nombre max d'images selon le statut PRO
+        // Vérifier que l'utilisateur a un numéro de téléphone si show_phone est activé
+        if ($data['show_phone'] && empty(auth()->user()->phone)) {
+            return back()->withErrors([
+                'show_phone' => 'Vous devez ajouter un numéro de téléphone dans votre profil avant de pouvoir l\'afficher dans vos annonces.'
+            ])->withInput();
+        }
+
+        // Déterminer le nombre max d'images selon les features de l'abonnement
         $subscriptionService = app(\App\Services\SubscriptionService::class);
-        $isPro = auth()->check() ? $subscriptionService->userIsPro(auth()->user()) : false;
-        $maxImages = $isPro ? 8 : 4;
+        $features = $subscriptionService->getFeatures(auth()->user());
+        $maxImages = $features['max_images_per_ad'] ?? 4;  // 4 par défaut pour compte gratuit
 
         // Upload rapide (sans traitement) puis traitement async après réponse
         $imagePaths = [
@@ -501,10 +508,10 @@ class AnnonceController extends Controller
             abort(403, 'Vous ne pouvez modifier que vos propres annonces.');
         }
 
-        // Déterminer le nombre max d'images selon le statut PRO
+        // Déterminer le nombre max d'images selon les features de l'abonnement
         $subscriptionService = app(\App\Services\SubscriptionService::class);
-        $isPro = $subscriptionService->userIsPro(auth()->user());
-        $maxImages = $isPro ? 8 : 4;
+        $features = $subscriptionService->getFeatures(auth()->user());
+        $maxImages = $features['max_images_per_ad'] ?? 4; // 4 par défaut pour compte gratuit
 
         // Nettoyer fichiers vides
         if ($request->hasFile('images')) {

@@ -3,14 +3,14 @@
 @section('content')
 @php
     $subscriptionServiceIntro = app(\App\Services\SubscriptionService::class);
-    $isProIntro = auth()->check() ? $subscriptionServiceIntro->userIsPro(auth()->user()) : false;
-    $maxImagesIntro = $isProIntro ? 8 : 4;
+    $features = $subscriptionService->getFeatures(auth()->user());
+    $maxImagesIntro = $features['max_images_per_ad'] ?? 4;
 @endphp
 <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
     <div class="mb-6">
         <h1 class="text-2xl md:text-3xl font-bold mb-1">Déposer une annonce</h1>
         <p class="text-xs md:text-sm text-gray-500">
-            Remplissez les informations de votre vehicule et ajoutez jusqu'à {{ $maxImagesIntro }} photos{{ $isProIntro ? ' (Compte PRO)' : '' }}.
+            Remplissez les informations de votre vehicule et ajoutez jusqu'à {{ $maxImagesIntro }} photos.
         </p>
     </div>
 

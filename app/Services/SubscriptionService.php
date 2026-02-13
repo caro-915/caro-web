@@ -39,6 +39,7 @@ class SubscriptionService
         // Free plan defaults
         $defaults = [
             'max_active_ads' => 5,
+            'max_images_per_ad' => 4,  // 4 images pour compte gratuit
             'boosts_per_month' => 0,
             'boost_duration_days' => 7,
         ];

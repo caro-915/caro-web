@@ -177,10 +177,18 @@ class AnnonceApiController extends Controller
         $data['condition'] = $request->input('condition', 'non');
         $data['vehicle_type'] = $request->input('vehicle_type', 'Voiture');
         
-        // Déterminer le nombre max d'images selon le statut PRO
+        // Vérifier que l'utilisateur a un numéro de téléphone si show_phone est activé
+        if ($data['show_phone'] && empty($request->user()->phone)) {
+            return response()->json([
+                'message' => 'Vous devez ajouter un numéro de téléphone dans votre profil avant de pouvoir l\'afficher dans vos annonces.',
+                'error' => 'phone_required',
+            ], 400);
+        }
+        
+        // Déterminer le nombre max d'images selon le plan d'abonnement
         $subscriptionService = app(\App\Services\SubscriptionService::class);
-        $isPro = $subscriptionService->userIsPro($request->user());
-        $maxImages = $isPro ? 8 : 4;
+        $features = $subscriptionService->getFeatures($request->user());
+        $maxImages = $features['max_images_per_ad'] ?? 4;
         
         // Upload images
         $imagePaths = [
@@ -412,10 +420,10 @@ class AnnonceApiController extends Controller
             $mappedData['show_phone'] = $request->boolean('show_phone');
         }
 
-        // Check PRO status for image limits
+        // Check plan features for image limits
         $subscriptionService = app(\App\Services\SubscriptionService::class);
-        $isPro = $subscriptionService->userIsPro($request->user());
-        $maxImages = $isPro ? 8 : 4;
+        $features = $subscriptionService->getFeatures($request->user());
+        $maxImages = $features['max_images_per_ad'] ?? 4;
 
         // Upload new images if provided
         if ($request->hasFile('images')) {
