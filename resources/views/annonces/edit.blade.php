@@ -249,7 +249,10 @@
                 $subscriptionService = app(\App\Services\SubscriptionService::class);
                 $features = $subscriptionService->getFeatures(auth()->user());
                 $maxImages = $features['max_images_per_ad'] ?? 4;
-            $slots = ['image_path','image_path_2','image_path_3','image_path_4','image_path_5','image_path_6','image_path_7','image_path_8'];
+                $isPro = $subscriptionService->userIsPro(auth()->user());
+                $slots = ['image_path','image_path_2','image_path_3','image_path_4','image_path_5'];
+            @endphp
+
             @if(collect($slots)->filter(fn($s) => !empty($annonce->$s))->count())
                 <div id="existing_images_grid" class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4 justify-center mx-auto max-w-3xl">
                     @foreach($slots as $imgSlot)

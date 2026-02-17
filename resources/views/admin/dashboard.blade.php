@@ -30,8 +30,14 @@
     {{-- Quick Actions --}}
     <div class="mb-8 flex justify-center gap-3 flex-wrap">
         <a href="{{ route('admin.annonces.index') }}"
-           class="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-sm font-semibold text-gray-700 hover:border-gray-800 hover:text-gray-800 inline-block">
+           class="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-sm font-semibold text-gray-700 hover:border-gray-800 hover:text-gray-800 inline-block relative">
            Gérer les annonces
+           @php
+               $pendingAnnoncesCount = \App\Models\Annonce::where('is_active', false)->count();
+           @endphp
+           @if($pendingAnnoncesCount > 0)
+               <span class="absolute -top-2 -right-2 inline-flex items-center justify-center min-w-[20px] h-[20px] rounded-full bg-red-600 text-white text-xs font-bold">{{ $pendingAnnoncesCount }}</span>
+           @endif
         </a>
 
         <a href="{{ route('admin.users.index') }}"
@@ -55,7 +61,7 @@
     <div class="bg-white rounded-xl shadow p-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold">Dernières annonces</h2>
-            <span class="text-sm text-gray-500">{{ $latestAds->count() }} affichées</span>
+            <span class="text-sm text-gray-500">{{ $latestAds->total() }} au total</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -133,6 +139,11 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-4">
+            {{ $latestAds->links() }}
         </div>
     </div>
 

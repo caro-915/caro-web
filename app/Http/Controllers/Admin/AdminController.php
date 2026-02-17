@@ -25,8 +25,8 @@ class AdminController extends Controller
 
         $latestAds = Annonce::with('user')
             ->latest()
-            ->take(12)
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
 
         return view('admin.dashboard', compact('stats', 'latestAds'));
     }

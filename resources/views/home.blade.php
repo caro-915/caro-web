@@ -208,14 +208,23 @@
                         </div>
                     </div>
 
-                    {{-- PRO upgrade card (visible only if not PRO) --}}
-                    @if(auth()->check() && !auth()->user()->isPro())
+                    {{-- PRO upgrade card (visible for non-subscribers AND Premium users) --}}
+                    @if(auth()->check() && !auth()->user()->hasProPlan())
                         <div class="bg-gradient-to-r from-pink-50 to-pink-100 border border-pink-300 rounded-2xl p-4 md:p-5 inline-flex flex-col md:flex-row md:items-center gap-4 w-full">
                             <div class="flex-1">
-                                <h2 class="text-sm md:text-base font-semibold mb-1">✨ Passer en PRO</h2>
-                                <p class="text-xs md:text-sm text-gray-700">
-                                    Débloquez 10 annonces, boostez vos annonces et bénéficiez de fonctionnalités premium.
-                                </p>
+                                @if(auth()->user()->isPro() && !auth()->user()->hasProPlan())
+                                    {{-- User has Premium subscription --}}
+                                    <h2 class="text-sm md:text-base font-semibold mb-1">🚀 Passez au plan PRO</h2>
+                                    <p class="text-xs md:text-sm text-gray-700">
+                                        Vous êtes en <strong>Premium</strong>. Passez au PRO pour débloquer jusqu'à 10 annonces, 5 boosts/mois et 30 jours d'accès.
+                                    </p>
+                                @else
+                                    {{-- Free user --}}
+                                    <h2 class="text-sm md:text-base font-semibold mb-1">✨ Passer en PRO</h2>
+                                    <p class="text-xs md:text-sm text-gray-700">
+                                        Débloquez plus d'annonces, boostez vos annonces et bénéficiez de fonctionnalités exclusives.
+                                    </p>
+                                @endif
                             </div>
                             <div>
                                 <a href="{{ route('pro.index') }}"

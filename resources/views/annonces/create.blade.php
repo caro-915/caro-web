@@ -391,17 +391,9 @@
 
         {{-- Images --}}
         <div>
-            @php
-                $subscriptionService = app(\App\Services\SubscriptionService::class);
-                $isPro = auth()->check() ? $subscriptionService->userIsPro(auth()->user()) : false;
-                $maxImages = $isPro ? 8 : 4;
-            @endphp
             <label class="block text-xs font-semibold mb-1">
                 Photos du vehicule 
-                <span class="text-gray-400">(jusqu'à {{ $maxImages }} photos{{ $isPro ? ' - Compte PRO' : '' }})</span>
-                @if(!$isPro)
-                    <span class="text-pink-600 text-[10px] ml-1">→ Passez PRO pour 8 photos!</span>
-                @endif
+                <span class="text-gray-400">(jusqu'à {{ $maxImagesIntro }} photos)</span>
             </label>
             <p class="text-[11px] text-gray-500 mb-2">
                 Formats acceptés : JPG, JPEG, PNG, WEBP. Taille max : 4 Mo par photo.
@@ -552,7 +544,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const finitionInput = document.getElementById('finition_input');
 
         if (boiteVitesseSelect) {
-            boiteVitesseSelect.disabled = isMoto;
+            if (isMoto) {
+                // Pour Moto: désactiver + mettre valeur N/A
+                boiteVitesseSelect.disabled = true;
+                boiteVitesseSelect.value = 'N/A';
+                // Ajouter option N/A si elle n'existe pas
+                if (!Array.from(boiteVitesseSelect.options).find(opt => opt.value === 'N/A')) {
+                    const naOption = new Option('N/A', 'N/A', true, true);
+                    boiteVitesseSelect.add(naOption);
+                }
+            } else {
+                // Pour Voiture: réactiver + retirer N/A
+                boiteVitesseSelect.disabled = false;
+                const naOption = Array.from(boiteVitesseSelect.options).find(opt => opt.value === 'N/A');
+                if (naOption) {
+                    naOption.remove();
+                }
+                // Réinitialiser si était N/A
+                if (boiteVitesseSelect.value === 'N/A') {
+                    boiteVitesseSelect.value = '';
+                }
+            }
             boiteVitesseSelect.classList.toggle('opacity-50', isMoto);
             boiteVitesseSelect.classList.toggle('cursor-not-allowed', isMoto);
         }
@@ -636,13 +648,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Boîte de vitesses
-        const boiteVitesse = document.querySelector('select[name="boite_vitesse"]');
-        if (!boiteVitesse || !boiteVitesse.value) {
-            errors.push('La boîte de vitesses est obligatoire.');
-            if (boiteVitesse) {
-                boiteVitesse.classList.add('border-red-500');
-                errorFields.push(boiteVitesse);
+        // Boîte de vitesses (seulement si Voiture)
+        const vehicleType = document.querySelector('input[name="vehicle_type"]');
+        const isVoiture = vehicleType && vehicleType.value === 'Voiture';
+        
+        if (isVoiture) {
+            const boiteVitesse = document.querySelector('select[name="boite_vitesse"]');
+            if (!boiteVitesse || !boiteVitesse.value || boiteVitesse.value === '') {
+                errors.push('La boîte de vitesses est obligatoire.');
+                if (boiteVitesse) {
+                    boiteVitesse.classList.add('border-red-500');
+                    errorFields.push(boiteVitesse);
+                }
             }
         }
         
@@ -725,7 +742,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const addImageBtn = document.getElementById('add_image_btn');
     const imagesPreview = document.getElementById('images_preview');
 
-    const MAX_IMAGES = {{ $maxImages ?? 4 }};
+    const MAX_IMAGES = {{ $maxImagesIntro }};
     const IS_PRO = {{ $isPro ? 'true' : 'false' }};
     let imageCount = 1;
 

@@ -71,6 +71,18 @@
                 </div>
 
                 <div class="mb-4">
+                    <label for="max_images_per_ad" class="block text-sm font-semibold text-gray-900 mb-2">
+                        Nombre maximum d'images par annonce
+                    </label>
+                    <input type="number" id="max_images_per_ad" name="max_images_per_ad" value="{{ old('max_images_per_ad', $plan->features['max_images_per_ad'] ?? 4) }}" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" 
+                        min="1" max="8" required>
+                    @error('max_images_per_ad')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
                     <label for="boosts_per_month" class="block text-sm font-semibold text-gray-900 mb-2">
                         Boosts par mois
                     </label>

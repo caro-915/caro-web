@@ -160,8 +160,14 @@ class AnnonceController extends Controller
         
         $brands = collect($brandsList);
         $models = CarModel::orderBy('name')->get();
+        
+        // Récupérer les features de l'utilisateur pour le formulaire
+        $subscriptionService = app(\App\Services\SubscriptionService::class);
+        $features = $subscriptionService->getFeatures(auth()->user());
+        $isPro = $subscriptionService->userIsPro(auth()->user());
+        $maxImagesIntro = $features['max_images_per_ad'] ?? 4;
 
-        return view('annonces.create', compact('brands', 'models', 'wilayas', 'brandModelsMap'));
+        return view('annonces.create', compact('brands', 'models', 'wilayas', 'brandModelsMap', 'isPro', 'maxImagesIntro'));
     }
 
     public function cleanTempImages()
@@ -255,33 +261,94 @@ class AnnonceController extends Controller
             'image_path_8' => null,
         ];
 
-        $uploadedFiles = [];
         if ($request->hasFile('images')) {
             $disk = config('filesystems.default', 'public');
             $imageCount = 0;
             
+            \Log::info('🔍 DEBUT UPLOAD IMAGES', [
+                'maxImages' => $maxImages,
+                'files_count' => count($request->file('images')),
+                'user_id' => auth()->id(),
+                'plan' => auth()->user()->subscriptions()->latest()->first()?->plan?->name ?? 'Free',
+            ]);
+            
+            // Charger watermark une fois pour toutes les images (performance)
+            $watermarkOpacity = config('app.watermark_opacity', 0.20);
+            $watermarkWidth = config('app.watermark_width', 0.65);
+            $fontPath = null;
+            $possibleFonts = [
+                'C:/Windows/Fonts/arialbd.ttf',
+                'C:/Windows/Fonts/arial.ttf',
+                '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+                '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+            ];
+            foreach ($possibleFonts as $font) {
+                if (file_exists($font)) {
+                    $fontPath = $font;
+                    break;
+                }
+            }
+            
             foreach ($request->file('images') as $index => $file) {
-                // Limiter selon le statut PRO
-                if ($imageCount >= $maxImages) break;
+                \Log::info('🔍 ITERATION FOREACH', [
+                    'index' => $index,
+                    'imageCount' => $imageCount,
+                    'maxImages' => $maxImages,
+                    'will_break' => $imageCount >= $maxImages,
+                ]);
+                
+                // Limiter selon le maxImages
+                if ($imageCount >= $maxImages) {
+                    \Log::info('⚠️ BREAK: imageCount >= maxImages', [
+                        'imageCount' => $imageCount,
+                        'maxImages' => $maxImages,
+                    ]);
+                    break;
+                }
 
                 try {
-                    $path = $file->store('annonces', $disk);
+                    // Traiter l'image inline avec watermark (pas async)
+                    $filename = 'annonces/' . Str::uuid() . '.jpg';
+                    $image = Image::make($file->getRealPath())->orientate();
+
+                    // Redimensionner
+                    $image->resize(1280, null, function ($c) {
+                        $c->aspectRatio();
+                        $c->upsize();
+                    });
+
+                    // Appliquer watermark
+                    $targetTextWidth = $image->width() * $watermarkWidth;
+                    $fontSize = (int) ($targetTextWidth / 4.8);
                     
-                    if (!$path) {
-                        \Log::error("Image upload failed for slot $index");
-                        continue;
-                    }
+                    $image->text('ELSAYARA', $image->width() / 2, $image->height() / 2, function($font) use ($fontSize, $watermarkOpacity, $fontPath) {
+                        if ($fontPath) {
+                            $font->file($fontPath);
+                        }
+                        $font->size($fontSize);
+                        $font->color([255, 255, 255, $watermarkOpacity]);
+                        $font->align('center');
+                        $font->valign('middle');
+                    });
+
+                    // Sauvegarder
+                    Storage::disk($disk)->put($filename, (string) $image->encode('jpg', 95));
                     
-                    $uploadedFiles[] = $path;
+                    \Log::info('✅ Image traitée inline', [
+                        'index' => $index,
+                        'filename' => $filename,
+                        'width' => $image->width(),
+                        'height' => $image->height(),
+                    ]);
                     
-                    if ($index === 0) $imagePaths['image_path']   = $path;
-                    if ($index === 1) $imagePaths['image_path_2'] = $path;
-                    if ($index === 2) $imagePaths['image_path_3'] = $path;
-                    if ($index === 3) $imagePaths['image_path_4'] = $path;
-                    if ($index === 4) $imagePaths['image_path_5'] = $path;
-                    if ($index === 5) $imagePaths['image_path_6'] = $path;
-                    if ($index === 6) $imagePaths['image_path_7'] = $path;
-                    if ($index === 7) $imagePaths['image_path_8'] = $path;
+                    if ($index === 0) $imagePaths['image_path']   = $filename;
+                    if ($index === 1) $imagePaths['image_path_2'] = $filename;
+                    if ($index === 2) $imagePaths['image_path_3'] = $filename;
+                    if ($index === 3) $imagePaths['image_path_4'] = $filename;
+                    if ($index === 4) $imagePaths['image_path_5'] = $filename;
+                    if ($index === 5) $imagePaths['image_path_6'] = $filename;
+                    if ($index === 6) $imagePaths['image_path_7'] = $filename;
+                    if ($index === 7) $imagePaths['image_path_8'] = $filename;
                     
                     $imageCount++;
                 } catch (\Exception $e) {
@@ -295,11 +362,6 @@ class AnnonceController extends Controller
         $data['is_active'] = false; // ✅ En attente de validation admin par défaut
 
         $annonce = Annonce::create($data);
-
-        // ✅ Dispatcher le traitement des images (redimensionne 1280px, watermark, qualité 95%)
-        if (!empty($uploadedFiles)) {
-            ProcessAnnonceImages::dispatch($uploadedFiles)->afterResponse();
-        }
 
         return redirect()
             ->route('annonces.show', $annonce->id)
@@ -706,7 +768,10 @@ class AnnonceController extends Controller
         $brands = CarBrand::orderBy('name')->get();
         $models = CarModel::orderBy('name')->get();
 
-        return view('annonces.edit', compact('annonce', 'brands', 'models'));
+        $subscriptionService = app(\App\Services\SubscriptionService::class);
+        $isPro = $subscriptionService->userIsPro(Auth::user());
+
+        return view('annonces.edit', compact('annonce', 'brands', 'models', 'isPro'));
     }
 
     public function getModels(Request $request)

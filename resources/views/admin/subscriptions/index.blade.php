@@ -7,6 +7,9 @@
         <!-- Header -->
         <div class="mb-8 flex justify-between items-center">
             <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <a href="{{ route('admin.dashboard') }}" class="text-pink-600 hover:text-pink-700 font-semibold">← Retour au tableau de bord</a>
+                </div>
                 <h1 class="text-3xl font-bold text-gray-900">Abonnements PRO</h1>
                 <p class="text-gray-600 mt-1">Gérez les demandes d'abonnement</p>
             </div>

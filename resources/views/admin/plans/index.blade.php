@@ -7,7 +7,8 @@
         <!-- Header -->
         <div class="mb-8 flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900">Plans PRO</h1>
+                <a href="{{ route('admin.dashboard') }}" class="text-pink-600 hover:text-pink-700 font-semibold">← Retour au tableau de bord</a>
+                <h1 class="text-3xl font-bold text-gray-900 mt-2">Plans PRO</h1>
                 <p class="text-gray-600 mt-1">Créez et gérez les plans d'abonnement</p>
             </div>
             <a href="{{ route('admin.plans.create') }}" class="py-2 px-4 bg-pink-600 text-white rounded-lg font-semibold hover:bg-pink-700 transition">
@@ -43,6 +44,12 @@
                                     <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
                                 Annonces : {{ $plan->features['max_active_ads'] }}
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                                Images : {{ $plan->features['max_images_per_ad'] ?? 4 }}/annonce
                             </li>
                             <li class="flex items-center">
                                 <svg class="w-4 h-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">

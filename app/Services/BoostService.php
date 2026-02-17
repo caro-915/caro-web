@@ -37,10 +37,10 @@ class BoostService
         $canBoost = true;
         $reason = '';
 
-        // Check if user is PRO
+        // Check if user has an active subscription (Premium or Pro)
         if (!$this->subscriptionService->userIsPro($user)) {
             $canBoost = false;
-            $reason = 'Vous devez avoir un abonnement PRO pour booster une annonce.';
+            $reason = 'Vous devez avoir un abonnement actif (Premium ou Pro) pour booster une annonce.';
             \Log::warning('❌ BOOST NON AUTORISÉ : Utilisateur non PRO', [
                 'user_id' => $user->id,
                 'annonce_id' => $annonce->id,

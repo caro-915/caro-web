@@ -5,13 +5,12 @@
 
     <div class="flex items-center justify-between mb-6">
         <div>
+            <div class="flex items-center gap-3 mb-2">
+                <a href="{{ route('admin.dashboard') }}" class="text-pink-600 hover:text-pink-700 font-semibold">← Retour au tableau de bord</a>
+            </div>
             <h1 class="text-2xl md:text-3xl font-bold">Admin · Annonces</h1>
             <p class="text-sm text-gray-500">Gérer toutes les annonces (approuver/rejeter/supprimer).</p>
         </div>
-
-        <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-600 hover:text-gray-800">
-            ← Dashboard
-        </a>
     </div>
 
     @if(session('success'))

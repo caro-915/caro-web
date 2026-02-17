@@ -49,6 +49,7 @@ class Plan extends Model
         // Force conversion to integers for numeric values
         return [
             'max_active_ads' => (int) ($decoded['max_active_ads'] ?? 5),
+            'max_images_per_ad' => (int) ($decoded['max_images_per_ad'] ?? 4),
             'boosts_per_month' => (int) ($decoded['boosts_per_month'] ?? 0),
             'boost_duration_days' => (int) ($decoded['boost_duration_days'] ?? 7),
         ];

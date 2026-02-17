@@ -99,6 +99,10 @@ Route::middleware(['auth', 'banned'])->group(function () {
     Route::get('/messages/{conversation}/new', [MessageController::class, 'fetchNew'])->name('messages.new');
 
     Route::get('/messages/unread-count', function () {
+        if (!auth()->check()) {
+            return response()->json(['count' => 0]);
+        }
+        
         return response()->json([
             'count' => \App\Models\Message::whereHas('conversation', function ($q) {
                     $q->where('buyer_id', auth()->id())

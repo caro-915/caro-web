@@ -73,22 +73,31 @@ class AnnonceApiController extends Controller
             });
         }
 
+        // ✅ TRI BOOST: Les annonces boostées remontent en premier
+        $query->leftJoin('boosts', function ($join) {
+            $join->on('annonces.id', '=', 'boosts.annonce_id')
+                 ->where('boosts.status', '=', 'active')
+                 ->where('boosts.expires_at', '>', now());
+        })
+        ->select('annonces.*')
+        ->orderByRaw('CASE WHEN boosts.id IS NOT NULL THEN 0 ELSE 1 END');
+
         // Tri
         switch ($request->get('sort', 'latest')) {
             case 'price_asc':
-                $query->orderBy('prix', 'asc');
+                $query->orderBy('annonces.prix', 'asc');
                 break;
             case 'price_desc':
-                $query->orderBy('prix', 'desc');
+                $query->orderBy('annonces.prix', 'desc');
                 break;
             case 'km_asc':
-                $query->orderBy('kilometrage', 'asc');
+                $query->orderBy('annonces.kilometrage', 'asc');
                 break;
             case 'year_desc':
-                $query->orderBy('annee', 'desc');
+                $query->orderBy('annonces.annee', 'desc');
                 break;
             default:
-                $query->orderBy('created_at', 'desc');
+                $query->orderBy('annonces.created_at', 'desc');
         }
 
         $annonces = $query->paginate(20);
@@ -194,6 +203,18 @@ class AnnonceApiController extends Controller
         $subscriptionService = app(\App\Services\SubscriptionService::class);
         $features = $subscriptionService->getFeatures($request->user());
         $maxImages = $features['max_images_per_ad'] ?? 4;
+        
+        // ✅ QUOTA CHECK: Vérifier la limite d'annonces
+        $maxAds = $features['max_active_ads'];
+        $activeCount = $request->user()->annonces()->count();
+        
+        if ($activeCount >= $maxAds) {
+            return response()->json([
+                'message' => "Vous avez atteint votre limite de {$maxAds} annonces actives. " . 
+                             ($maxAds === 5 ? "Passez à PRO pour publier jusqu'à 10 annonces !" : ""),
+                'error' => 'quota_exceeded',
+            ], 422);
+        }
         
         // Upload images
         $imagePaths = [

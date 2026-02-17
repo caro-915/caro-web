@@ -406,7 +406,7 @@
                 <div class="relative inline-block w-[92vw] h-[88vh]">
                     <!-- Bouton fermer stylé -->
                     <button onclick="closeLightbox()" 
-                            class="absolute -top-12 right-0 md:top-2 md:right-2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-800 text-white text-xl md:text-2xl font-bold hover:bg-gray-900 hover:scale-110 transition-all duration-200 flex items-center justify-center shadow-2xl"
+                            class="absolute top-2 right-2 md:top-4 md:right-4 w-10 h-10 md:w-12 md:h-12 rounded-full bg-red-600 text-white text-xl md:text-2xl font-bold hover:bg-red-700 hover:scale-110 transition-all duration-200 flex items-center justify-center shadow-2xl"
                             style="z-index: 10000;">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>

@@ -1,0 +1,2409 @@
+﻿﻿﻿
+
+
+
+﻿<!DOCTYPE html>
+<html lang="fr">
+    <style>
+  html { scroll-behavior: smooth; overflow-y: scroll; }
+</style>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>ElSayara – Trouvez votre voiture d'occasion</title>
+
+    
+    <script type="module" src="http://[::1]:5173/@vite/client"></script><link rel="stylesheet" href="http://[::1]:5173/resources/css/app.css" /><script type="module" src="http://[::1]:5173/resources/js/app.js"></script>    <script src="//unpkg.com/alpinejs" defer></script>
+    <style>[x-cloak]{ display:none !important; }</style>
+    
+</head>
+<body class="bg-gray-50 text-slate-900 overflow-x-hidden">
+
+    
+    <header class="bg-white shadow-sm fixed w-full top-0 left-0 right-0 z-50">
+        <div class="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 flex items-center justify-between h-14 sm:h-16">
+
+            
+            <a href="http://127.0.0.1:8000" class="flex items-center flex-shrink-0">
+                <span class="text-2xl sm:text-3xl font-black bg-gradient-to-r from-gray-800 via-gray-900 to-slate-800 bg-clip-text text-transparent tracking-wider drop-shadow-sm">ELSAYARA</span>
+            </a>
+
+            
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <a href="http://127.0.0.1:8000/recherche" class="hover:text-gray-800 whitespace-nowrap">Annonces</a>
+                <a href="http://127.0.0.1:8000#top-annonces" class="hover:text-gray-800 whitespace-nowrap">Top annonces</a>
+                <a href="http://127.0.0.1:8000#about" class="hover:text-gray-800 whitespace-nowrap">À propos de nous</a>
+                <a href="http://127.0.0.1:8000#contact-us" class="hover:text-gray-800 whitespace-nowrap">Nous contacter</a>
+            </nav>
+
+            
+            <div class="flex items-center gap-1 sm:gap-3 flex-shrink-0">
+
+                                    
+                    <a href="http://127.0.0.1:8000/login"
+                       class="text-[10px] sm:text-xs md:text-sm text-gray-700 hover:text-gray-800 whitespace-nowrap">
+                        Se connecter
+                    </a>
+                    <a href="http://127.0.0.1:8000/register"
+                       class="hidden sm:inline-flex items-center justify-center text-xs md:text-sm text-gray-700 hover:text-gray-800 whitespace-nowrap">
+                        S'inscrire
+                    </a>
+                    <a href="http://127.0.0.1:8000/annonces/create"
+                       class="bg-gray-800 text-white text-[10px] sm:text-sm font-semibold px-2 sm:px-4 py-1.5 sm:py-2 rounded-full hover:bg-gray-900 whitespace-nowrap">
+                        Déposer
+                    </a>
+                
+            </div>
+        </div>
+    </header>
+
+    
+   <main class="pt-16 sm:pt-18 py-6 md:py-8">
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen">
+                    
+
+
+    
+    <section class="mb-10">
+        <div class="bg-gradient-to-r from-gray-100 to-white rounded-3xl px-6 py-8 md:px-10 md:py-12 flex flex-col md:flex-row gap-8 md:items-center">
+            
+            
+            <div class="w-full md:max-w-md">
+                                <form method="GET" action="http://127.0.0.1:8000/recherche" class="bg-white rounded-3xl shadow-lg p-5 md:p-6 space-y-4">
+                                    
+                                    <input type="hidden" name="vehicle_type" id="vehicle_type_input" value="">
+
+                                    
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="block text-xs font-semibold mb-1">Type de véhicule</label>
+                                            <div class="flex items-center gap-2 text-xs md:text-sm">
+                                                
+                                                <button type="button"
+                                                        data-type="Voiture"
+                                                        class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
+                                                            bg-white text-gray-600 border-gray-200">
+                                                    🚗 Voiture
+                                                </button>
+                                                <button type="button"
+                                                        data-type="Moto"
+                                                        class="vehicle-type-btn flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs md:text-sm
+                                                            bg-white text-gray-600 border-gray-200">
+                                                    🏍 Moto
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-xs font-semibold mb-1">Recherche texte</label>
+                                            <input type="text"
+                                                   name="home_q"
+                                                   value=""
+                                                   placeholder="Marque, modèle, mot-clé..."
+                                                   class="w-full border rounded-lg p-2 text-xs md:text-sm">
+                                        </div>
+
+                                        <div class="flex items-center justify-center">
+                                            <span class="px-2 py-1 text-[10px] uppercase tracking-wide text-gray-500 bg-gray-100 rounded-full">ou</span>
+                                        </div>
+                                    </div>
+
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Marque</label>
+
+                            <div id="home_brand_dropdown" x-data="brandDropdownHome()" class="relative">
+                                <button type="button" @click="open = !open"
+                                        class="w-full border rounded-lg p-2 text-xs md:text-sm text-left bg-white flex justify-between items-center">
+                                    <span x-text="selected || 'Peu importe'"></span>
+                                    <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                    </svg>
+                                </button>
+
+                                <input type="hidden" name="marque" id="home_marque_hidden" :value="selected">
+
+                                
+                                <div x-show="open" @click.away="open = false"
+                                     class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
+                                     style="max-height: 280px;">
+                                    
+                                    <div class="sticky top-0 p-2 border-b bg-white">
+                                        <input type="text" x-model="search" placeholder="Rechercher une marque..."
+                                               class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                    </div>
+
+                                    
+                                    <div class="overflow-y-auto flex-1" style="max-height: 240px;">
+                                        <button type="button"
+                                                @click="selectBrand('')"
+                                                class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b">
+                                            <span>Peu importe</span>
+                                        </button>
+                                        <template x-for="brand in filteredBrands()" :key="brand">
+                                            <button type="button"
+                                                    @click="selectBrand(brand)"
+                                                    class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
+                                                <span x-text="brand"></span>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Modèle</label>
+                            <div id="home_model_dropdown" x-data="modelDropdownHome()" class="relative">
+                                <button type="button" 
+                                        @click="open = !open"
+                                        class="w-full border rounded-lg p-2 text-xs md:text-sm text-left bg-white flex justify-between items-center">
+                                    <span x-text="selected || 'Peu importe'"></span>
+                                    <svg class="w-4 h-4 transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                    </svg>
+                                </button>
+
+                                <input type="hidden" name="modele" id="home_modele_hidden" :value="selected">
+
+                                
+                                <div x-show="open" @click.away="open = false"
+                                     class="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 overflow-hidden flex flex-col"
+                                     style="max-height: 280px;">
+                                    
+                                    <div class="sticky top-0 p-2 border-b bg-white">
+                                        <input type="text" x-model="search" placeholder="Rechercher un modèle..."
+                                               class="w-full border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                    </div>
+
+                                    
+                                    <div class="overflow-y-auto flex-1" style="max-height: 240px;">
+                                        <button type="button"
+                                                @click="selectModel('')"
+                                                class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b">
+                                            <span>Peu importe</span>
+                                        </button>
+                                        <template x-for="model in filteredModels()" :key="model">
+                                            <button type="button"
+                                                    @click="selectModel(model)"
+                                                    class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 border-b last:border-b-0">
+                                                <span x-text="model"></span>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Prix max</label>
+                            <input type="number" name="price_max" value=""
+                                   class="w-full border rounded-lg p-2 text-xs md:text-sm" placeholder="Pas de limite">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Carburant</label>
+                            <select name="carburant"
+                                    class="w-full border rounded-lg p-2 text-xs md:text-sm">
+                                <option value="any">Peu importe</option>
+                                <option value="Essence"  >Essence</option>
+                                <option value="Diesel"   >Diesel</option>
+                                <option value="Hybride"  >Hybride</option>
+                                <option value="Électrique" >Électrique</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Wilaya / Code postal</label>
+                        <input type="text" name="wilaya" value=""
+                               class="w-full border rounded-lg p-2 text-xs md:text-sm" placeholder="ex : Alger, 16000">
+                    </div>
+
+                    
+                    <div class="pt-2">
+                        <button type="submit"
+                                class="w-full py-3 rounded-full bg-gray-800 text-white text-sm font-semibold hover:bg-gray-900">
+                            Rechercher
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            
+            <div class="flex-1">
+                <h1 class="text-3xl md:text-4xl font-extrabold leading-tight mb-4">
+                    Trouvez <span class="text-pink-600">la voiture d'occasion</span><br>
+                    qui vous correspond
+                </h1>
+                <p class="text-gray-600 text-sm md:text-base mb-6 max-w-xl">
+                    Recherchez parmi des milliers d'annonces vérifiées partout en Algérie. 
+                    Filtrez par marque, budget, wilaya et trouvez votre prochaine voiture en quelques clics.
+                </p>
+
+                
+                <div class="space-y-3">
+                    
+                    <div class="bg-white bg-opacity-80 border border-pink-100 rounded-2xl p-4 md:p-5 inline-flex flex-col md:flex-row md:items-center gap-4 w-full">
+                        <div class="flex-1">
+                            <h2 class="text-sm md:text-base font-semibold mb-1">Vendre votre véhicule ?</h2>
+                            <p class="text-xs md:text-sm text-gray-600">
+                                Déposez votre annonce gratuitement et touchez des milliers d'acheteurs potentiels en quelques minutes.
+                            </p>
+                        </div>
+                        <div>
+                            <a href="http://127.0.0.1:8000/annonces/create"
+                               class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-gray-800 text-white text-xs md:text-sm font-semibold hover:bg-gray-900">
+                                Déposer une annonce
+                            </a>
+                        </div>
+                    </div>
+
+                    
+                                    </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg md:text-xl font-semibold">Dernières annonces</h2>
+            <a href="http://127.0.0.1:8000/recherche" class="text-xs md:text-sm text-gray-600 hover:text-gray-800">
+                Voir tout →
+            </a>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                                            <a href="http://127.0.0.1:8000/annonces/111"
+                   class="bg-white rounded-xl shadow-sm hover:shadow transition overflow-hidden group">
+                    <div class="relative h-24 overflow-hidden bg-gray-100">
+                        <img src="http://127.0.0.1:8000/storage/annonces/ELpqrOzL6qOgArp6OfkMOqhGf8P022NxIMaWMn1V.png" 
+                             alt="BMW serie 3 pack M"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='http://127.0.0.1:8000/images/placeholder-car.jpg'">
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs font-semibold truncate">BMW serie 3 pack M</p>
+                        <p class="text-xs text-pink-600 font-bold">1 200 000 DA</p>
+                    </div>
+                </a>
+                                            <a href="http://127.0.0.1:8000/annonces/110"
+                   class="bg-white rounded-xl shadow-sm hover:shadow transition overflow-hidden group">
+                    <div class="relative h-24 overflow-hidden bg-gray-100">
+                        <img src="http://127.0.0.1:8000/storage/annonces/wcJIPW9CbyHOoZkuz4gye2HmEGtzgJiGTPTMWJfL.png" 
+                             alt="Yamaha"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='http://127.0.0.1:8000/images/placeholder-car.jpg'">
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs font-semibold truncate">Yamaha</p>
+                        <p class="text-xs text-pink-600 font-bold">1 000 000 DA</p>
+                    </div>
+                </a>
+                                            <a href="http://127.0.0.1:8000/annonces/109"
+                   class="bg-white rounded-xl shadow-sm hover:shadow transition overflow-hidden group">
+                    <div class="relative h-24 overflow-hidden bg-gray-100">
+                        <img src="http://127.0.0.1:8000/storage/annonces/6ZVAfJsUZWi2M62DXe8HeCCuriFogAoO27HMG6x3.png" 
+                             alt="CLASS C"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='http://127.0.0.1:8000/images/placeholder-car.jpg'">
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs font-semibold truncate">CLASS C</p>
+                        <p class="text-xs text-pink-600 font-bold">12 345 DA</p>
+                    </div>
+                </a>
+                                            <a href="http://127.0.0.1:8000/annonces/108"
+                   class="bg-white rounded-xl shadow-sm hover:shadow transition overflow-hidden group">
+                    <div class="relative h-24 overflow-hidden bg-gray-100">
+                        <img src="http://127.0.0.1:8000/storage/annonces/NhVzURPmhlm0zljerCLQ3iDyw1QfLPlXagoqcc5L.jpg" 
+                             alt="BMW serie 3 pack M"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='http://127.0.0.1:8000/images/placeholder-car.jpg'">
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs font-semibold truncate">BMW serie 3 pack M</p>
+                        <p class="text-xs text-pink-600 font-bold">120 000 DA</p>
+                    </div>
+                </a>
+                                            <a href="http://127.0.0.1:8000/annonces/107"
+                   class="bg-white rounded-xl shadow-sm hover:shadow transition overflow-hidden group">
+                    <div class="relative h-24 overflow-hidden bg-gray-100">
+                        <img src="http://127.0.0.1:8000/storage/annonces/viegCfcvGcLR4blrXdSHzUNXkEf8oT7MmEEeW1bI.png" 
+                             alt="BMW serie 3 pack M"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='http://127.0.0.1:8000/images/placeholder-car.jpg'">
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs font-semibold truncate">BMW serie 3 pack M</p>
+                        <p class="text-xs text-pink-600 font-bold">1 234 DA</p>
+                    </div>
+                </a>
+                                            <a href="http://127.0.0.1:8000/annonces/85"
+                   class="bg-white rounded-xl shadow-sm hover:shadow transition overflow-hidden group">
+                    <div class="relative h-24 overflow-hidden bg-gray-100">
+                        <img src="http://127.0.0.1:8000/storage/annonces/oOfrXIZwbsCd7f9vgbg1eEbYeYqmlpOMsQJtXoj3.jpg" 
+                             alt="Test bot - annonce"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='http://127.0.0.1:8000/images/placeholder-car.jpg'">
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs font-semibold truncate">Test bot - annonce</p>
+                        <p class="text-xs text-pink-600 font-bold">2 500 000 DA</p>
+                    </div>
+                </a>
+                    </div>
+    </section>
+
+    
+    <section id="top-annonces" class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg md:text-xl font-semibold">🔥 Top annonces</h2>
+            <span class="text-xs md:text-sm text-gray-500">Les plus consultées</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <a href="http://127.0.0.1:8000/annonces/73"
+                   class="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden">
+                    <div class="relative h-40 overflow-hidden bg-gray-100">
+                        <img src="http://127.0.0.1:8000/storage/annonces/DaDUcKSI7WQpRqehTYmkJ1y0ZQ1ajseJDkYRxEeP.png" 
+                             alt="Hyndai edit test"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='http://127.0.0.1:8000/images/placeholder-car.jpg'">
+                        <div class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-xs font-semibold text-gray-700">
+                            👁️ 73 vues
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-xs text-gray-500 mb-1">Hyundai • ACCENT test edit</p>
+                        <p class="text-sm font-semibold truncate mb-2">Hyndai edit test</p>
+                        <p class="text-base text-pink-600 font-bold">11 111 DA</p>
+                    </div>
+                </a>
+                                            <a href="http://127.0.0.1:8000/annonces/72"
+                   class="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden">
+                    <div class="relative h-40 overflow-hidden bg-gray-100">
+                        <img src="http://127.0.0.1:8000/storage/annonces/Ge5gMxAuPojLx7j34Xli4CrmGhL2Ywr67TpeYjm4.png" 
+                             alt="audi test"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='http://127.0.0.1:8000/images/placeholder-car.jpg'">
+                        <div class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-xs font-semibold text-gray-700">
+                            👁️ 28 vues
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-xs text-gray-500 mb-1">Citroën • TEST AUDI</p>
+                        <p class="text-sm font-semibold truncate mb-2">audi test</p>
+                        <p class="text-base text-pink-600 font-bold">2 540 000 DA</p>
+                    </div>
+                </a>
+                                            <a href="http://127.0.0.1:8000/annonces/47"
+                   class="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden">
+                    <div class="relative h-40 overflow-hidden bg-gray-100">
+                        <img src="http://127.0.0.1:8000/storage/annonces/88cfa9ca-bdec-4ad5-9292-1bfbc5e15f29.jpg" 
+                             alt="clio DCI"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='http://127.0.0.1:8000/images/placeholder-car.jpg'">
+                        <div class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-xs font-semibold text-gray-700">
+                            👁️ 13 vues
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-xs text-gray-500 mb-1">Audi • A7</p>
+                        <p class="text-sm font-semibold truncate mb-2">clio DCI</p>
+                        <p class="text-base text-pink-600 font-bold">12 345 DA</p>
+                    </div>
+                </a>
+                    </div>
+    </section>
+
+    
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">Marques populaires</h2>
+        <div class="bg-white rounded-2xl shadow px-4 py-4 flex flex-wrap gap-3">
+                            <a href="http://127.0.0.1:8000?marque=BMW"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    BMW (11)
+                </a>
+                            <a href="http://127.0.0.1:8000?marque=Audi"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Audi (10)
+                </a>
+                            <a href="http://127.0.0.1:8000?marque=Hyundai"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Hyundai (6)
+                </a>
+                            <a href="http://127.0.0.1:8000?marque=Renault"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Renault (5)
+                </a>
+                            <a href="http://127.0.0.1:8000?marque=Toyota"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Toyota (4)
+                </a>
+                            <a href="http://127.0.0.1:8000?marque=Nissan"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Nissan (4)
+                </a>
+                            <a href="http://127.0.0.1:8000?marque=Mercedes-Benz"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Mercedes-Benz (3)
+                </a>
+                            <a href="http://127.0.0.1:8000?marque=Citro%C3%ABn"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Citroën (3)
+                </a>
+                    </div>
+    </section>
+
+    
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">Modèles populaires</h2>
+        <div class="bg-white rounded-2xl shadow px-4 py-4 flex flex-wrap gap-3">
+                            <a href="http://127.0.0.1:8000?modele=Clio"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Clio (5)
+                </a>
+                            <a href="http://127.0.0.1:8000?modele=A1"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    A1 (4)
+                </a>
+                            <a href="http://127.0.0.1:8000?modele=S%C3%A9rie%201"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Série 1 (2)
+                </a>
+                            <a href="http://127.0.0.1:8000?modele=C-HR"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    C-HR (2)
+                </a>
+                            <a href="http://127.0.0.1:8000?modele=Austral"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    Austral (2)
+                </a>
+                            <a href="http://127.0.0.1:8000?modele=A3"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    A3 (2)
+                </a>
+                            <a href="http://127.0.0.1:8000?modele=X1"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    X1 (1)
+                </a>
+                            <a href="http://127.0.0.1:8000?modele=TEST%20AUDI"
+                   class="px-3 py-1 rounded-full border text-xs md:text-sm text-gray-700 hover:border-gray-800 hover:text-gray-800">
+                    TEST AUDI (1)
+                </a>
+                    </div>
+    </section>
+
+    
+            <section class="mb-12">
+            <h2 class="text-xl font-semibold mb-2">Catalogue marques & modèles</h2>
+            <p class="text-xs md:text-sm text-gray-500 mb-4">Choisissez une marque pour voir tous les modèles associés déjà intégrés sur ElSayara.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Alfa Romeo</span>
+                            <span class="text-xs text-gray-400">4 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Alfa%20Romeo&amp;modele=Giulietta"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Giulietta
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Alfa%20Romeo&amp;modele=Giulia"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Giulia
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Alfa%20Romeo&amp;modele=Stelvio"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Stelvio
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Alfa%20Romeo&amp;modele=Tonale"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Tonale
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Audi</span>
+                            <span class="text-xs text-gray-400">16 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=A1"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    A1
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=A3"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    A3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=A4"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    A4
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=A5"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    A5
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=A6"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    A6
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=A7"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    A7
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=A8"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    A8
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=Q2"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Q2
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=Q3"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Q3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=Q4%20e-tron"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Q4 e-tron
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=Q5"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Q5
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=Q6%20e-tron"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Q6 e-tron
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=Q7"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Q7
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=Q8"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Q8
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=e-tron%20GT"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    e-tron GT
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Audi&amp;modele=TT"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    TT
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>BMW</span>
+                            <span class="text-xs text-gray-400">16 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=S%C3%A9rie%201"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Série 1
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=S%C3%A9rie%202"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Série 2
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=S%C3%A9rie%203"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Série 3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=S%C3%A9rie%204"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Série 4
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=S%C3%A9rie%205"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Série 5
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=S%C3%A9rie%206"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Série 6
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=S%C3%A9rie%207"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Série 7
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=S%C3%A9rie%208"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Série 8
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=X1"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    X1
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=X2"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    X2
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=X3"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    X3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=X4"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    X4
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=X5"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    X5
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=X6"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    X6
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=X7"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    X7
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW&amp;modele=Z4"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Z4
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>BMW Motorrad</span>
+                            <span class="text-xs text-gray-400">5 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW%20Motorrad&amp;modele=R1250"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    R1250
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW%20Motorrad&amp;modele=S1000RR"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    S1000RR
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW%20Motorrad&amp;modele=F750"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    F750
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW%20Motorrad&amp;modele=F850"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    F850
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=BMW%20Motorrad&amp;modele=GS"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    GS
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Chery</span>
+                            <span class="text-xs text-gray-400">3 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chery&amp;modele=Tiggo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Tiggo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chery&amp;modele=Arrizo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Arrizo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chery&amp;modele=QQ"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    QQ
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Chevrolet</span>
+                            <span class="text-xs text-gray-400">8 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chevrolet&amp;modele=Spark"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Spark
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chevrolet&amp;modele=Aveo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Aveo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chevrolet&amp;modele=Cruze"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Cruze
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chevrolet&amp;modele=Malibu"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Malibu
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chevrolet&amp;modele=Captiva"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Captiva
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chevrolet&amp;modele=Trax"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Trax
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chevrolet&amp;modele=Tahoe"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Tahoe
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Chevrolet&amp;modele=Silverado"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Silverado
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Citroën</span>
+                            <span class="text-xs text-gray-400">11 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=C3"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    C3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=C4"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    C4
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=C4%20X"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    C4 X
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=C5%20X"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    C5 X
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=C5"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    C5
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=Berlingo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Berlingo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=Jumpy"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Jumpy
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=C-Elys%C3%A9e"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    C-Elysée
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=C3%20Aircross"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    C3 Aircross
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=C4%20Cactus"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    C4 Cactus
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Citro%C3%ABn&amp;modele=Jumper"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Jumper
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>DS</span>
+                            <span class="text-xs text-gray-400">3 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=DS&amp;modele=DS3"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    DS3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=DS&amp;modele=DS4"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    DS4
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=DS&amp;modele=DS7"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    DS7
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Dacia</span>
+                            <span class="text-xs text-gray-400">6 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Dacia&amp;modele=Sandero"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Sandero
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Dacia&amp;modele=Logan"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Logan
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Dacia&amp;modele=Duster"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Duster
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Dacia&amp;modele=Lodgy"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Lodgy
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Dacia&amp;modele=Dokker"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Dokker
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Dacia&amp;modele=Spring"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Spring
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Ducati</span>
+                            <span class="text-xs text-gray-400">5 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ducati&amp;modele=Monster"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Monster
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ducati&amp;modele=Panigale"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Panigale
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ducati&amp;modele=Multistrada"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Multistrada
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ducati&amp;modele=Scrambler"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Scrambler
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ducati&amp;modele=Diavel"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Diavel
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Fiat</span>
+                            <span class="text-xs text-gray-400">8 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Fiat&amp;modele=500"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    500
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Fiat&amp;modele=Panda"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Panda
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Fiat&amp;modele=Punto"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Punto
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Fiat&amp;modele=Tipo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Tipo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Fiat&amp;modele=Doblo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Doblo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Fiat&amp;modele=500X"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    500X
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Fiat&amp;modele=Fiorino"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Fiorino
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Fiat&amp;modele=Ducato"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Ducato
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Ford</span>
+                            <span class="text-xs text-gray-400">9 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ford&amp;modele=Fiesta"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Fiesta
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ford&amp;modele=Focus"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Focus
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ford&amp;modele=Mondeo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Mondeo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ford&amp;modele=Kuga"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Kuga
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ford&amp;modele=Ranger"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Ranger
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ford&amp;modele=EcoSport"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    EcoSport
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ford&amp;modele=Puma"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Puma
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ford&amp;modele=Mustang"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Mustang
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Ford&amp;modele=Transit"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Transit
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Geely</span>
+                            <span class="text-xs text-gray-400">4 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Geely&amp;modele=Emgrand"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Emgrand
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Geely&amp;modele=Coolray"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Coolray
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Geely&amp;modele=Atlas"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Atlas
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Geely&amp;modele=GC6"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    GC6
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Harley-Davidson</span>
+                            <span class="text-xs text-gray-400">5 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Harley-Davidson&amp;modele=Sportster"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Sportster
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Harley-Davidson&amp;modele=Softail"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Softail
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Harley-Davidson&amp;modele=Touring"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Touring
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Harley-Davidson&amp;modele=Street"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Street
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Harley-Davidson&amp;modele=V-Rod"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    V-Rod
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Honda</span>
+                            <span class="text-xs text-gray-400">7 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Honda&amp;modele=Civic"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Civic
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Honda&amp;modele=Accord"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Accord
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Honda&amp;modele=CR-V"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    CR-V
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Honda&amp;modele=Jazz"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Jazz
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Honda&amp;modele=HR-V"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    HR-V
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Honda&amp;modele=City"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    City
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Honda&amp;modele=Fit"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Fit
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Hyundai</span>
+                            <span class="text-xs text-gray-400">14 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=Bayon"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Bayon
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=IONIQ%205"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    IONIQ 5
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=IONIQ%206"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    IONIQ 6
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=KONA%20Electric"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    KONA Electric
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=Kona"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Kona
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=NEXO"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    NEXO
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=Santa%20Fe"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Santa Fe
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=Tucson"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Tucson
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=i10"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    i10
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=i20"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    i20
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=i30"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    i30
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=Accent"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Accent
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=Elantra"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Elantra
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Hyundai&amp;modele=Creta"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Creta
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Isuzu</span>
+                            <span class="text-xs text-gray-400">3 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Isuzu&amp;modele=D-Max"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    D-Max
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Isuzu&amp;modele=MU-X"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    MU-X
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Isuzu&amp;modele=Trooper"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Trooper
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Jeep</span>
+                            <span class="text-xs text-gray-400">5 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Jeep&amp;modele=Renegade"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Renegade
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Jeep&amp;modele=Compass"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Compass
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Jeep&amp;modele=Cherokee"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Cherokee
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Jeep&amp;modele=Grand%20Cherokee"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Grand Cherokee
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Jeep&amp;modele=Wrangler"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Wrangler
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>KTM</span>
+                            <span class="text-xs text-gray-400">4 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=KTM&amp;modele=Duke"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Duke
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=KTM&amp;modele=RC"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    RC
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=KTM&amp;modele=Adventure"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Adventure
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=KTM&amp;modele=Enduro"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Enduro
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Kawasaki</span>
+                            <span class="text-xs text-gray-400">5 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kawasaki&amp;modele=Ninja"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Ninja
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kawasaki&amp;modele=Z"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Z
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kawasaki&amp;modele=Versys"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Versys
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kawasaki&amp;modele=ZX"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    ZX
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kawasaki&amp;modele=ER-6"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    ER-6
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Kia</span>
+                            <span class="text-xs text-gray-400">13 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Ceed"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Ceed
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=EV6"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    EV6
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Niro"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Niro
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Picanto"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Picanto
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Rio"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Rio
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Sorento"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Sorento
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Sportage"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Sportage
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Stonic"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Stonic
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=XCeed"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    XCeed
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Cerato"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Cerato
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Optima"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Optima
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Seltos"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Seltos
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Kia&amp;modele=Carens"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Carens
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Land Rover</span>
+                            <span class="text-xs text-gray-400">5 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Land%20Rover&amp;modele=Discovery"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Discovery
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Land%20Rover&amp;modele=Range%20Rover"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Range Rover
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Land%20Rover&amp;modele=Range%20Rover%20Sport"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Range Rover Sport
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Land%20Rover&amp;modele=Defender"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Defender
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Land%20Rover&amp;modele=Evoque"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Evoque
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Lexus</span>
+                            <span class="text-xs text-gray-400">8 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Lexus&amp;modele=IS"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    IS
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Lexus&amp;modele=ES"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    ES
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Lexus&amp;modele=GS"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    GS
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Lexus&amp;modele=LS"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    LS
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Lexus&amp;modele=NX"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    NX
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Lexus&amp;modele=RX"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    RX
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Lexus&amp;modele=LX"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    LX
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Lexus&amp;modele=UX"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    UX
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Mahindra</span>
+                            <span class="text-xs text-gray-400">5 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mahindra&amp;modele=Scorpio"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Scorpio
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mahindra&amp;modele=XUV500"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    XUV500
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mahindra&amp;modele=Thar"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Thar
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mahindra&amp;modele=Bolero"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Bolero
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mahindra&amp;modele=KUV100"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    KUV100
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Mazda</span>
+                            <span class="text-xs text-gray-400">7 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mazda&amp;modele=2"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    2
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mazda&amp;modele=3"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mazda&amp;modele=6"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    6
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mazda&amp;modele=CX-3"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    CX-3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mazda&amp;modele=CX-5"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    CX-5
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mazda&amp;modele=CX-30"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    CX-30
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mazda&amp;modele=MX-5"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    MX-5
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Mercedes-Benz</span>
+                            <span class="text-xs text-gray-400">14 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=Classe%20A"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Classe A
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=Classe%20C"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Classe C
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=Classe%20E"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Classe E
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=Classe%20S"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Classe S
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=GLA"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    GLA
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=GLB"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    GLB
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=GLC"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    GLC
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=GLE"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    GLE
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=GLS"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    GLS
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=Classe%20B"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Classe B
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=CLA"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    CLA
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=CLS"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    CLS
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=Vito"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Vito
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mercedes-Benz&amp;modele=Sprinter"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Sprinter
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Mini</span>
+                            <span class="text-xs text-gray-400">4 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mini&amp;modele=Cooper"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Cooper
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mini&amp;modele=Clubman"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Clubman
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mini&amp;modele=Countryman"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Countryman
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mini&amp;modele=Paceman"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Paceman
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Mitsubishi</span>
+                            <span class="text-xs text-gray-400">6 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mitsubishi&amp;modele=Pajero"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Pajero
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mitsubishi&amp;modele=L200"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    L200
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mitsubishi&amp;modele=ASX"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    ASX
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mitsubishi&amp;modele=Outlander"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Outlander
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mitsubishi&amp;modele=Lancer"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Lancer
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Mitsubishi&amp;modele=Eclipse%20Cross"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Eclipse Cross
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Nissan</span>
+                            <span class="text-xs text-gray-400">10 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=Juke"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Juke
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=Leaf"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Leaf
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=Micra"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Micra
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=Navara"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Navara
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=Qashqai"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Qashqai
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=X-Trail"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    X-Trail
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=Note"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Note
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=Patrol"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Patrol
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=Sentra"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Sentra
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Nissan&amp;modele=Altima"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Altima
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Opel</span>
+                            <span class="text-xs text-gray-400">8 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Opel&amp;modele=Corsa"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Corsa
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Opel&amp;modele=Astra"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Astra
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Opel&amp;modele=Insignia"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Insignia
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Opel&amp;modele=Mokka"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Mokka
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Opel&amp;modele=Grandland"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Grandland
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Opel&amp;modele=Crossland"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Crossland
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Opel&amp;modele=Combo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Combo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Opel&amp;modele=Vivaro"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Vivaro
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Peugeot</span>
+                            <span class="text-xs text-gray-400">12 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=208"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    208
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=308"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    308
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=508"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    508
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=2008"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    2008
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=3008"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    3008
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=301"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    301
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=407"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    407
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=206"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    206
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=307"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    307
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=5008"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    5008
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=Partner"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Partner
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Peugeot&amp;modele=Expert"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Expert
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Porsche</span>
+                            <span class="text-xs text-gray-400">7 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Porsche&amp;modele=911"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    911
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Porsche&amp;modele=Cayenne"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Cayenne
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Porsche&amp;modele=Macan"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Macan
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Porsche&amp;modele=Panamera"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Panamera
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Porsche&amp;modele=Taycan"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Taycan
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Porsche&amp;modele=Boxster"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Boxster
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Porsche&amp;modele=Cayman"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Cayman
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Renault</span>
+                            <span class="text-xs text-gray-400">14 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Austral"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Austral
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Captur"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Captur
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Clio"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Clio
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=M%C3%A9gane%20E-Tech"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Mégane E-Tech
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Sc%C3%A9nic%20E-Tech"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Scénic E-Tech
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Talisman"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Talisman
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Twingo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Twingo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Megane"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Megane
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Symbol"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Symbol
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Logan"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Logan
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Sandero"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Sandero
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Duster"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Duster
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Kadjar"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Kadjar
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Renault&amp;modele=Kangoo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Kangoo
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>SEAT</span>
+                            <span class="text-xs text-gray-400">5 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=SEAT&amp;modele=Arona"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Arona
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=SEAT&amp;modele=Ateca"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Ateca
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=SEAT&amp;modele=Ibiza"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Ibiza
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=SEAT&amp;modele=Leon"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Leon
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=SEAT&amp;modele=Tarraco"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Tarraco
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Skoda</span>
+                            <span class="text-xs text-gray-400">8 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Skoda&amp;modele=Enyaq"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Enyaq
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Skoda&amp;modele=Fabia"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Fabia
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Skoda&amp;modele=Kamiq"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Kamiq
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Skoda&amp;modele=Karoq"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Karoq
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Skoda&amp;modele=Kodiaq"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Kodiaq
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Skoda&amp;modele=Octavia"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Octavia
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Skoda&amp;modele=Scala"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Scala
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Skoda&amp;modele=Superb"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Superb
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Suzuki</span>
+                            <span class="text-xs text-gray-400">8 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Suzuki&amp;modele=Swift"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Swift
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Suzuki&amp;modele=Vitara"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Vitara
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Suzuki&amp;modele=Baleno"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Baleno
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Suzuki&amp;modele=Jimny"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Jimny
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Suzuki&amp;modele=S-Cross"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    S-Cross
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Suzuki&amp;modele=Celerio"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Celerio
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Suzuki&amp;modele=Alto"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Alto
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Suzuki&amp;modele=Dzire"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Dzire
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Tesla</span>
+                            <span class="text-xs text-gray-400">4 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Tesla&amp;modele=Model%203"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Model 3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Tesla&amp;modele=Model%20S"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Model S
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Tesla&amp;modele=Model%20X"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Model X
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Tesla&amp;modele=Model%20Y"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Model Y
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Toyota</span>
+                            <span class="text-xs text-gray-400">13 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Aygo%20X"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Aygo X
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=C-HR"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    C-HR
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Corolla"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Corolla
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Hilux"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Hilux
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Land%20Cruiser"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Land Cruiser
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=RAV4"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    RAV4
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Yaris"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Yaris
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Yaris%20Cross"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Yaris Cross
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Camry"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Camry
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Prado"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Prado
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Fortuner"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Fortuner
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Avensis"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Avensis
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Toyota&amp;modele=Auris"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Auris
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Volkswagen</span>
+                            <span class="text-xs text-gray-400">17 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=Golf"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Golf
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=ID.%20Buzz"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    ID. Buzz
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=ID.3"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    ID.3
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=ID.4"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    ID.4
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=ID.5"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    ID.5
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=ID.7"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    ID.7
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=Polo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Polo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=T-Cross"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    T-Cross
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=T-Roc"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    T-Roc
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=Taigo"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Taigo
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=Tiguan"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Tiguan
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=Touareg"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Touareg
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=up%21"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    up!
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=Passat"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Passat
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=Jetta"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Jetta
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=Caddy"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Caddy
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volkswagen&amp;modele=Arteon"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Arteon
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Volvo</span>
+                            <span class="text-xs text-gray-400">7 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volvo&amp;modele=S60"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    S60
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volvo&amp;modele=S90"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    S90
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volvo&amp;modele=V60"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    V60
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volvo&amp;modele=V90"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    V90
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volvo&amp;modele=XC40"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    XC40
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volvo&amp;modele=XC60"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    XC60
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Volvo&amp;modele=XC90"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    XC90
+                                </a>
+                                                    </div>
+                    </details>
+                                    <details class="bg-white rounded-2xl shadow border border-gray-100 p-4" >
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 flex items-center justify-between">
+                            <span>Yamaha</span>
+                            <span class="text-xs text-gray-400">9 modèles</span>
+                        </summary>
+                        <div class="mt-3 flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1">
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Yamaha&amp;modele=YZF-R1"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    YZF-R1
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Yamaha&amp;modele=YZF-R6"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    YZF-R6
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Yamaha&amp;modele=MT-07"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    MT-07
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Yamaha&amp;modele=MT-09"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    MT-09
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Yamaha&amp;modele=TMAX"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    TMAX
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Yamaha&amp;modele=XMax"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    XMax
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Yamaha&amp;modele=Aerox"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Aerox
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Yamaha&amp;modele=FZ"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    FZ
+                                </a>
+                                                            <a href="http://127.0.0.1:8000/recherche?marque=Yamaha&amp;modele=Tenere"
+                                   class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-[11px] text-gray-700 hover:border-gray-800 hover:text-gray-900">
+                                    Tenere
+                                </a>
+                                                    </div>
+                    </details>
+                            </div>
+        </section>
+    
+
+    <section id="about" class="mt-16 bg-white rounded-2xl shadow p-6 md:p-8">
+    <h2 class="text-2xl font-bold mb-3">À propos de ElSayara</h2>
+
+    <p class="text-sm md:text-base text-gray-600 leading-relaxed">
+        ElSayara est une plateforme algérienne dédiée à la vente et à l'achat de véhicules
+        entre particuliers et professionnels.
+        Notre objectif est de proposer une expérience simple, fiable et rapide pour
+        trouver le véhicule idéal.
+    </p>
+</section>
+
+<section id="contact-us" class="mt-10 bg-white rounded-2xl shadow p-6 md:p-8">
+    <h2 class="text-2xl font-bold mb-3">Nous contacter</h2>
+
+    <p class="text-sm md:text-base text-gray-600 mb-4">
+        Une question, une suggestion ou un problème ?
+        Contactez-nous :
+    </p>
+
+    <ul class="text-sm md:text-base text-gray-700 space-y-2">
+        <li>📧 Email : <strong>contact@elsayara.dz</strong></li>
+        <li>📞 Téléphone : <strong>05 00 00 00 00</strong></li>
+    </ul>
+</section>
+
+
+
+
+    
+    <script>
+        // Handle vehicle type button selection
+        const typeInput = document.getElementById('vehicle_type_input');
+        const typeButtons = document.querySelectorAll('.vehicle-type-btn');
+        const homeBrandDropdown = document.getElementById('home_brand_dropdown');
+        const homeMarqueHidden = document.getElementById('home_marque_hidden');
+        const homeModelDropdown = document.getElementById('home_model_dropdown');
+
+        function setActiveHomeTypeButton(type) {
+            typeButtons.forEach(btn => {
+                const isActive = btn.getAttribute('data-type') === type;
+                btn.classList.toggle('bg-gray-500', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('border-gray-800', isActive);
+                btn.classList.toggle('bg-white', !isActive);
+                btn.classList.toggle('text-gray-600', !isActive);
+                btn.classList.toggle('border-gray-200', !isActive);
+            });
+        }
+
+        function applyHomeVehicleTypeUI(type) {
+            const isMoto = type === 'Moto';
+
+            // Pour les motos, on cache les dropdowns marque/modèle
+            // La recherche se fait via le champ texte libre "home_q"
+            if (homeBrandDropdown) {
+                homeBrandDropdown.classList.toggle('hidden', isMoto);
+            }
+
+            if (homeModelDropdown) {
+                homeModelDropdown.classList.toggle('hidden', isMoto);
+            }
+
+            if (isMoto && homeMarqueHidden) {
+                homeMarqueHidden.value = '';
+                // Réinitialiser les dropdowns Alpine
+                const brandDropdownData = Alpine.$data(homeBrandDropdown);
+                if (brandDropdownData) {
+                    brandDropdownData.selected = '';
+                }
+                
+                const modelDropdownData = Alpine.$data(homeModelDropdown);
+                if (modelDropdownData) {
+                    modelDropdownData.selected = '';
+                    modelDropdownData.availableModels = [];
+                }
+            }
+        }
+
+        if (typeInput && typeInput.value) {
+            setActiveHomeTypeButton(typeInput.value);
+        }
+        applyHomeVehicleTypeUI(typeInput ? typeInput.value : '');
+
+        typeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.getAttribute('data-type');
+                typeInput.value = type;
+
+                // Update active state
+                setActiveHomeTypeButton(type);
+                applyHomeVehicleTypeUI(type);
+            });
+        });
+
+        // Dynamic models loading (si tu l'avais déjà, garde ta logique)
+        const baseUrlFilter = "http://127.0.0.1:8000/api/marques";
+        const selectMarqueFilter = document.getElementById('filter_marque');
+        const selectModeleFilter = document.getElementById('filter_modele');
+
+        if (selectMarqueFilter) {
+            selectMarqueFilter.addEventListener('change', function () {
+                const marqueId = this.value;
+
+                if (!marqueId) {
+                    selectModeleFilter.innerHTML = '<option value=\"\">Peu importe</option>';
+                    return;
+                }
+
+                fetch(`${baseUrlFilter}/${marqueId}/modeles`)
+                    .then(response => response.json())
+                    .then(data => {
+                        selectModeleFilter.innerHTML = '<option value=\"\">Peu importe</option>';
+                        data.forEach(modele => {
+                            const option = document.createElement('option');
+                            option.value = modele.id;
+                            option.textContent = modele.name;
+                            selectModeleFilter.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading models:', error);
+                    });
+            });
+        }
+
+        // Alpine.js: Données partagées pour marque/modèle
+        const brandModelsData = {"Renault":["Clio","Megane","Symbol","Logan","Sandero","Duster","Captur","Kadjar","Talisman","Twingo","Kangoo"],"Peugeot":["208","308","2008","3008","301","508","407","206","307","5008","Partner","Expert"],"Citro\u00ebn":["C3","C4","C5","Berlingo","Jumpy","C-Elys\u00e9e","C3 Aircross","C4 Cactus","Jumper"],"Dacia":["Sandero","Logan","Duster","Lodgy","Dokker","Spring"],"Volkswagen":["Golf","Polo","Passat","Tiguan","Jetta","Touareg","Caddy","T-Cross","T-Roc","Arteon"],"Hyundai":["i10","i20","Accent","Elantra","Tucson","Santa Fe","Kona","i30","Creta"],"Kia":["Picanto","Rio","Cerato","Sportage","Sorento","Optima","Stonic","Seltos","Carens"],"Toyota":["Corolla","Yaris","Hilux","Land Cruiser","RAV4","Camry","Prado","Fortuner","Avensis","Auris"],"Nissan":["Micra","Qashqai","X-Trail","Juke","Navara","Note","Patrol","Sentra","Altima"],"Ford":["Fiesta","Focus","Mondeo","Kuga","Ranger","EcoSport","Puma","Mustang","Transit"],"Opel":["Corsa","Astra","Insignia","Mokka","Grandland","Crossland","Combo","Vivaro"],"Seat":["Ibiza","Leon","Arona","Ateca","Tarraco","Toledo"],"Skoda":["Fabia","Octavia","Superb","Kodiaq","Karoq","Scala","Kamiq"],"Fiat":["500","Panda","Punto","Tipo","Doblo","500X","Fiorino","Ducato"],"Honda":["Civic","Accord","CR-V","Jazz","HR-V","City","Fit"],"Mazda":["2","3","6","CX-3","CX-5","CX-30","MX-5"],"Mitsubishi":["Pajero","L200","ASX","Outlander","Lancer","Eclipse Cross"],"Suzuki":["Swift","Vitara","Baleno","Jimny","S-Cross","Celerio","Alto","Dzire"],"Isuzu":["D-Max","MU-X","Trooper"],"Mahindra":["Scorpio","XUV500","Thar","Bolero","KUV100"],"Tata Motors":["Indica","Indigo","Safari","Nexon","Harrier"],"Chery":["Tiggo","Arrizo","QQ"],"Geely":["Emgrand","Coolray","Atlas","GC6"],"JAC":["S3","S5","T6","J4"],"Mercedes-Benz":["Classe A","Classe B","Classe C","Classe E","Classe S","GLA","GLB","GLC","GLE","GLS","CLA","CLS","Vito","Sprinter"],"BMW":["S\u00e9rie 1","S\u00e9rie 2","S\u00e9rie 3","S\u00e9rie 4","S\u00e9rie 5","S\u00e9rie 7","X1","X3","X5","X6","X7","Z4"],"Audi":["A1","A3","A4","A5","A6","A7","A8","Q2","Q3","Q5","Q7","Q8","TT"],"Chevrolet":["Spark","Aveo","Cruze","Malibu","Captiva","Trax","Tahoe","Silverado"],"Jeep":["Renegade","Compass","Cherokee","Grand Cherokee","Wrangler"],"Land Rover":["Discovery","Range Rover","Range Rover Sport","Defender","Evoque"],"Lexus":["IS","ES","GS","LS","NX","RX","LX","UX"],"Porsche":["911","Cayenne","Macan","Panamera","Taycan","Boxster","Cayman"],"Tesla":["Model 3","Model S","Model X","Model Y"],"Volvo":["S60","S90","V60","V90","XC40","XC60","XC90"],"Mini":["Cooper","Clubman","Countryman","Paceman"],"Alfa Romeo":["Giulietta","Giulia","Stelvio","Tonale"],"DS":["DS3","DS4","DS7"],"Yamaha":["YZF-R1","YZF-R6","MT-07","MT-09","TMAX","XMax","Aerox","FZ","Tenere"],"Honda Moto":["CBR","CB","CRF","PCX","SH","Africa Twin","Gold Wing"],"Kawasaki":["Ninja","Z","Versys","ZX","ER-6"],"Suzuki Moto":["GSX-R","Hayabusa","V-Strom","Burgman","Address"],"Ducati":["Monster","Panigale","Multistrada","Scrambler","Diavel"],"KTM":["Duke","RC","Adventure","Enduro"],"BMW Motorrad":["R1250","S1000RR","F750","F850","GS"],"Harley-Davidson":["Sportster","Softail","Touring","Street","V-Rod"],"SEAT":["Arona","Ateca","Ibiza","Leon","Tarraco"]};
+
+        // Alpine.js dropdown for brand (home)
+        function brandDropdownHome() {
+            return {
+                open: false,
+                search: '',
+                selected: "",
+                brands: ["Alfa Romeo","Audi","BMW","BMW Motorrad","Chery","Chevrolet","Citro\u00ebn","Dacia","DS","Ducati","Fiat","Ford","Geely","Harley-Davidson","Honda","Honda Moto","Hyundai","Isuzu","JAC","Jeep","Kawasaki","Kia","KTM","Land Rover","Lexus","Mahindra","Mazda","Mercedes-Benz","Mini","Mitsubishi","Nissan","Opel","Peugeot","Porsche","Renault","Seat","SEAT","Skoda","Suzuki","Suzuki Moto","Tata Motors","Tesla","Toyota","Volkswagen","Volvo","Yamaha"],
+                filteredBrands() {
+                    return this.search
+                        ? this.brands.filter(b => b.toLowerCase().includes(this.search.toLowerCase()))
+                        : this.brands;
+                },
+                selectBrand(value) {
+                    this.selected = value;
+                    this.open = false;
+                    
+                    // Mettre à jour les modèles disponibles
+                    const modelDropdown = Alpine.$data(document.getElementById('home_model_dropdown'));
+                    if (modelDropdown) {
+                        modelDropdown.updateAvailableModels(value);
+                        modelDropdown.selected = '';
+                    }
+                }
+            };
+        }
+
+        // Alpine.js dropdown for model (home)
+        function modelDropdownHome() {
+            // Extraire tous les modèles de toutes les marques
+            const allModelsSet = new Set();
+            Object.values(brandModelsData).forEach(models => {
+                models.forEach(model => allModelsSet.add(model));
+            });
+            const allModels = Array.from(allModelsSet).sort();
+
+            return {
+                open: false,
+                search: '',
+                selected: "",
+                availableModels: allModels,
+                allModels: allModels,
+                init() {
+                    const selectedBrand = document.querySelector('input[name="marque"]')?.value || "";
+                    if (selectedBrand) {
+                        this.updateAvailableModels(selectedBrand);
+                    }
+                },
+                updateAvailableModels(brand) {
+                    if (brand && brandModelsData[brand]) {
+                        this.availableModels = brandModelsData[brand];
+                    } else {
+                        // Aucune marque sélectionnée → afficher tous les modèles
+                        this.availableModels = this.allModels;
+                    }
+                },
+                filteredModels() {
+                    return this.search
+                        ? this.availableModels.filter(m => m.toLowerCase().includes(this.search.toLowerCase()))
+                        : this.availableModels;
+                },
+                selectModel(value) {
+                    this.selected = value;
+                    this.open = false;
+                }
+            };
+        }
+    </script>
+            </div>
+</main>
+
+    
+    <footer class="bg-gray-900 text-gray-300 text-xs md:text-sm mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                
+                <div>
+                    <h3 class="font-semibold text-white mb-3">À propos de ElSayara</h3>
+                    <p class="text-[11px] md:text-xs leading-relaxed">
+                        ElSayara est une plateforme leader pour l'achat et la vente de véhicules d'occasion en Algérie. 
+                        Découvrez des milliers d'annonces vérifiées.
+                    </p>
+                </div>
+
+                
+                <div>
+                    <h3 class="font-semibold text-white mb-3">Informations légales</h3>
+                    <ul class="space-y-1">
+                        <li><a href="#" class="hover:text-white transition">Conditions générales</a></li>
+                        <li><a href="#" class="hover:text-white transition">Politique de confidentialité</a></li>
+                        <li><a href="#" class="hover:text-white transition">Mentions légales</a></li>
+                        <li><a href="#" class="hover:text-white transition">Nous contacter</a></li>
+                    </ul>
+                </div>
+
+                
+                <div>
+                    <h3 class="font-semibold text-white mb-3">Nous contacter</h3>
+                    <ul class="space-y-1 text-[11px] md:text-xs">
+                        <li>Email: <a href="mailto:contact@elsayara.dz" class="hover:text-white transition">contact@elsayara.dz</a></li>
+                        <li>Tél: <a href="tel:+213XXX" class="hover:text-white transition">+213 XXX XXX XXX</a></li>
+                        <li>Algérie</li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            <div class="border-t border-gray-700 pt-6">
+                <p class="text-center text-[10px] md:text-xs text-gray-400">
+                    © 2026 ElSayara. Tous droits réservés. | Plateforme de vente de véhicules d'occasion en Algérie
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    
+    
+    <script>
+setInterval(() => {
+    fetch('http://127.0.0.1:8000/messages/unread-count', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        const badge = document.getElementById('unread-badge');
+        if (!badge) return;
+
+        if (data.count > 0) {
+            badge.textContent = data.count;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    });
+}, 20000); // toutes les 20 secondes
+</script>
+
+
+</body>
+</html>
+

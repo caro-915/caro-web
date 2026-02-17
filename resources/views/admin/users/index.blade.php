@@ -5,10 +5,12 @@
 
     <div class="flex items-start justify-between gap-4 mb-6">
         <div>
+            <div class="flex items-center gap-3 mb-2">
+                <a href="{{ route('admin.dashboard') }}" class="text-pink-600 hover:text-pink-700 font-semibold">← Retour au tableau de bord</a>
+            </div>
             <h1 class="text-2xl md:text-3xl font-bold">Admin • Utilisateurs</h1>
             <p class="text-sm text-gray-500 mt-1">Gérer les comptes</p>
         </div>
-        <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-500 hover:underline">← Dashboard</a>
     </div>
 
     @if(session('success'))

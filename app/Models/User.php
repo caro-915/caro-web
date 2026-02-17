@@ -102,12 +102,28 @@ public function activeSubscription()
 }
 
 /**
- * Check if user has active PRO subscription.
+ * Check if user has any active paid subscription (Premium or Pro).
  */
 public function isPro(): bool
 {
     return $this->activeSubscription() !== null;
 }
-    
 
+/**
+ * Check if user has specifically the "Pro" plan (not Premium).
+ */
+public function hasProPlan(): bool
+{
+    $sub = $this->activeSubscription();
+    return $sub && $sub->plan && strtolower($sub->plan->name) === 'pro';
+}
+
+/**
+ * Get the name of the user's current active plan, or null.
+ */
+public function currentPlanName(): ?string
+{
+    $sub = $this->activeSubscription();
+    return $sub?->plan?->name;
+}
 }

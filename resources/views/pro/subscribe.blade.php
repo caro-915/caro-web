@@ -92,10 +92,10 @@
                                 <svg class="w-5 h-5 text-green-600 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                                 </svg>
-                                <span id="fileName" class="text-green-900 font-semibold truncate"></span>
+                                <span id="fileName" class="text-green-900 font-semibold truncate" title=""></span>
                             </div>
-                            <button type="button" id="removeFileButton" class="inline-flex items-center justify-center px-3 py-1.5 rounded bg-red-100 text-red-600 text-sm font-semibold hover:bg-red-200">
-                                Supprimer la pièce jointe
+                            <button type="button" id="removeFileButton" class="inline-flex items-center justify-center px-2 py-1.5 rounded bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 flex-shrink-0">
+                                × Supprimer
                             </button>
                         </div>
                     </div>
@@ -184,7 +184,10 @@
     function handleFileSelect() {
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
-            fileNameSpan.textContent = file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
+            // Afficher seulement le nom du fichier (pas la taille)
+            const fileName = file.name;
+            fileNameSpan.textContent = fileName;
+            fileNameSpan.title = fileName + ' (' + (file.size / 1024).toFixed(2) + ' KB)'; // Info au survol
             fileInputContainer.classList.add('hidden');
             selectedFileDiv.classList.remove('hidden');
         }

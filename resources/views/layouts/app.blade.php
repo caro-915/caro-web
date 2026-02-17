@@ -11,7 +11,6 @@
 
     {{-- Tailwind + JS compilés par Vite (Breeze) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="//unpkg.com/alpinejs" defer></script>
     <style>[x-cloak]{ display:none !important; }</style>
     
 </head>
