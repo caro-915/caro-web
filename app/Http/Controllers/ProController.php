@@ -52,8 +52,9 @@ class ProController extends Controller
             'payment_proof.max' => 'Le fichier ne doit pas dépasser 5 MB.',
         ]);
 
-        // Store the payment proof
-        $path = $request->file('payment_proof')->store('payment_proofs');
+        // Store the payment proof — use S3 if configured (persistent), otherwise default disk
+        $disk = !empty(config('filesystems.disks.s3.bucket')) ? 's3' : config('filesystems.default');
+        $path = $request->file('payment_proof')->store('payment_proofs', $disk);
 
         // Create subscription with pending status
         $subscription = $this->subscriptionService->createSubscription(

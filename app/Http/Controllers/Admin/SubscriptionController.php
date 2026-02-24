@@ -50,18 +50,31 @@ class SubscriptionController extends Controller
     {
         abort_unless($subscription->payment_proof_path, 404);
 
-        // Try default disk first, then fallback to 'public' disk for older uploads
         $path = $subscription->payment_proof_path;
 
+        // 1) Try S3/R2 first (production persistent storage)
+        if (!empty(config('filesystems.disks.s3.bucket'))) {
+            try {
+                if (Storage::disk('s3')->exists($path)) {
+                    return Storage::disk('s3')->response($path);
+                }
+            } catch (\Exception $e) {
+                // S3 not reachable, continue to fallbacks
+            }
+        }
+
+        // 2) Try default disk
         if (Storage::exists($path)) {
             return Storage::response($path);
         }
 
+        // 3) Try public disk (old uploads)
         if (Storage::disk('public')->exists($path)) {
             return Storage::disk('public')->response($path);
         }
 
-        abort(404);
+        // File is permanently lost (e.g. old upload on ephemeral filesystem)
+        abort(404, 'Fichier de preuve introuvable. Il a peut-être été perdu lors d\'un redéploiement.');
     }
 
     /**
