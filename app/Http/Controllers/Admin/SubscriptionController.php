@@ -52,29 +52,78 @@ class SubscriptionController extends Controller
 
         $path = $subscription->payment_proof_path;
 
-        // 1) Try S3/R2 first (production persistent storage)
+        // Try each disk in order: S3/R2 (persistent) → default → public (legacy)
+        $disksToTry = [];
+
         if (!empty(config('filesystems.disks.s3.bucket'))) {
+            $disksToTry[] = 's3';
+        }
+
+        $defaultDisk = config('filesystems.default');
+        if (!in_array($defaultDisk, $disksToTry)) {
+            $disksToTry[] = $defaultDisk;
+        }
+
+        if (!in_array('public', $disksToTry)) {
+            $disksToTry[] = 'public';
+        }
+
+        foreach ($disksToTry as $diskName) {
             try {
-                if (Storage::disk('s3')->exists($path)) {
-                    return Storage::disk('s3')->response($path);
+                $disk = Storage::disk($diskName);
+                if ($disk->exists($path) && $disk->size($path) > 0) {
+                    $content = $disk->get($path);
+                    $mimeType = $disk->mimeType($path) ?: 'application/octet-stream';
+                    $filename = basename($path);
+
+                    return response($content, 200, [
+                        'Content-Type' => $mimeType,
+                        'Content-Disposition' => 'inline; filename="' . $filename . '"',
+                        'Content-Length' => strlen($content),
+                        'Cache-Control' => 'no-cache',
+                    ]);
                 }
             } catch (\Exception $e) {
-                // S3 not reachable, continue to fallbacks
+                \Log::warning("Proof lookup failed on disk [{$diskName}]", [
+                    'subscription_id' => $subscription->id,
+                    'path' => $path,
+                    'error' => $e->getMessage(),
+                ]);
+                continue;
             }
         }
 
-        // 2) Try default disk
-        if (Storage::exists($path)) {
-            return Storage::response($path);
+        // File not found on any disk — return a clear error page
+        return response()->view('errors.proof-missing', [
+            'subscription' => $subscription,
+        ], 404);
+    }
+
+    /**
+     * Check if proof exists (AJAX).
+     */
+    public function proofCheck(Subscription $subscription)
+    {
+        if (!$subscription->payment_proof_path) {
+            return response()->json(['exists' => false]);
         }
 
-        // 3) Try public disk (old uploads)
-        if (Storage::disk('public')->exists($path)) {
-            return Storage::disk('public')->response($path);
+        $path = $subscription->payment_proof_path;
+        $disks = ['s3', config('filesystems.default'), 'public'];
+
+        foreach (array_unique($disks) as $diskName) {
+            try {
+                if (empty($diskName)) continue;
+                if ($diskName === 's3' && empty(config('filesystems.disks.s3.bucket'))) continue;
+                if (Storage::disk($diskName)->exists($path) && Storage::disk($diskName)->size($path) > 0) {
+                    return response()->json(['exists' => true, 'disk' => $diskName]);
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
         }
 
-        // File is permanently lost (e.g. old upload on ephemeral filesystem)
-        abort(404, 'Fichier de preuve introuvable. Il a peut-être été perdu lors d\'un redéploiement.');
+        return response()->json(['exists' => false]);
     }
 
     /**
