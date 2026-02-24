@@ -59,35 +59,24 @@
                             </div>
 
                             <!-- Proof Preview -->
-                            <div class="mb-4" x-data="{ proofAvailable: null }" x-init="
-                                fetch('{{ route('admin.subscriptions.proof.check', $subscription->id) }}')
-                                    .then(r => r.json())
-                                    .then(d => proofAvailable = d.exists)
-                                    .catch(() => proofAvailable = false)
-                            ">
+                            <div class="mb-4">
                                 @if($subscription->payment_proof_path)
-                                    {{-- Loading state --}}
-                                    <template x-if="proofAvailable === null">
-                                        <span class="inline-flex items-center gap-2 px-3 py-1 bg-gray-50 rounded text-sm text-gray-400">
-                                            ⏳ Vérification de la preuve...
-                                        </span>
-                                    </template>
-                                    {{-- Proof available --}}
-                                    <template x-if="proofAvailable === true">
-                                        <a href="{{ route('admin.subscriptions.proof', $subscription->id) }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-1 bg-green-100 hover:bg-green-200 rounded text-sm text-green-800 font-semibold transition">
+                                    @if(!empty($proofAvailability[$subscription->id]))
+                                        {{-- Proof file exists on storage --}}
+                                        <a href="{{ route('admin.subscriptions.proof', $subscription->id) }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 hover:bg-green-200 rounded text-sm text-green-800 font-semibold transition">
                                             @if(str_ends_with(strtolower($subscription->payment_proof_path), '.pdf'))
                                                 📄 Voir le PDF
                                             @else
                                                 🖼️ Voir l'image
                                             @endif
                                         </a>
-                                    </template>
-                                    {{-- Proof missing --}}
-                                    <template x-if="proofAvailable === false">
-                                        <span class="inline-flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
-                                            ⚠️ Preuve de paiement indisponible (fichier perdu lors d'un redéploiement). Demandez à l'utilisateur de re-soumettre.
-                                        </span>
-                                    </template>
+                                    @else
+                                        {{-- Proof file is LOST --}}
+                                        <div class="inline-flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                                            ⚠️ Preuve de paiement indisponible (fichier perdu lors d'un redéploiement).
+                                            <br>Demandez à l'utilisateur de re-soumettre sa preuve.
+                                        </div>
+                                    @endif
                                 @else
                                     <span class="inline-flex items-center gap-2 px-3 py-1 bg-gray-50 rounded text-sm text-gray-500">
                                         Aucune preuve fournie

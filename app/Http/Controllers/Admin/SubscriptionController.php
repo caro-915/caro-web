@@ -32,7 +32,39 @@ class SubscriptionController extends Controller
             ->latest()
             ->paginate(15);
 
-        return view('admin.subscriptions.index', compact('pendingSubscriptions', 'approvedSubscriptions'));
+        // Check proof availability for each pending subscription (server-side)
+        $proofAvailability = [];
+        foreach ($pendingSubscriptions as $sub) {
+            $proofAvailability[$sub->id] = $this->isProofAvailable($sub);
+        }
+
+        return view('admin.subscriptions.index', compact('pendingSubscriptions', 'approvedSubscriptions', 'proofAvailability'));
+    }
+
+    /**
+     * Check if a proof file is actually accessible on any disk.
+     */
+    private function isProofAvailable(Subscription $subscription): bool
+    {
+        if (!$subscription->payment_proof_path) {
+            return false;
+        }
+
+        $path = $subscription->payment_proof_path;
+        $disks = array_unique(array_filter(['s3', config('filesystems.default'), 'public']));
+
+        foreach ($disks as $diskName) {
+            try {
+                if ($diskName === 's3' && empty(config('filesystems.disks.s3.bucket'))) continue;
+                if (Storage::disk($diskName)->exists($path)) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        return false;
     }
 
     /**

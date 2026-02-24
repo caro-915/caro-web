@@ -21,7 +21,7 @@
         <div class="space-y-3">
             @foreach($annonces as $annonce)
                 @php
-                    $disk = env('FILESYSTEM_DISK', 's3');
+                    $disk = config('filesystems.default');
                     $image = $annonce->image_path
                         ? Storage::disk($disk)->url($annonce->image_path)
                         : ($annonce->image_url ?? asset('images/placeholder-car.jpg'));

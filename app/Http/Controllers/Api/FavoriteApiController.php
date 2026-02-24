@@ -59,7 +59,7 @@ class FavoriteApiController extends Controller
             }
 
             $annonce = $favorite->annonce;
-            $disk = env('FILESYSTEM_DISK', 's3');
+            $disk = config('filesystems.default');
             $images = [];
             $imageFields = ['image_path', 'image_path_2', 'image_path_3', 'image_path_4', 'image_path_5'];
             
