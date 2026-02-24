@@ -53,7 +53,7 @@ class ProController extends Controller
         ]);
 
         // Store the payment proof
-        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+        $path = $request->file('payment_proof')->store('payment_proofs');
 
         // Create subscription with pending status
         $subscription = $this->subscriptionService->createSubscription(

@@ -217,7 +217,7 @@
                         <li><a href="#" class="hover:text-white transition">Conditions générales</a></li>
                         <li><a href="#" class="hover:text-white transition">Politique de confidentialité</a></li>
                         <li><a href="#" class="hover:text-white transition">Mentions légales</a></li>
-                        <li><a href="#" class="hover:text-white transition">Nous contacter</a></li>
+                        <li><a href="/#contact-us" class="hover:text-white transition">Nous contacter</a></li>
                     </ul>
                 </div>
 
@@ -225,8 +225,7 @@
                 <div>
                     <h3 class="font-semibold text-white mb-3">Nous contacter</h3>
                     <ul class="space-y-1 text-[11px] md:text-xs">
-                        <li>Email: <a href="mailto:contact@elsayara.dz" class="hover:text-white transition">contact@elsayara.dz</a></li>
-                        <li>Tél: <a href="tel:+213XXX" class="hover:text-white transition">+213 XXX XXX XXX</a></li>
+                        <li>Email : <a href="mailto:contact@elsayara.com" class="hover:text-white transition">contact@elsayara.com</a></li>
                         <li>Algérie</li>
                     </ul>
                 </div>

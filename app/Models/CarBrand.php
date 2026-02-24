@@ -10,7 +10,7 @@ class CarBrand extends Model
     use HasFactory;
 
     // Allow mass assignment for these attributes
-    protected $fillable = ['name', 'region'];
+    protected $fillable = ['name', 'region', 'vehicle_type'];
 
     /**
      * One brand has many car models.

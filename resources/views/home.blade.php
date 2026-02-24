@@ -416,16 +416,22 @@
     </p>
 
     <ul class="text-sm md:text-base text-gray-700 space-y-2">
-        <li>📧 Email : <strong>contact@elsayara.dz</strong></li>
-        <li>📞 Téléphone : <strong>05 00 00 00 00</strong></li>
+        <li>📧 Email : <a href="mailto:contact@elsayara.com" class="font-semibold hover:underline">contact@elsayara.com</a></li>
     </ul>
 </section>
 
 
 
 
-    {{-- JS: handle vehicle type buttons + dynamic models (si tu l’utilises déjà, fusionne) --}}
+    {{-- JS: handle vehicle type buttons + dynamic brand/model switching --}}
     <script>
+        // Data maps per vehicle type (from DB)
+        const carBrandsMapData = @json($carBrandsMap);
+        const motoBrandsMapData = @json($motoBrandsMap);
+        const carBrandsList = @json($marques);
+        const motoBrandsList = @json($marquesMotos);
+        const brandModelsData = {...carBrandsMapData, ...motoBrandsMapData};
+
         // Handle vehicle type button selection
         const typeInput = document.getElementById('vehicle_type_input');
         const typeButtons = document.querySelectorAll('.vehicle-type-btn');
@@ -447,37 +453,35 @@
 
         function applyHomeVehicleTypeUI(type) {
             const isMoto = type === 'Moto';
+            const newBrands = isMoto ? motoBrandsList : carBrandsList;
 
-            // Pour les motos, on cache les dropdowns marque/modèle
-            // La recherche se fait via le champ texte libre "home_q"
+            // Swap brand list in dropdown (always visible, just different data)
             if (homeBrandDropdown) {
-                homeBrandDropdown.classList.toggle('hidden', isMoto);
-            }
-
-            if (homeModelDropdown) {
-                homeModelDropdown.classList.toggle('hidden', isMoto);
-            }
-
-            if (isMoto && homeMarqueHidden) {
-                homeMarqueHidden.value = '';
-                // Réinitialiser les dropdowns Alpine
                 const brandDropdownData = Alpine.$data(homeBrandDropdown);
                 if (brandDropdownData) {
+                    brandDropdownData.brands = newBrands;
                     brandDropdownData.selected = '';
+                    brandDropdownData.search = '';
                 }
-                
+            }
+
+            // Reset model dropdown
+            if (homeModelDropdown) {
                 const modelDropdownData = Alpine.$data(homeModelDropdown);
                 if (modelDropdownData) {
                     modelDropdownData.selected = '';
                     modelDropdownData.availableModels = [];
                 }
             }
+
+            if (homeMarqueHidden) {
+                homeMarqueHidden.value = '';
+            }
         }
 
         if (typeInput && typeInput.value) {
             setActiveHomeTypeButton(typeInput.value);
         }
-        applyHomeVehicleTypeUI(typeInput ? typeInput.value : '');
 
         typeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -490,39 +494,12 @@
             });
         });
 
-        // Dynamic models loading (si tu l'avais déjà, garde ta logique)
-        const baseUrlFilter = "{{ url('/api/marques') }}";
-        const selectMarqueFilter = document.getElementById('filter_marque');
-        const selectModeleFilter = document.getElementById('filter_modele');
-
-        if (selectMarqueFilter) {
-            selectMarqueFilter.addEventListener('change', function () {
-                const marqueId = this.value;
-
-                if (!marqueId) {
-                    selectModeleFilter.innerHTML = '<option value=\"\">Peu importe</option>';
-                    return;
-                }
-
-                fetch(`${baseUrlFilter}/${marqueId}/modeles`)
-                    .then(response => response.json())
-                    .then(data => {
-                        selectModeleFilter.innerHTML = '<option value=\"\">Peu importe</option>';
-                        data.forEach(modele => {
-                            const option = document.createElement('option');
-                            option.value = modele.id;
-                            option.textContent = modele.name;
-                            selectModeleFilter.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error loading models:', error);
-                    });
-            });
-        }
-
-        // Alpine.js: Données partagées pour marque/modèle
-        const brandModelsData = @json($brandModelsMap);
+        // Apply initial state after Alpine is ready
+        document.addEventListener('alpine:initialized', () => {
+            if (typeInput && typeInput.value) {
+                applyHomeVehicleTypeUI(typeInput.value);
+            }
+        });
 
         // Alpine.js dropdown for brand (home)
         function brandDropdownHome() {
@@ -530,7 +507,7 @@
                 open: false,
                 search: '',
                 selected: "{{ request('marque') }}",
-                brands: @json($marques),
+                brands: carBrandsList,
                 filteredBrands() {
                     return this.search
                         ? this.brands.filter(b => b.toLowerCase().includes(this.search.toLowerCase()))
@@ -552,19 +529,11 @@
 
         // Alpine.js dropdown for model (home)
         function modelDropdownHome() {
-            // Extraire tous les modèles de toutes les marques
-            const allModelsSet = new Set();
-            Object.values(brandModelsData).forEach(models => {
-                models.forEach(model => allModelsSet.add(model));
-            });
-            const allModels = Array.from(allModelsSet).sort();
-
             return {
                 open: false,
                 search: '',
                 selected: "{{ request('modele') }}",
-                availableModels: allModels,
-                allModels: allModels,
+                availableModels: [],
                 init() {
                     const selectedBrand = document.querySelector('input[name="marque"]')?.value || "{{ request('marque') }}";
                     if (selectedBrand) {
@@ -575,8 +544,7 @@
                     if (brand && brandModelsData[brand]) {
                         this.availableModels = brandModelsData[brand];
                     } else {
-                        // Aucune marque sélectionnée → afficher tous les modèles
-                        this.availableModels = this.allModels;
+                        this.availableModels = [];
                     }
                 },
                 filteredModels() {

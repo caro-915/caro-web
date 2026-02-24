@@ -477,57 +477,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function applyVehicleTypeUI(type) {
         const isMoto = type === 'Moto';
+        const newBrands = isMoto ? motoBrandsList : carBrandsList;
 
-        // Pour les motos, on cache les dropdowns marque/modèle et affiche les champs texte
+        // Swap brand list in dropdown (always visible, just different data)
         if (brandDropdownWrapper) {
-            brandDropdownWrapper.classList.toggle('hidden', isMoto);
+            const brandDropdown = Alpine.$data(brandDropdownWrapper);
+            if (brandDropdown) {
+                brandDropdown.brands = newBrands;
+                brandDropdown.selected = '';
+                brandDropdown.search = '';
+            }
         }
 
+        // Reset model dropdown
         if (modelDropdownWrapper) {
-            modelDropdownWrapper.classList.toggle('hidden', isMoto);
-        }
-
-        if (marqueTextInput) {
-            marqueTextInput.classList.toggle('hidden', !isMoto);
-            marqueTextInput.disabled = !isMoto;
-            const placeholder = isMoto
-                ? marqueTextInput.dataset.placeholderMoto
-                : marqueTextInput.dataset.placeholderVoiture;
-            if (placeholder) {
-                marqueTextInput.placeholder = placeholder;
+            const modelDropdown = Alpine.$data(modelDropdownWrapper);
+            if (modelDropdown) {
+                modelDropdown.selected = '';
+                modelDropdown.availableModels = [];
             }
         }
 
-        if (modeleTextInput) {
-            modeleTextInput.classList.toggle('hidden', !isMoto);
-            modeleTextInput.disabled = !isMoto;
-            const placeholder = isMoto
-                ? modeleTextInput.dataset.placeholderMoto
-                : modeleTextInput.dataset.placeholderVoiture;
-            if (placeholder) {
-                modeleTextInput.placeholder = placeholder;
-            }
-        }
-
+        // Reset hidden inputs
         if (marqueHiddenInput) {
-            marqueHiddenInput.disabled = isMoto;
-            if (isMoto) {
-                // Réinitialiser les dropdowns Alpine
-                const brandDropdown = Alpine.$data(brandDropdownWrapper);
-                if (brandDropdown) {
-                    brandDropdown.selected = '';
-                }
-                
-                const modelDropdown = Alpine.$data(modelDropdownWrapper);
-                if (modelDropdown) {
-                    modelDropdown.selected = '';
-                    modelDropdown.availableModels = [];
-                }
-            }
+            marqueHiddenInput.value = '';
         }
 
-        if (marqueHiddenSelect) {
-            marqueHiddenSelect.disabled = isMoto;
+        // Hide text inputs (no longer needed — dropdowns handle both types)
+        if (marqueTextInput) {
+            marqueTextInput.classList.add('hidden');
+            marqueTextInput.disabled = true;
+        }
+        if (modeleTextInput) {
+            modeleTextInput.classList.add('hidden');
+            modeleTextInput.disabled = true;
         }
 
         if (titreInput) {
@@ -590,12 +573,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (!vehicleTypeInput.value) {
-        // Pas de valeur sauvegardée, pré-sélectionner "Voiture"
         vehicleTypeInput.value = 'Voiture';
     }
 
     setActiveVehicleButton(vehicleTypeInput.value);
-    applyVehicleTypeUI(vehicleTypeInput.value);
+
+    // Apply initial vehicle type UI after Alpine is ready
+    document.addEventListener('alpine:initialized', () => {
+        applyVehicleTypeUI(vehicleTypeInput.value);
+    });
 
     // Gestion des clics sur les boutons de type de véhicule
     vehicleButtons.forEach(btn => {
@@ -822,8 +808,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     imagesContainer.addEventListener('change', updatePreview);
 
-    // Alpine.js: Données partagées pour marque/modèle
-    const brandModelsData = @json($brandModelsMap);
+    // Data maps per vehicle type (from DB)
+    const carBrandsMapData = @json($carBrandsMap);
+    const motoBrandsMapData = @json($motoBrandsMap);
+    const carBrandsList = @json($brands->map(function($b) { return $b; }));
+    const motoBrandsList = @json($motoBrandsList);
+    const brandModelsData = {...carBrandsMapData, ...motoBrandsMapData};
 
     // Brand Dropdown for Create Annonce (Alpine.js)
     function brandDropdownCreate() {
@@ -831,7 +821,7 @@ document.addEventListener('DOMContentLoaded', function() {
             open: false,
             search: '',
             selected: '{{ old("marque") }}',
-            brands: @json($brands->map(function($b) { return $b; })),
+            brands: carBrandsList,
             
             filteredBrands() {
                 return this.brands.filter(brand => 

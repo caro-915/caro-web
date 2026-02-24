@@ -65,7 +65,21 @@
     {{-- Main layout: filters / results / side panel --}}
     <div class="grid gap-6 lg:grid-cols-[260px,minmax(0,1fr),260px]">
         {{-- LEFT COLUMN – Filters --}}
-        <aside class="bg-white rounded-2xl shadow p-4 space-y-4">
+        <div x-data="{ filtersOpen: false }">
+            {{-- Mobile toggle button --}}
+            <button @click="filtersOpen = !filtersOpen"
+                    class="lg:hidden w-full mb-3 flex items-center justify-center gap-2 bg-white rounded-xl shadow px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                </svg>
+                <span x-text="filtersOpen ? 'Masquer les filtres' : 'Afficher les filtres'">Afficher les filtres</span>
+                <svg class="w-4 h-4 transition" :class="{ 'rotate-180': filtersOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+
+            <aside :class="filtersOpen ? '' : 'hidden lg:block'"
+                   class="bg-white rounded-2xl shadow p-4 space-y-4">
             <h2 class="text-sm font-semibold mb-1">Filtres</h2>
 
             {{-- Filters form --}}
@@ -243,6 +257,7 @@
                 </div>
             </form>
         </aside>
+        </div>
 
         {{-- CENTER COLUMN – Results list --}}
         <main class="space-y-3">

@@ -87,9 +87,24 @@ class AnnonceController extends Controller
         // Clean up any existing temp images from previous attempts
         $this->cleanTempImages();
         
-        // Mapping marque -> modèles populaires (Algérie & Afrique)
-        $brandModelsMap = [
-            // Marques populaires en Algérie
+        // Build brand → models maps from DB (split by vehicle_type)
+        $carBrandsMap = [];
+        $motoBrandsMap = [];
+
+        CarBrand::with(['models' => fn ($q) => $q->orderBy('name')])
+            ->orderBy('name')
+            ->get()
+            ->each(function (CarBrand $brand) use (&$carBrandsMap, &$motoBrandsMap) {
+                $models = $brand->models->pluck('name')->filter()->unique()->sort()->values()->all();
+                if ($brand->vehicle_type === 'Moto') {
+                    $motoBrandsMap[$brand->name] = $models;
+                } else {
+                    $carBrandsMap[$brand->name] = $models;
+                }
+            });
+
+        // Enrich with static car models for Algeria
+        $staticCarModels = [
             'Renault' => ['Clio', 'Megane', 'Symbol', 'Logan', 'Sandero', 'Duster', 'Captur', 'Kadjar', 'Talisman', 'Twingo', 'Kangoo'],
             'Peugeot' => ['208', '308', '2008', '3008', '301', '508', '407', '206', '307', '5008', 'Partner', 'Expert'],
             'Citroën' => ['C3', 'C4', 'C5', 'Berlingo', 'Jumpy', 'C-Elysée', 'C3 Aircross', 'C4 Cactus', 'Jumper'],
@@ -104,49 +119,34 @@ class AnnonceController extends Controller
             'Seat' => ['Ibiza', 'Leon', 'Arona', 'Ateca', 'Tarraco', 'Toledo'],
             'Skoda' => ['Fabia', 'Octavia', 'Superb', 'Kodiaq', 'Karoq', 'Scala', 'Kamiq'],
             'Fiat' => ['500', 'Panda', 'Punto', 'Tipo', 'Doblo', '500X', 'Fiorino', 'Ducato'],
-            
-            // Marques africaines & asiatiques populaires
             'Honda' => ['Civic', 'Accord', 'CR-V', 'Jazz', 'HR-V', 'City', 'Fit'],
             'Mazda' => ['2', '3', '6', 'CX-3', 'CX-5', 'CX-30', 'MX-5'],
             'Mitsubishi' => ['Pajero', 'L200', 'ASX', 'Outlander', 'Lancer', 'Eclipse Cross'],
             'Suzuki' => ['Swift', 'Vitara', 'Baleno', 'Jimny', 'S-Cross', 'Celerio', 'Alto', 'Dzire'],
             'Isuzu' => ['D-Max', 'MU-X', 'Trooper'],
-            'Mahindra' => ['Scorpio', 'XUV500', 'Thar', 'Bolero', 'KUV100'],
-            'Tata Motors' => ['Indica', 'Indigo', 'Safari', 'Nexon', 'Harrier'],
-            'Chery' => ['Tiggo', 'Arrizo', 'QQ'],
-            'Geely' => ['Emgrand', 'Coolray', 'Atlas', 'GC6'],
-            'JAC' => ['S3', 'S5', 'T6', 'J4'],
-            
-            // Premium
+            'Chevrolet' => ['Spark', 'Aveo', 'Cruze', 'Malibu', 'Captiva', 'Trax', 'Tahoe', 'Silverado'],
+            'Jeep' => ['Renegade', 'Compass', 'Cherokee', 'Grand Cherokee', 'Wrangler'],
             'Mercedes-Benz' => ['Classe A', 'Classe B', 'Classe C', 'Classe E', 'Classe S', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS', 'CLA', 'CLS', 'Vito', 'Sprinter'],
             'BMW' => ['Série 1', 'Série 2', 'Série 3', 'Série 4', 'Série 5', 'Série 7', 'X1', 'X3', 'X5', 'X6', 'X7', 'Z4'],
             'Audi' => ['A1', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q2', 'Q3', 'Q5', 'Q7', 'Q8', 'TT'],
-            
-            // Autres marques internationales
-            'Chevrolet' => ['Spark', 'Aveo', 'Cruze', 'Malibu', 'Captiva', 'Trax', 'Tahoe', 'Silverado'],
-            'Jeep' => ['Renegade', 'Compass', 'Cherokee', 'Grand Cherokee', 'Wrangler'],
-            'Land Rover' => ['Discovery', 'Range Rover', 'Range Rover Sport', 'Defender', 'Evoque'],
-            'Lexus' => ['IS', 'ES', 'GS', 'LS', 'NX', 'RX', 'LX', 'UX'],
-            'Porsche' => ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan', 'Boxster', 'Cayman'],
-            'Tesla' => ['Model 3', 'Model S', 'Model X', 'Model Y'],
-            'Volvo' => ['S60', 'S90', 'V60', 'V90', 'XC40', 'XC60', 'XC90'],
-            'Mini' => ['Cooper', 'Clubman', 'Countryman', 'Paceman'],
-            'Alfa Romeo' => ['Giulietta', 'Giulia', 'Stelvio', 'Tonale'],
-            'DS' => ['DS3', 'DS4', 'DS7'],
-            
-            // Motos populaires
-            'Yamaha' => ['YZF-R1', 'YZF-R6', 'MT-07', 'MT-09', 'TMAX', 'XMax', 'Aerox', 'FZ', 'Tenere'],
-            'Honda Moto' => ['CBR', 'CB', 'CRF', 'PCX', 'SH', 'Africa Twin', 'Gold Wing'],
-            'Kawasaki' => ['Ninja', 'Z', 'Versys', 'ZX', 'ER-6'],
-            'Suzuki Moto' => ['GSX-R', 'Hayabusa', 'V-Strom', 'Burgman', 'Address'],
-            'Ducati' => ['Monster', 'Panigale', 'Multistrada', 'Scrambler', 'Diavel'],
-            'KTM' => ['Duke', 'RC', 'Adventure', 'Enduro'],
-            'BMW Motorrad' => ['R1250', 'S1000RR', 'F750', 'F850', 'GS'],
-            'Harley-Davidson' => ['Sportster', 'Softail', 'Touring', 'Street', 'V-Rod'],
         ];
+
+        foreach ($staticCarModels as $brand => $models) {
+            $existing = $carBrandsMap[$brand] ?? [];
+            $carBrandsMap[$brand] = array_values(array_unique(array_merge($existing, $models)));
+            sort($carBrandsMap[$brand], SORT_NATURAL | SORT_FLAG_CASE);
+        }
+
+        // Combined map for JS
+        $brandModelsMap = array_merge($carBrandsMap, $motoBrandsMap);
         
-        // Extraction des marques uniques
-        $brandsList = array_keys($brandModelsMap);
+        $carBrandsList = array_keys($carBrandsMap);
+        sort($carBrandsList, SORT_NATURAL | SORT_FLAG_CASE);
+        
+        $motoBrandsList = array_keys($motoBrandsMap);
+        sort($motoBrandsList, SORT_NATURAL | SORT_FLAG_CASE);
+        
+        $brands = collect($carBrandsList);
         
         // Official list of Algerian Wilayas
         $wilayas = [
@@ -158,7 +158,6 @@ class AnnonceController extends Controller
             'Ouled Djellal', 'Béni Abbès', 'In Salah', 'In Guezzam', 'Touggourt', 'Djanet', 'El M\'Ghair', 'El Meniaa'
         ];
         
-        $brands = collect($brandsList);
         $models = CarModel::orderBy('name')->get();
         
         // Récupérer les features de l'utilisateur pour le formulaire
@@ -167,7 +166,11 @@ class AnnonceController extends Controller
         $isPro = $subscriptionService->userIsPro(auth()->user());
         $maxImagesIntro = $features['max_images_per_ad'] ?? 4;
 
-        return view('annonces.create', compact('brands', 'models', 'wilayas', 'brandModelsMap', 'isPro', 'maxImagesIntro'));
+        return view('annonces.create', compact(
+            'brands', 'models', 'wilayas', 'brandModelsMap',
+            'isPro', 'maxImagesIntro',
+            'carBrandsMap', 'motoBrandsMap', 'motoBrandsList'
+        ));
     }
 
     public function cleanTempImages()

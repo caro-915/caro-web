@@ -50,13 +50,18 @@ class SubscriptionController extends Controller
     {
         abort_unless($subscription->payment_proof_path, 404);
 
-        $disk = 'public';
+        // Try default disk first, then fallback to 'public' disk for older uploads
+        $path = $subscription->payment_proof_path;
 
-        if (!Storage::disk($disk)->exists($subscription->payment_proof_path)) {
-            abort(404);
+        if (Storage::exists($path)) {
+            return Storage::response($path);
         }
 
-        return Storage::disk($disk)->response($subscription->payment_proof_path);
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::disk('public')->response($path);
+        }
+
+        abort(404);
     }
 
     /**
