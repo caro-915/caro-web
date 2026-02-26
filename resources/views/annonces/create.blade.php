@@ -475,31 +475,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Track if this is the initial page load (to preserve old() values after validation error)
+    let isInitialLoad = true;
+
     function applyVehicleTypeUI(type) {
         const isMoto = type === 'Moto';
         const newBrands = isMoto ? motoBrandsList : carBrandsList;
+        
+        // Get old values from blade (only available on validation error redirect)
+        const oldMarque = '{{ old("marque") }}';
+        const oldModele = '{{ old("modele") }}';
 
         // Swap brand list in dropdown (always visible, just different data)
         if (brandDropdownWrapper) {
             const brandDropdown = Alpine.$data(brandDropdownWrapper);
             if (brandDropdown) {
                 brandDropdown.brands = newBrands;
-                brandDropdown.selected = '';
-                brandDropdown.search = '';
+                // Only reset if not initial load, or if no old value exists
+                if (!isInitialLoad || !oldMarque) {
+                    brandDropdown.selected = '';
+                    brandDropdown.search = '';
+                }
             }
         }
 
-        // Reset model dropdown
+        // Reset model dropdown (only if not initial load or no old value)
         if (modelDropdownWrapper) {
             const modelDropdown = Alpine.$data(modelDropdownWrapper);
             if (modelDropdown) {
-                modelDropdown.selected = '';
-                modelDropdown.availableModels = [];
+                if (!isInitialLoad || !oldModele) {
+                    modelDropdown.selected = '';
+                    modelDropdown.availableModels = [];
+                }
+                // If we have an old brand, load its models
+                if (isInitialLoad && oldMarque) {
+                    modelDropdown.updateAvailableModels(oldMarque);
+                }
             }
         }
 
-        // Reset hidden inputs
-        if (marqueHiddenInput) {
+        // Reset hidden inputs (only if not initial load)
+        if (marqueHiddenInput && !isInitialLoad) {
             marqueHiddenInput.value = '';
         }
 
@@ -581,6 +597,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Apply initial vehicle type UI after Alpine is ready
     document.addEventListener('alpine:initialized', () => {
         applyVehicleTypeUI(vehicleTypeInput.value);
+        // After initial load, mark as no longer initial
+        setTimeout(() => { isInitialLoad = false; }, 100);
     });
 
     // Gestion des clics sur les boutons de type de véhicule

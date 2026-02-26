@@ -208,8 +208,8 @@
                         </div>
                     </div>
 
-                    {{-- PRO upgrade card (visible for non-subscribers AND Premium users) --}}
-                    @if(auth()->check() && !auth()->user()->hasProPlan())
+                    {{-- PRO upgrade card - TEMPORARILY HIDDEN (change false to true to re-enable) --}}
+                    @if(false && auth()->check() && !auth()->user()->hasProPlan())
                         <div class="bg-gradient-to-r from-pink-50 to-pink-100 border border-pink-300 rounded-2xl p-4 md:p-5 inline-flex flex-col md:flex-row md:items-center gap-4 w-full">
                             <div class="flex-1">
                                 @if(auth()->user()->isPro() && !auth()->user()->hasProPlan())
