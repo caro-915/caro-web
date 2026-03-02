@@ -323,6 +323,187 @@ setInterval(() => {
 }, 20000); // toutes les 20 secondes
 </script>
 
+{{-- CHATBOT ASSISTANT --}}
+<div x-data="chatbot()" x-cloak class="fixed bottom-4 right-4 z-50">
+    {{-- Bouton flottant --}}
+    <button @click="toggle()"
+            class="w-14 h-14 bg-pink-600 hover:bg-pink-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300"
+            :class="{ 'scale-0': isOpen }"
+            title="Aide">
+        <span class="text-2xl">💬</span>
+    </button>
+
+    {{-- Fenêtre chat --}}
+    <div x-show="isOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+         class="absolute bottom-0 right-0 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+        
+        {{-- Header --}}
+        <div class="bg-gradient-to-r from-pink-600 to-pink-500 text-white px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-xl">🤖</span>
+                <div>
+                    <h3 class="font-bold text-sm">Assistant ElSayara</h3>
+                    <p class="text-[10px] text-pink-100">En ligne • Réponse instantanée</p>
+                </div>
+            </div>
+            <button @click="toggle()" class="text-white/80 hover:text-white transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        {{-- Messages zone --}}
+        <div x-ref="messagesContainer" class="h-72 overflow-y-auto p-4 space-y-3 bg-gray-50">
+            <template x-for="(msg, index) in messages" :key="index">
+                <div :class="msg.type === 'user' ? 'flex justify-end' : 'flex justify-start'">
+                    <div :class="msg.type === 'user' 
+                        ? 'bg-pink-600 text-white rounded-2xl rounded-br-md px-4 py-2 max-w-[85%]' 
+                        : 'bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-bl-md px-4 py-2 max-w-[85%] shadow-sm'">
+                        <p class="text-sm" x-text="msg.text"></p>
+                        {{-- Actions buttons --}}
+                        <template x-if="msg.actions && msg.actions.length > 0">
+                            <div class="mt-2 space-y-1">
+                                <template x-for="(action, i) in msg.actions" :key="i">
+                                    <a :href="action.url" 
+                                       class="block text-xs bg-pink-50 text-pink-700 hover:bg-pink-100 px-3 py-1.5 rounded-lg transition text-center font-medium"
+                                       x-text="action.label"></a>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+            {{-- Typing indicator --}}
+            <div x-show="isTyping" class="flex justify-start">
+                <div class="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-2 shadow-sm">
+                    <div class="flex space-x-1">
+                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Quick actions --}}
+        <div class="px-3 py-2 bg-white border-t border-gray-100">
+            <div class="flex flex-wrap gap-1">
+                <button @click="sendQuick('Déposer une annonce')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">🚗 Déposer</button>
+                <button @click="sendQuick('Rechercher une voiture')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">🔍 Rechercher</button>
+                <button @click="sendQuick('Mes favoris')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">❤️ Favoris</button>
+                <button @click="sendQuick('Mes messages')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">💬 Messages</button>
+                <button @click="sendQuick('Contact support')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">📧 Contact</button>
+            </div>
+        </div>
+
+        {{-- Input zone --}}
+        <div class="p-3 bg-white border-t border-gray-200">
+            <form @submit.prevent="send()" class="flex gap-2">
+                <input type="text" 
+                       x-model="input"
+                       @keydown.enter="send()"
+                       placeholder="Posez votre question..."
+                       class="flex-1 px-4 py-2 text-sm border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                       :disabled="isTyping">
+                <button type="submit" 
+                        :disabled="!input.trim() || isTyping"
+                        class="w-10 h-10 bg-pink-600 hover:bg-pink-700 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function chatbot() {
+    return {
+        isOpen: false,
+        isTyping: false,
+        input: '',
+        messages: [
+            {
+                type: 'bot',
+                text: 'Bonjour ! 👋 Je suis l\'assistant ElSayara. Comment puis-je vous aider ?',
+                actions: []
+            }
+        ],
+
+        toggle() {
+            this.isOpen = !this.isOpen;
+        },
+
+        sendQuick(text) {
+            this.input = text;
+            this.send();
+        },
+
+        async send() {
+            const text = this.input.trim();
+            if (!text || this.isTyping) return;
+
+            // Add user message
+            this.messages.push({ type: 'user', text: text, actions: [] });
+            this.input = '';
+            this.scrollToBottom();
+
+            // Show typing indicator
+            this.isTyping = true;
+
+            try {
+                const response = await fetch('{{ route("chatbot.ask") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ message: text })
+                });
+
+                const data = await response.json();
+
+                // Simulate typing delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                this.messages.push({
+                    type: 'bot',
+                    text: data.reply,
+                    actions: data.actions || []
+                });
+            } catch (error) {
+                this.messages.push({
+                    type: 'bot',
+                    text: 'Désolé, une erreur est survenue. Veuillez réessayer.',
+                    actions: []
+                });
+            }
+
+            this.isTyping = false;
+            this.scrollToBottom();
+        },
+
+        scrollToBottom() {
+            this.$nextTick(() => {
+                const container = this.$refs.messagesContainer;
+                if (container) {
+                    container.scrollTop = container.scrollHeight;
+                }
+            });
+        }
+    }
+}
+</script>
+
 
 </body>
 </html>

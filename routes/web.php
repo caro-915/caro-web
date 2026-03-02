@@ -20,6 +20,7 @@ use App\Http\Controllers\BoostController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PhoneController;
+use App\Http\Controllers\ChatbotController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,15 @@ Route::get('/contact', [ContactController::class, 'show'])->name('contact.show')
 Route::post('/contact', [ContactController::class, 'send'])
     ->middleware('throttle:10,1') // max 10 requêtes par minute
     ->name('contact.send');
+
+/*
+|--------------------------------------------------------------------------
+| CHATBOT (public, avec rate limiting)
+|--------------------------------------------------------------------------
+*/
+Route::post('/chatbot', [ChatbotController::class, 'ask'])
+    ->middleware('throttle:30,1') // max 30 requêtes par minute
+    ->name('chatbot.ask');
 
 /*
 |--------------------------------------------------------------------------
