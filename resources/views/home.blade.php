@@ -505,13 +505,12 @@
                 </div>
             </div>
 
-            {{-- Newsletter placeholder --}}
+                        {{-- Newsletter placeholder - HIDDEN
             <div class="bg-gradient-to-br from-pink-50 to-gray-50 rounded-xl p-5">
                 <h3 class="text-sm font-semibold text-gray-800 mb-2">📬 Newsletter</h3>
                 <p class="text-xs text-gray-600 mb-4">
                     Recevez les meilleures offres et nouveautés directement dans votre boîte mail.
                 </p>
-                {{-- TODO: Implémenter le backend newsletter (NewsletterController + table subscribers) --}}
                 <form action="#" method="POST" class="space-y-3" onsubmit="event.preventDefault(); alert('Newsletter bientôt disponible !');">
                     @csrf
                     <input type="email" name="newsletter_email" placeholder="Votre adresse email"
@@ -523,6 +522,7 @@
                 </form>
                 <p class="text-[10px] text-gray-400 mt-2">Pas de spam, promis. Désinscription possible à tout moment.</p>
             </div>
+            --}}
         </div>
     </section>
 
