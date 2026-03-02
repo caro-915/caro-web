@@ -7,7 +7,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>ElSayara – Trouvez votre voiture d'occasion</title>
+    {{-- SEO: Dynamic title and meta --}}
+    <title>@yield('seo_title', 'ElSayara – Trouvez votre voiture d\'occasion en Algérie')</title>
+    <meta name="description" content="@yield('seo_description', 'ElSayara est la plateforme leader pour acheter et vendre des véhicules d\'occasion en Algérie. Des milliers d\'annonces vérifiées de voitures, motos et utilitaires.')">
+    <meta name="robots" content="@yield('seo_robots', 'index, follow')">
+    <link rel="canonical" href="@yield('seo_canonical', url()->current())">
+
+    {{-- Open Graph --}}
+    <meta property="og:title" content="@yield('seo_title', 'ElSayara – Trouvez votre voiture d\'occasion en Algérie')">
+    <meta property="og:description" content="@yield('seo_description', 'ElSayara est la plateforme leader pour acheter et vendre des véhicules d\'occasion en Algérie.')">
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:url" content="@yield('seo_canonical', url()->current())">
+    <meta property="og:image" content="@yield('og_image', asset('images/og-default.jpg'))">
+    <meta property="og:locale" content="fr_DZ">
+    <meta property="og:site_name" content="ElSayara">
+
+    {{-- Additional SEO stack for JSON-LD etc --}}
+    @stack('seo')
 
     {{-- Tailwind + JS compilés par Vite (Breeze) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -30,7 +46,7 @@
                 <a href="{{ route('annonces.search') }}" class="hover:text-gray-800 whitespace-nowrap">Annonces</a>
                 <a href="{{ route('home') }}#top-annonces" class="hover:text-gray-800 whitespace-nowrap">Top annonces</a>
                 <a href="{{ route('home') }}#about" class="hover:text-gray-800 whitespace-nowrap">À propos de nous</a>
-                <a href="{{ route('home') }}#contact-us" class="hover:text-gray-800 whitespace-nowrap">Nous contacter</a>
+                <a href="{{ route('contact.show') }}" class="hover:text-gray-800 whitespace-nowrap">Nous contacter</a>
             </nav>
 
             {{-- Actions droite --}}
@@ -186,8 +202,35 @@
         </div>
     </header>
 
+    {{-- BANNIÈRE VALIDATION TÉLÉPHONE (Google login sans numéro) --}}
+    @auth
+        @if(auth()->user()->google_id && empty(auth()->user()->phone))
+            <div class="bg-orange-50 border-b border-orange-200 fixed w-full top-14 sm:top-16 left-0 right-0 z-40">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="hidden sm:inline-flex items-center justify-center w-8 h-8 bg-orange-100 rounded-full text-orange-600">
+                                👤
+                            </span>
+                            <p class="text-xs sm:text-sm text-orange-800">
+                                <span class="font-semibold">Validez votre compte</span> en ajoutant un numéro de téléphone mobile afin de bénéficier de toutes les fonctionnalités d'ElSayara
+                            </p>
+                        </div>
+                        <a href="{{ route('phone.edit') }}"
+                           class="flex-shrink-0 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-1.5 rounded-full transition">
+                            VALIDER
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endauth
+
     {{-- CONTENU PAGE --}}
-   <main class="pt-16 sm:pt-18 py-6 md:py-8">
+    @php
+        $showPhoneBanner = auth()->check() && auth()->user()->google_id && empty(auth()->user()->phone);
+    @endphp
+   <main class="{{ $showPhoneBanner ? 'pt-28 sm:pt-32' : 'pt-16 sm:pt-18' }} py-6 md:py-8">
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen">
         @isset($slot)
             {{ $slot }}
@@ -200,33 +243,49 @@
     {{-- FOOTER --}}
     <footer class="bg-gray-900 text-gray-300 text-xs md:text-sm mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                {{-- About section --}}
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                {{-- Branding --}}
                 <div>
-                    <h3 class="font-semibold text-white mb-3">À propos de ElSayara</h3>
-                    <p class="text-[11px] md:text-xs leading-relaxed">
-                        ElSayara est une plateforme leader pour l'achat et la vente de véhicules d'occasion en Algérie. 
-                        Découvrez des milliers d'annonces vérifiées.
+                    <a href="{{ route('home') }}" class="text-xl font-black text-white tracking-wider">ELSAYARA</a>
+                    <p class="text-[11px] md:text-xs leading-relaxed mt-2 text-gray-400">
+                        La plateforme de référence pour l'achat et la vente de véhicules d'occasion en Algérie.
                     </p>
+                </div>
+
+                {{-- Navigation rapide --}}
+                <div>
+                    <h3 class="font-semibold text-white mb-3">Navigation</h3>
+                    <ul class="space-y-1">
+                        <li><a href="{{ route('annonces.search') }}" class="hover:text-white transition">Rechercher</a></li>
+                        <li><a href="{{ route('annonces.create') }}" class="hover:text-white transition">Déposer une annonce</a></li>
+                        <li><a href="{{ route('home') }}#top-annonces" class="hover:text-white transition">Top annonces</a></li>
+                        <li><a href="{{ route('home') }}#about" class="hover:text-white transition">À propos</a></li>
+                    </ul>
                 </div>
 
                 {{-- Legal links --}}
                 <div>
-                    <h3 class="font-semibold text-white mb-3">Informations légales</h3>
+                    <h3 class="font-semibold text-white mb-3">Informations</h3>
                     <ul class="space-y-1">
                         <li><a href="#" class="hover:text-white transition">Conditions générales</a></li>
                         <li><a href="#" class="hover:text-white transition">Politique de confidentialité</a></li>
                         <li><a href="#" class="hover:text-white transition">Mentions légales</a></li>
-                        <li><a href="/#contact-us" class="hover:text-white transition">Nous contacter</a></li>
                     </ul>
                 </div>
 
-                {{-- Contact section --}}
+                {{-- Contact --}}
                 <div>
-                    <h3 class="font-semibold text-white mb-3">Nous contacter</h3>
+                    <h3 class="font-semibold text-white mb-3">Contact</h3>
                     <ul class="space-y-1 text-[11px] md:text-xs">
-                        <li>Email : <a href="mailto:contact@elsayara.com" class="hover:text-white transition">contact@elsayara.com</a></li>
-                        <li>Algérie</li>
+                        <li>
+                            <a href="mailto:{{ config('autodz.contact_email', 'contact@elsayara.com') }}" class="hover:text-white transition">
+                                📧 {{ config('autodz.contact_email', 'contact@elsayara.com') }}
+                            </a>
+                        </li>
+                        <li>📍 Algérie</li>
+                        <li>
+                            <a href="{{ route('contact.show') }}" class="hover:text-white transition text-pink-400">Formulaire de contact →</a>
+                        </li>
                     </ul>
                 </div>
             </div>

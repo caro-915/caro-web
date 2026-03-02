@@ -17,6 +17,62 @@ use App\Http\Controllers\Admin\PlanController as AdminPlanController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ProController;
 use App\Http\Controllers\BoostController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PhoneController;
+
+/*
+|--------------------------------------------------------------------------
+| SEO: Sitemap & Robots
+|--------------------------------------------------------------------------
+*/
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
+
+/*
+|--------------------------------------------------------------------------
+| CONTACT (public, avec rate limiting)
+|--------------------------------------------------------------------------
+*/
+Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::post('/contact', [ContactController::class, 'send'])
+    ->middleware('throttle:10,1') // max 10 requêtes par minute
+    ->name('contact.send');
+
+/*
+|--------------------------------------------------------------------------
+| TEST EMAIL (local/dev uniquement) - SUPPRIMER EN PRODUCTION
+|--------------------------------------------------------------------------
+*/
+if (app()->environment('local', 'development', 'staging')) {
+    Route::get('/test-email', function () {
+        try {
+            \Illuminate\Support\Facades\Mail::to(config('autodz.contact_email', 'contact@elsayara.com'))
+                ->send(new \App\Mail\ContactMessageMail([
+                    'name'       => 'Test User',
+                    'email'      => 'test@example.com',
+                    'phone'      => '0555123456',
+                    'subject'    => 'Test Email ElSayara',
+                    'body'       => 'Ceci est un email de test envoyé depuis la route /test-email.',
+                    'ip'         => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'sent_at'    => now()->format('d/m/Y à H:i'),
+                ]));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Email envoyé avec succès à ' . config('autodz.contact_email', 'contact@elsayara.com'),
+                'from'    => config('mail.from.address'),
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Test email failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    })->name('test.email');
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -154,6 +210,14 @@ Route::middleware(['auth', 'banned'])->group(function () {
 
     /*
     |-------------------------
+    | Téléphone (validation compte Google)
+    |-------------------------
+    */
+    Route::get('/compte/telephone', [PhoneController::class, 'edit'])->name('phone.edit');
+    Route::post('/compte/telephone', [PhoneController::class, 'update'])->name('phone.update');
+
+    /*
+    |-------------------------
     | PRO Subscription
     |-------------------------
     */
@@ -172,11 +236,21 @@ Route::middleware(['auth', 'banned'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| FICHE ANNONCE - Public
+| FICHE ANNONCE - Public (SEO-friendly URL with slug)
+| Supports: /annonces/123-renault-clio-2020
+| Legacy /annonces/123 will 301 redirect to canonical URL
 | IMPORTANT: toujours après /annonces/create et /annonces/{annonce}/edit
 |--------------------------------------------------------------------------
 */
-Route::get('/annonces/{annonce}', [AnnonceController::class, 'show'])->name('annonces.show');
+Route::get('/annonces/{annonce}-{slug}', [AnnonceController::class, 'show'])
+    ->where('annonce', '[0-9]+')
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('annonces.show');
+
+// Legacy route without slug - redirects to canonical URL
+Route::get('/annonces/{annonce}', [AnnonceController::class, 'show'])
+    ->where('annonce', '[0-9]+')
+    ->name('annonces.show.legacy');
 
 /*
 |--------------------------------------------------------------------------
