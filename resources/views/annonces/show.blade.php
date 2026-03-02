@@ -50,7 +50,7 @@
 @section('seo_description', Str::limit($seoDesc, 160))
 @section('og_type', 'product')
 @section('og_image', $mainImage)
-@section('seo_canonical', route('annonces.show.legacy', $annonce->id))
+@section('seo_canonical', route('annonces.show', ['annonce' => $annonce->id, 'slug' => $annonce->slug ?? Str::slug($annonce->titre)]))
 
 @push('seo')
 {{-- Schema.org JSON-LD for Vehicle + Offer --}}
@@ -459,7 +459,7 @@ if ($city) {
                             $simCity    = $sim->ville ?? $sim->city;
                         @endphp
 
-                        <a href="{{ route('annonces.show.legacy', $sim->id) }}"
+                        <a href="{{ route('annonces.show', ['annonce' => $sim->id, 'slug' => $sim->slug ?? Str::slug($sim->titre ?? '')]) }}"
                            class="bg-white rounded-2xl shadow flex overflow-hidden hover:shadow-md transition">
                             <img src="{{ $simImage }}" alt="Photo similaire"
                                  class="w-32 h-24 object-cover">

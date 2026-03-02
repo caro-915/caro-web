@@ -28,7 +28,7 @@
         @if($annonces->count() > 0)
             <div class="space-y-4">
                 @foreach($annonces as $annonce)
-                    <a href="{{ route('annonces.show.legacy', $annonce->id) }}" class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex">
+                    <a href="{{ route('annonces.show', ['annonce' => $annonce->id, 'slug' => $annonce->slug ?? Str::slug($annonce->titre)]) }}" class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex">
                         {{-- Image à gauche --}}
                         <div class="relative bg-gray-200 w-64 h-48 flex-shrink-0">
                             @if($annonce->image_path)

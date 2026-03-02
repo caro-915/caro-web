@@ -134,7 +134,7 @@
                                 <div class="text-[10px] text-gray-500">
                                     {{ $a->marque }} • {{ $a->modele }} • {{ optional($a->created_at)->diffForHumans() }}
                                 </div>
-                                <a href="{{ route('annonces.show.legacy', $a->id) }}" target="_blank" class="text-[10px] text-gray-800 hover:underline">
+                                <a href="{{ route('annonces.show', ['annonce' => $a->id, 'slug' => $a->slug ?? Str::slug($a->titre)]) }}" target="_blank" class="text-[10px] text-gray-800 hover:underline">
                                     Voir →
                                 </a>
                             </td>

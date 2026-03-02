@@ -313,7 +313,7 @@
                         }
                     @endphp
                     {{-- One result card --}}
-                    <a href="{{ route('annonces.show.legacy', $annonce->id) }}"
+                    <a href="{{ route('annonces.show', ['annonce' => $annonce->id, 'slug' => $annonce->slug ?: Str::slug($annonce->titre)]) }}"
                        class="bg-white rounded-2xl shadow flex flex-row overflow-hidden hover:shadow-md transition">
 
                         {{-- Image - Responsive: petit sur mobile, plus grand sur desktop --}}

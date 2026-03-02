@@ -273,7 +273,7 @@
                         $mainImage = asset('images/placeholder-car.jpg');
                     }
                 @endphp
-                <a href="{{ route('annonces.show.legacy', $ad->id) }}"
+                <a href="{{ route('annonces.show', ['annonce' => $ad->id, 'slug' => $ad->slug ?: Str::slug($ad->titre)]) }}"
                    class="bg-white rounded-xl shadow-sm hover:shadow transition overflow-hidden group">
                     <div class="relative h-24 overflow-hidden bg-gray-100">
                         <img src="{{ $mainImage }}" 
@@ -319,7 +319,7 @@
                         $mainImage = asset('images/placeholder-car.jpg');
                     }
                 @endphp
-                <a href="{{ route('annonces.show.legacy', $ad->id) }}"
+                <a href="{{ route('annonces.show', ['annonce' => $ad->id, 'slug' => $ad->slug ?: Str::slug($ad->titre)]) }}"
                    class="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden">
                     <div class="relative h-40 overflow-hidden bg-gray-100">
                         <img src="{{ $mainImage }}" 

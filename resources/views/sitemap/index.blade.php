@@ -20,7 +20,7 @@
     {{-- All active annonces --}}
     @foreach($annonces as $annonce)
     <url>
-        <loc>{{ route('annonces.show.legacy', $annonce->id) }}</loc>
+        <loc>{{ route('annonces.show', ['annonce' => $annonce->id, 'slug' => $annonce->slug ?: Str::slug($annonce->titre)]) }}</loc>
         <lastmod>{{ $annonce->updated_at->toW3cString() }}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>

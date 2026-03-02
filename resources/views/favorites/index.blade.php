@@ -28,7 +28,7 @@
 
                 <div class="bg-white rounded-2xl shadow overflow-hidden hover:shadow-md transition">
                     {{-- Partie cliquable : ouvre la fiche annonce --}}
-                    <a href="{{ route('annonces.show.legacy', $annonce->id) }}"
+                    <a href="{{ route('annonces.show', ['annonce' => $annonce->id, 'slug' => $annonce->slug ?? Str::slug($annonce->titre)]) }}"
                        class="flex">
                         <img src="{{ $image }}" alt="Photo véhicule"
                              class="w-32 h-24 object-cover">
