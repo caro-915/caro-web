@@ -8,7 +8,7 @@
 
     <h1 class="text-lg font-bold mt-2">
         Conversation – 
-        <a href="{{ route('annonces.show', $conversation->annonce->id) }}" 
+        <a href="{{ route('annonces.show.legacy', $conversation->annonce->id) }}" 
            class="text-gray-800 hover:text-gray-600 hover:underline">
             {{ $conversation->annonce->titre ?? 'Annonce #'.$conversation->annonce->id }}
         </a>

@@ -38,7 +38,7 @@
                         <div class="text-xs text-gray-500">
                             {{ $a->marque }} • {{ $a->modele }} • Vendeur: {{ optional($a->user)->name ?? '—' }}
                         </div>
-                        <a class="text-xs text-gray-800 hover:underline" href="{{ route('annonces.show', $a->id) }}">
+                        <a class="text-xs text-gray-800 hover:underline" href="{{ route('annonces.show.legacy', $a->id) }}">
                             Voir l’annonce
                         </a>
                     </div>

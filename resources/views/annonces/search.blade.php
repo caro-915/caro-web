@@ -2,7 +2,39 @@
 
 @php
     use Illuminate\Support\Facades\Storage;
+    
+    // Build SEO title and description based on filters
+    $seoTitleParts = [];
+    $seoDescParts = [];
+    
+    if (request('marque')) {
+        $seoTitleParts[] = request('marque');
+    }
+    if (request('modele')) {
+        $seoTitleParts[] = request('modele');
+    }
+    if (request('vehicle_type') === 'Moto') {
+        $seoTitleParts[] = 'Motos';
+    } elseif (request('vehicle_type') === 'Voiture') {
+        $seoTitleParts[] = 'Voitures';
+    }
+    if (request('wilaya')) {
+        $seoTitleParts[] = request('wilaya');
+    }
+    
+    $seoTitle = count($seoTitleParts) > 0 
+        ? implode(' ', $seoTitleParts) . ' d\'occasion - Annonces | ElSayara'
+        : 'Annonces Véhicules d\'Occasion en Algérie | ElSayara';
+    
+    $seoDesc = 'Recherchez parmi ' . (isset($annonces) ? number_format($annonces->total()) : 'des milliers') . ' annonces de véhicules d\'occasion';
+    if (request('marque')) {
+        $seoDesc .= ' ' . request('marque');
+    }
+    $seoDesc .= ' en Algérie. Filtrez par prix, année, kilométrage et wilaya.';
 @endphp
+
+@section('seo_title', $seoTitle)
+@section('seo_description', $seoDesc)
 
 @section('content')
 <!-- Force cache refresh v2 -->
@@ -281,7 +313,7 @@
                         }
                     @endphp
                     {{-- One result card --}}
-                    <a href="{{ route('annonces.show', $annonce->id) }}"
+                    <a href="{{ route('annonces.show.legacy', $annonce->id) }}"
                        class="bg-white rounded-2xl shadow flex flex-row overflow-hidden hover:shadow-md transition">
 
                         {{-- Image - Responsive: petit sur mobile, plus grand sur desktop --}}

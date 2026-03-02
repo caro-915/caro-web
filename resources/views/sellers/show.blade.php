@@ -49,7 +49,7 @@
                     <div class="bg-white rounded-2xl shadow hover:shadow-md transition overflow-hidden">
                         <div class="flex flex-col sm:flex-row">
                             {{-- Image gauche (comme capture 1) --}}
-                            <a href="{{ route('annonces.show', $annonce) }}"
+                            <a href="{{ route('annonces.show.legacy', $annonce->id) }}"
                                class="block w-full sm:w-[240px] h-[150px] sm:h-[140px] bg-gray-100 overflow-hidden">
                                 @if($img)
                                     <img src="{{ $img }}" alt="{{ $annonce->titre }}"
@@ -67,7 +67,7 @@
                                     {{ $annonce->marque }} · {{ $annonce->modele }}
                                 </div>
 
-                                <a href="{{ route('annonces.show', $annonce) }}"
+                                <a href="{{ route('annonces.show.legacy', $annonce->id) }}"
                                    class="block font-extrabold text-base leading-tight mt-1 hover:text-gray-800">
                                     {{ $annonce->titre }}
                                 </a>
@@ -92,7 +92,7 @@
                                 </div>
 
                                 <div class="text-right">
-                                    <a href="{{ route('annonces.show', $annonce) }}"
+                                    <a href="{{ route('annonces.show.legacy', $annonce->id) }}"
                                        class="text-xs font-semibold text-gray-800 hover:underline">
                                         Voir le détail
                                     </a>

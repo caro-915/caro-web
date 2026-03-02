@@ -1,26 +1,119 @@
 ﻿@extends('layouts.app')
 
+@php
+    // Build an array of up to 4 image URLs from the stored paths
+    $mainImage = $images[0] ?? asset('images/placeholder-car.jpg');
+
+    // Normalize some fields (support both annee/year, kilometrage/mileage)
+    $year       = $annonce->annee ?? $annonce->year;
+    $mileage    = $annonce->kilometrage ?? $annonce->mileage;
+    $fuel       = $annonce->carburant ?? $annonce->fuel_type;
+    $gearbox    = $annonce->boite_vitesse ?? $annonce->gearbox;
+    $city       = $annonce->ville ?? $annonce->city;
+    $brandName  = $annonce->marque ?? optional($annonce->marque)->name;
+    $modelName  = $annonce->modele ?? optional($annonce->modele)->name;
+
+    // Extra fields
+    $couleur = $annonce->couleur ?? null;
+    $documentType = $annonce->document_type ?? null;
+    $finition = $annonce->finition ?? null;
+    
+    // SEO: Build title and description
+    $seoTitle = trim($brandName . ' ' . $modelName);
+    if ($year) $seoTitle .= ' ' . $year;
+    $seoTitle .= ' - ' . number_format($annonce->prix, 0, ',', ' ') . ' DA | ElSayara';
+    
+    $seoDesc = $annonce->titre ?? $seoTitle;
+    if ($mileage) $seoDesc .= ' • ' . number_format($mileage, 0, ',', ' ') . ' km';
+    if ($fuel) $seoDesc .= ' • ' . $fuel;
+    if ($city) $seoDesc .= ' • ' . $city;
+    $seoDesc .= '. Annonce véhicule d\'occasion sur ElSayara.';
+    
+    // Fuel type mapping for Schema.org
+    $fuelTypeSchema = match(strtolower($fuel ?? '')) {
+        'essence' => 'https://schema.org/Gasoline',
+        'diesel' => 'https://schema.org/Diesel',
+        'électrique', 'electrique' => 'https://schema.org/Electric',
+        'hybride' => 'https://schema.org/HybridElectric',
+        default => null
+    };
+    
+    // Transmission mapping for Schema.org
+    $transmissionSchema = match(strtolower($gearbox ?? '')) {
+        'automatique' => 'https://schema.org/AutomaticTransmission',
+        'manuelle' => 'https://schema.org/ManualTransmission',
+        default => null
+    };
+@endphp
+
+@section('seo_title', $seoTitle)
+@section('seo_description', Str::limit($seoDesc, 160))
+@section('og_type', 'product')
+@section('og_image', $mainImage)
+@section('seo_canonical', route('annonces.show.legacy', $annonce->id))
+
+@push('seo')
+{{-- Schema.org JSON-LD for Vehicle + Offer --}}
+@php
+$jsonLd = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Vehicle',
+    'name' => $annonce->titre ?? trim($brandName . ' ' . $modelName),
+    'description' => Str::limit($annonce->description ?? $seoDesc, 500),
+    'brand' => [
+        '@type' => 'Brand',
+        'name' => $brandName
+    ],
+    'image' => $images->toArray(),
+    'url' => url()->current(),
+    'offers' => [
+        '@type' => 'Offer',
+        'price' => $annonce->prix,
+        'priceCurrency' => 'DZD',
+        'availability' => 'https://schema.org/InStock',
+        'itemCondition' => $annonce->condition === 'oui' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
+        'seller' => [
+            '@type' => 'Person',
+            'name' => $annonce->user->name ?? 'Vendeur'
+        ],
+        'url' => url()->current()
+    ]
+];
+
+if ($modelName) {
+    $jsonLd['model'] = $modelName;
+}
+if ($year) {
+    $jsonLd['vehicleModelDate'] = (string) $year;
+    $jsonLd['modelDate'] = (string) $year;
+}
+if ($mileage) {
+    $jsonLd['mileageFromOdometer'] = [
+        '@type' => 'QuantitativeValue',
+        'value' => $mileage,
+        'unitCode' => 'KMT'
+    ];
+}
+if ($fuelTypeSchema) {
+    $jsonLd['fuelType'] = $fuelTypeSchema;
+}
+if ($transmissionSchema) {
+    $jsonLd['vehicleTransmission'] = $transmissionSchema;
+}
+if ($couleur) {
+    $jsonLd['color'] = $couleur;
+}
+if ($city) {
+    $jsonLd['offers']['areaServed'] = [
+        '@type' => 'Place',
+        'name' => $city . ', Algérie'
+    ];
+}
+@endphp
+<script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}</script>
+@endpush
+
 @section('content')
-    @php
-        // Build an array of up to 4 image URLs from the stored paths
-        $mainImage = $images[0] ?? asset('images/placeholder-car.jpg');
-
-
-        // Normalize some fields (support both annee/year, kilometrage/mileage)
-        $year       = $annonce->annee ?? $annonce->year;
-        $mileage    = $annonce->kilometrage ?? $annonce->mileage;
-        $fuel       = $annonce->carburant ?? $annonce->fuel_type;
-        $gearbox    = $annonce->boite_vitesse ?? $annonce->gearbox;
-        $city       = $annonce->ville ?? $annonce->city;
-        $brandName  = $annonce->marque ?? optional($annonce->marque)->name;
-        $modelName  = $annonce->modele ?? optional($annonce->modele)->name;
-
-        // Extra fields
-        $couleur = $annonce->couleur ?? null;
-        $documentType = $annonce->document_type ?? null;
-        $finition = $annonce->finition ?? null;
-    @endphp
-
     <div class="max-w-6xl mx-auto px-4 py-6 md:py-8">
         {{-- Breadcrumb / back link --}}
         <div class="mb-4 text-xs md:text-sm text-gray-500 flex items-center gap-2">
@@ -366,7 +459,7 @@
                             $simCity    = $sim->ville ?? $sim->city;
                         @endphp
 
-                        <a href="{{ route('annonces.show', $sim->id) }}"
+                        <a href="{{ route('annonces.show.legacy', $sim->id) }}"
                            class="bg-white rounded-2xl shadow flex overflow-hidden hover:shadow-md transition">
                             <img src="{{ $simImage }}" alt="Photo similaire"
                                  class="w-32 h-24 object-cover">

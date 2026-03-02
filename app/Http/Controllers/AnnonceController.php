@@ -367,12 +367,25 @@ class AnnonceController extends Controller
         $annonce = Annonce::create($data);
 
         return redirect()
-            ->route('annonces.show', $annonce->id)
+            ->route('annonces.show', ['annonce' => $annonce->id, 'slug' => $annonce->slug])
             ->with('success', 'Annonce créée avec succès.');
     }
 
-    public function show(Annonce $annonce)
+    /**
+     * Display an annonce with SEO-friendly URL.
+     * Redirects to canonical URL if slug is missing or doesn't match.
+     */
+    public function show(Request $request, Annonce $annonce, ?string $slug = null)
 {
+    // SEO: Redirect to canonical URL with slug if missing or wrong
+    $expectedSlug = $annonce->slug ?: Str::slug($annonce->titre);
+    if ($slug !== $expectedSlug) {
+        return redirect()->route('annonces.show', [
+            'annonce' => $annonce->id,
+            'slug' => $expectedSlug
+        ], 301);
+    }
+
     $isOwner = auth()->check() && auth()->id() === $annonce->user_id;
     $isAdmin = auth()->check() && auth()->user()->is_admin;
 

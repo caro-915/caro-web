@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use App\Models\CarBrand;
 use App\Models\CarModel;
 use App\Models\User;
@@ -14,6 +15,7 @@ class Annonce extends Model
 
     protected $fillable = [
         'titre',
+        'slug',
         'description',
         'prix',
         'marque',
@@ -43,6 +45,65 @@ class Annonce extends Model
         'show_phone' => 'boolean',
         'is_active'  => 'boolean',
     ];
+
+    /**
+     * Boot the model and auto-generate slug on creation.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($annonce) {
+            if (empty($annonce->slug)) {
+                $annonce->slug = $annonce->generateUniqueSlug();
+            }
+        });
+
+        static::updating(function ($annonce) {
+            // Regenerate slug if title changed and slug wasn't manually set
+            if ($annonce->isDirty('titre') && !$annonce->isDirty('slug')) {
+                $annonce->slug = $annonce->generateUniqueSlug();
+            }
+        });
+    }
+
+    /**
+     * Generate a unique slug for the annonce.
+     */
+    public function generateUniqueSlug(): string
+    {
+        $baseSlug = Str::slug($this->titre ?: ($this->marque . ' ' . $this->modele));
+        
+        if (empty($baseSlug)) {
+            $baseSlug = 'annonce';
+        }
+        
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (static::where('slug', $slug)->where('id', '!=', $this->id ?? 0)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
+    }
+
+    /**
+     * Get the route key name for model binding (allows both ID and slug).
+     */
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
+
+    /**
+     * Get the URL-friendly path for this annonce.
+     */
+    public function getUrlPath(): string
+    {
+        return $this->id . '-' . ($this->slug ?: Str::slug($this->titre));
+    }
 
     public function marque()
     {

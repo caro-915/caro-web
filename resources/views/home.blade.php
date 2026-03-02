@@ -1,5 +1,8 @@
 ﻿@extends('layouts.app')
 
+@section('seo_title', 'ElSayara – Achat et Vente de Véhicules d\'Occasion en Algérie')
+@section('seo_description', 'Trouvez votre prochaine voiture, moto ou utilitaire sur ElSayara. Des milliers d\'annonces vérifiées partout en Algérie. Recherche facile par marque, prix et wilaya.')
+
 @php
     use Illuminate\Support\Facades\Storage;
 @endphp
@@ -270,7 +273,7 @@
                         $mainImage = asset('images/placeholder-car.jpg');
                     }
                 @endphp
-                <a href="{{ route('annonces.show', $ad->id) }}"
+                <a href="{{ route('annonces.show.legacy', $ad->id) }}"
                    class="bg-white rounded-xl shadow-sm hover:shadow transition overflow-hidden group">
                     <div class="relative h-24 overflow-hidden bg-gray-100">
                         <img src="{{ $mainImage }}" 
@@ -316,7 +319,7 @@
                         $mainImage = asset('images/placeholder-car.jpg');
                     }
                 @endphp
-                <a href="{{ route('annonces.show', $ad->id) }}"
+                <a href="{{ route('annonces.show.legacy', $ad->id) }}"
                    class="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden">
                     <div class="relative h-40 overflow-hidden bg-gray-100">
                         <img src="{{ $mainImage }}" 
@@ -396,29 +399,132 @@
     @endif
 
 
-    <section id="about" class="mt-16 bg-white rounded-2xl shadow p-6 md:p-8">
-    <h2 class="text-2xl font-bold mb-3">À propos de ElSayara</h2>
+    {{-- SECTION : À propos --}}
+    <section id="about" class="mt-16 bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow p-6 md:p-8">
+        <div class="max-w-3xl">
+            <h2 class="text-2xl font-bold mb-3">À propos de ElSayara</h2>
+            <p class="text-sm md:text-base text-gray-600 leading-relaxed mb-6">
+                ElSayara est la plateforme algérienne de référence pour l'achat et la vente de véhicules d'occasion.
+                Notre mission : connecter acheteurs et vendeurs dans une expérience simple, transparente et sécurisée.
+                Des milliers d'annonces vérifiées, un moteur de recherche puissant, et une communauté active partout en Algérie.
+            </p>
 
-    <p class="text-sm md:text-base text-gray-600 leading-relaxed">
-        ElSayara est une plateforme algérienne dédiée à la vente et à l'achat de véhicules
-        entre particuliers et professionnels.
-        Notre objectif est de proposer une expérience simple, fiable et rapide pour
-        trouver le véhicule idéal.
-    </p>
-</section>
+            {{-- CTAs utiles --}}
+            <div class="flex flex-wrap gap-3">
+                <a href="{{ route('annonces.create') }}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-800 text-white text-sm font-semibold rounded-full hover:bg-gray-900 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Déposer une annonce
+                </a>
+                <a href="{{ route('annonces.search') }}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-full hover:bg-gray-50 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    Rechercher un véhicule
+                </a>
+                <a href="#top-annonces"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-pink-50 border border-pink-200 text-pink-700 text-sm font-semibold rounded-full hover:bg-pink-100 transition">
+                    🔥 Voir les top annonces
+                </a>
+            </div>
+        </div>
+    </section>
 
-<section id="contact-us" class="mt-10 bg-white rounded-2xl shadow p-6 md:p-8">
-    <h2 class="text-2xl font-bold mb-3">Nous contacter</h2>
+    {{-- SECTION : Contact complet --}}
+    <section id="contact-us" class="mt-10 bg-white rounded-2xl shadow p-6 md:p-8">
+        <h2 class="text-2xl font-bold mb-4">Nous contacter</h2>
 
-    <p class="text-sm md:text-base text-gray-600 mb-4">
-        Une question, une suggestion ou un problème ?
-        Contactez-nous :
-    </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{-- Coordonnées --}}
+            <div class="space-y-4">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-800 mb-2">📧 Email</h3>
+                    <a href="mailto:{{ config('autodz.contact_email', 'contact@elsayara.com') }}" 
+                       class="text-pink-600 hover:underline text-sm md:text-base">
+                        {{ config('autodz.contact_email', 'contact@elsayara.com') }}
+                    </a>
+                </div>
 
-    <ul class="text-sm md:text-base text-gray-700 space-y-2">
-        <li>📧 Email : <a href="mailto:contact@elsayara.com" class="font-semibold hover:underline">contact@elsayara.com</a></li>
-    </ul>
-</section>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-800 mb-2">📍 Localisation</h3>
+                    <p class="text-sm md:text-base text-gray-600">Algérie</p>
+                </div>
+
+                @if(config('autodz.contact_phone'))
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-800 mb-2">📞 Téléphone</h3>
+                    <a href="tel:{{ config('autodz.contact_phone') }}" 
+                       class="text-pink-600 hover:underline text-sm md:text-base">
+                        {{ config('autodz.contact_phone') }}
+                    </a>
+                </div>
+                @endif
+
+                {{-- Réseaux sociaux --}}
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-800 mb-2">🌐 Réseaux sociaux</h3>
+                    <div class="flex gap-3">
+                        @if(config('autodz.social_facebook'))
+                        <a href="{{ config('autodz.social_facebook') }}" target="_blank" rel="noopener"
+                           class="w-9 h-9 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
+                           title="Facebook">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.77,7.46H14.5v-1.9c0-.9.6-1.1,1-1.1h3V.5h-4.33C10.24.5,9.5,3.44,9.5,5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4Z"/></svg>
+                        </a>
+                        @endif
+                        @if(config('autodz.social_instagram'))
+                        <a href="{{ config('autodz.social_instagram') }}" target="_blank" rel="noopener"
+                           class="w-9 h-9 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-500 text-white hover:opacity-90 transition"
+                           title="Instagram">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12,2.16c3.2,0,3.58,0,4.85.07,3.25.15,4.77,1.69,4.92,4.92.06,1.27.07,1.65.07,4.85s0,3.58-.07,4.85c-.15,3.23-1.66,4.77-4.92,4.92-1.27.06-1.65.07-4.85.07s-3.58,0-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92-.06-1.27-.07-1.65-.07-4.85s0-3.58.07-4.85C2.38,3.92,3.9,2.38,7.15,2.23,8.42,2.18,8.8,2.16,12,2.16ZM12,0C8.74,0,8.33,0,7.05.07c-4.35.2-6.78,2.62-7,7C0,8.33,0,8.74,0,12s0,3.67.07,4.95c.2,4.36,2.62,6.78,7,7C8.33,24,8.74,24,12,24s3.67,0,4.95-.07c4.35-.2,6.78-2.62,7-7C24,15.67,24,15.26,24,12s0-3.67-.07-4.95c-.2-4.35-2.62-6.78-7-7C15.67,0,15.26,0,12,0Zm0,5.84A6.16,6.16,0,1,0,18.16,12,6.16,6.16,0,0,0,12,5.84ZM12,16a4,4,0,1,1,4-4A4,4,0,0,1,12,16ZM18.41,4.15a1.44,1.44,0,1,0,1.44,1.44A1.44,1.44,0,0,0,18.41,4.15Z"/></svg>
+                        </a>
+                        @endif
+                        @if(config('autodz.social_twitter'))
+                        <a href="{{ config('autodz.social_twitter') }}" target="_blank" rel="noopener"
+                           class="w-9 h-9 flex items-center justify-center rounded-full bg-black text-white hover:bg-gray-800 transition"
+                           title="X (Twitter)">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        @endif
+                        @if(config('autodz.social_tiktok'))
+                        <a href="{{ config('autodz.social_tiktok') }}" target="_blank" rel="noopener"
+                           class="w-9 h-9 flex items-center justify-center rounded-full bg-black text-white hover:bg-gray-800 transition"
+                           title="TikTok">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                        </a>
+                        @endif
+                    </div>
+                    @if(!config('autodz.social_facebook') && !config('autodz.social_instagram') && !config('autodz.social_twitter') && !config('autodz.social_tiktok'))
+                    <p class="text-xs text-gray-400">Bientôt disponible</p>
+                    @endif
+                </div>
+
+                {{-- Notice support --}}
+                <div class="bg-gray-50 rounded-lg p-3 mt-4">
+                    <p class="text-xs text-gray-500">
+                        💬 <strong>Support :</strong> Nous répondons généralement sous 24-48h ouvrées.
+                    </p>
+                </div>
+            </div>
+
+            {{-- Newsletter placeholder --}}
+            <div class="bg-gradient-to-br from-pink-50 to-gray-50 rounded-xl p-5">
+                <h3 class="text-sm font-semibold text-gray-800 mb-2">📬 Newsletter</h3>
+                <p class="text-xs text-gray-600 mb-4">
+                    Recevez les meilleures offres et nouveautés directement dans votre boîte mail.
+                </p>
+                {{-- TODO: Implémenter le backend newsletter (NewsletterController + table subscribers) --}}
+                <form action="#" method="POST" class="space-y-3" onsubmit="event.preventDefault(); alert('Newsletter bientôt disponible !');">
+                    @csrf
+                    <input type="email" name="newsletter_email" placeholder="Votre adresse email"
+                           class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                    <button type="submit"
+                            class="w-full px-4 py-2 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition">
+                        S'abonner
+                    </button>
+                </form>
+                <p class="text-[10px] text-gray-400 mt-2">Pas de spam, promis. Désinscription possible à tout moment.</p>
+            </div>
+        </div>
+    </section>
 
 
 

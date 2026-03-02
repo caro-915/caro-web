@@ -1,2 +1,18 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Disallow admin and auth routes
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+Disallow: /profile
+Disallow: /dashboard
+Disallow: /messages
+Disallow: /favoris
+Disallow: /mes-annonces
+Disallow: /historique-recherche
+Disallow: /api/
+
+# Sitemap (update with your actual domain)
+Sitemap: https://elsayara.com/sitemap.xml
