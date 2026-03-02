@@ -278,7 +278,7 @@
                     <h3 class="font-semibold text-white mb-3">Contact</h3>
                     <ul class="space-y-1 text-[11px] md:text-xs">
                         <li>
-                            <a href="mailto:{{ config('autodz.contact_email', 'contact@elsayara.com') }}" class="hover:text-white transition">
+                            <a href="{{ route('contact.show') }}" class="hover:text-white transition">
                                 📧 {{ config('autodz.contact_email', 'contact@elsayara.com') }}
                             </a>
                         </li>

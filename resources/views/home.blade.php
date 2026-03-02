@@ -438,7 +438,7 @@
             <div class="space-y-4">
                 <div>
                     <h3 class="text-sm font-semibold text-gray-800 mb-2">📧 Email</h3>
-                    <a href="mailto:{{ config('autodz.contact_email', 'contact@elsayara.com') }}" 
+                    <a href="{{ route('contact.show') }}" 
                        class="text-pink-600 hover:underline text-sm md:text-base">
                         {{ config('autodz.contact_email', 'contact@elsayara.com') }}
                     </a>
