@@ -6,6 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- SEO: Dynamic title and meta --}}
     <title>@yield('seo_title', 'ElSayara – Trouvez votre voiture d\'occasion en Algérie')</title>
@@ -323,101 +324,55 @@ setInterval(() => {
 }, 20000); // toutes les 20 secondes
 </script>
 
-{{-- CHATBOT ASSISTANT --}}
-<div x-data="chatbot()" x-cloak class="fixed bottom-4 right-4 z-50">
-    {{-- Bouton flottant --}}
-    <button @click="toggle()"
-            class="w-14 h-14 bg-pink-600 hover:bg-pink-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300"
-            :class="{ 'scale-0': isOpen }"
-            title="Aide">
-        <span class="text-2xl">💬</span>
+{{-- CHATBOT ASSISTANT - Version JavaScript pure --}}
+<div id="chatbot-container">
+    {{-- Bouton flottant robot --}}
+    <button id="chatbot-btn" onclick="toggleChatbot()" 
+            style="position:fixed;bottom:16px;right:16px;z-index:9999;width:56px;height:56px;background:#db2777;color:white;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,0.2);transition:transform 0.2s;"
+            onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <span style="font-size:28px;">🤖</span>
     </button>
 
-    {{-- Fenêtre chat --}}
-    <div x-show="isOpen"
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 scale-100"
-         x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-         class="absolute bottom-0 right-0 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
-        
+    {{-- Fenêtre chat (cachée par défaut) --}}
+    <div id="chatbot-window" style="display:none;position:fixed;bottom:16px;right:16px;z-index:9999;width:384px;max-width:calc(100vw - 32px);background:white;border-radius:16px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);border:1px solid #e5e7eb;overflow:hidden;">
         {{-- Header --}}
-        <div class="bg-gradient-to-r from-pink-600 to-pink-500 text-white px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <span class="text-xl">🤖</span>
+        <div style="background:linear-gradient(to right,#db2777,#ec4899);color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:20px;">🤖</span>
                 <div>
-                    <h3 class="font-bold text-sm">Assistant ElSayara</h3>
-                    <p class="text-[10px] text-pink-100">En ligne • Réponse instantanée</p>
+                    <div style="font-weight:bold;font-size:14px;">Assistant ElSayara</div>
+                    <div style="font-size:10px;opacity:0.8;">En ligne • Réponse instantanée</div>
                 </div>
             </div>
-            <button @click="toggle()" class="text-white/80 hover:text-white transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
+            <button onclick="toggleChatbot()" style="background:none;border:none;color:white;cursor:pointer;opacity:0.8;font-size:20px;">✕</button>
         </div>
 
-        {{-- Messages zone --}}
-        <div x-ref="messagesContainer" class="h-72 overflow-y-auto p-4 space-y-3 bg-gray-50">
-            <template x-for="(msg, index) in messages" :key="index">
-                <div :class="msg.type === 'user' ? 'flex justify-end' : 'flex justify-start'">
-                    <div :class="msg.type === 'user' 
-                        ? 'bg-pink-600 text-white rounded-2xl rounded-br-md px-4 py-2 max-w-[85%]' 
-                        : 'bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-bl-md px-4 py-2 max-w-[85%] shadow-sm'">
-                        <p class="text-sm" x-text="msg.text"></p>
-                        {{-- Actions buttons --}}
-                        <template x-if="msg.actions && msg.actions.length > 0">
-                            <div class="mt-2 space-y-1">
-                                <template x-for="(action, i) in msg.actions" :key="i">
-                                    <a :href="action.url" 
-                                       class="block text-xs bg-pink-50 text-pink-700 hover:bg-pink-100 px-3 py-1.5 rounded-lg transition text-center font-medium"
-                                       x-text="action.label"></a>
-                                </template>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-            </template>
-            {{-- Typing indicator --}}
-            <div x-show="isTyping" class="flex justify-start">
-                <div class="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-2 shadow-sm">
-                    <div class="flex space-x-1">
-                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
-                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
-                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
-                    </div>
+        {{-- Messages --}}
+        <div id="chatbot-messages" style="height:288px;overflow-y:auto;padding:16px;background:#f9fafb;">
+            <div style="display:flex;justify-content:flex-start;">
+                <div style="background:white;border:1px solid #e5e7eb;border-radius:16px;border-bottom-left-radius:4px;padding:8px 16px;max-width:85%;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+                    <p style="font-size:14px;margin:0;">Bonjour ! 👋 Je suis l'assistant ElSayara. Comment puis-je vous aider ?</p>
                 </div>
             </div>
         </div>
 
         {{-- Quick actions --}}
-        <div class="px-3 py-2 bg-white border-t border-gray-100">
-            <div class="flex flex-wrap gap-1">
-                <button @click="sendQuick('Déposer une annonce')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">🚗 Déposer</button>
-                <button @click="sendQuick('Rechercher une voiture')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">🔍 Rechercher</button>
-                <button @click="sendQuick('Mes favoris')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">❤️ Favoris</button>
-                <button @click="sendQuick('Mes messages')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">💬 Messages</button>
-                <button @click="sendQuick('Contact support')" class="text-[10px] bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-700 px-2 py-1 rounded-full transition">📧 Contact</button>
+        <div style="padding:8px 12px;background:white;border-top:1px solid #f3f4f6;">
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                <button onclick="sendQuickMessage('Déposer une annonce')" style="font-size:10px;background:#f3f4f6;border:none;padding:4px 8px;border-radius:12px;cursor:pointer;">🚗 Déposer</button>
+                <button onclick="sendQuickMessage('Rechercher une voiture')" style="font-size:10px;background:#f3f4f6;border:none;padding:4px 8px;border-radius:12px;cursor:pointer;">🔍 Rechercher</button>
+                <button onclick="sendQuickMessage('Mes favoris')" style="font-size:10px;background:#f3f4f6;border:none;padding:4px 8px;border-radius:12px;cursor:pointer;">❤️ Favoris</button>
+                <button onclick="sendQuickMessage('Contact support')" style="font-size:10px;background:#f3f4f6;border:none;padding:4px 8px;border-radius:12px;cursor:pointer;">📧 Contact</button>
             </div>
         </div>
 
-        {{-- Input zone --}}
-        <div class="p-3 bg-white border-t border-gray-200">
-            <form @submit.prevent="send()" class="flex gap-2">
-                <input type="text" 
-                       x-model="input"
-                       @keydown.enter="send()"
-                       placeholder="Posez votre question..."
-                       class="flex-1 px-4 py-2 text-sm border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                       :disabled="isTyping">
-                <button type="submit" 
-                        :disabled="!input.trim() || isTyping"
-                        class="w-10 h-10 bg-pink-600 hover:bg-pink-700 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
+        {{-- Input --}}
+        <div style="padding:12px;background:white;border-top:1px solid #e5e7eb;">
+            <form onsubmit="sendChatMessage(event)" style="display:flex;gap:8px;">
+                <input type="text" id="chatbot-input" placeholder="Posez votre question..." 
+                       style="flex:1;padding:8px 16px;font-size:14px;border:1px solid #e5e7eb;border-radius:20px;outline:none;">
+                <button type="submit" style="width:40px;height:40px;background:#db2777;color:white;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                 </button>
             </form>
         </div>
@@ -425,84 +380,119 @@ setInterval(() => {
 </div>
 
 <script>
-function chatbot() {
-    return {
-        isOpen: false,
-        isTyping: false,
-        input: '',
-        messages: [
-            {
-                type: 'bot',
-                text: 'Bonjour ! 👋 Je suis l\'assistant ElSayara. Comment puis-je vous aider ?',
-                actions: []
-            }
-        ],
-
-        toggle() {
-            this.isOpen = !this.isOpen;
-        },
-
-        sendQuick(text) {
-            this.input = text;
-            this.send();
-        },
-
-        async send() {
-            const text = this.input.trim();
-            if (!text || this.isTyping) return;
-
-            // Add user message
-            this.messages.push({ type: 'user', text: text, actions: [] });
-            this.input = '';
-            this.scrollToBottom();
-
-            // Show typing indicator
-            this.isTyping = true;
-
-            try {
-                const response = await fetch('{{ route("chatbot.ask") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ message: text })
-                });
-
-                const data = await response.json();
-
-                // Simulate typing delay
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                this.messages.push({
-                    type: 'bot',
-                    text: data.reply,
-                    actions: data.actions || []
-                });
-            } catch (error) {
-                this.messages.push({
-                    type: 'bot',
-                    text: 'Désolé, une erreur est survenue. Veuillez réessayer.',
-                    actions: []
-                });
-            }
-
-            this.isTyping = false;
-            this.scrollToBottom();
-        },
-
-        scrollToBottom() {
-            this.$nextTick(() => {
-                const container = this.$refs.messagesContainer;
-                if (container) {
-                    container.scrollTop = container.scrollHeight;
-                }
-            });
-        }
+function toggleChatbot() {
+    const btn = document.getElementById('chatbot-btn');
+    const win = document.getElementById('chatbot-window');
+    if (win.style.display === 'none') {
+        win.style.display = 'block';
+        btn.style.display = 'none';
+        document.getElementById('chatbot-input')?.focus();
+    } else {
+        win.style.display = 'none';
+        btn.style.display = 'flex';
     }
 }
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function sendQuickMessage(text) {
+    document.getElementById('chatbot-input').value = text;
+    sendChatMessage(new Event('submit'));
+}
+
+function addQuickReplies(quickReplies) {
+    if (!quickReplies || quickReplies.length === 0) return '';
+    return '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">' +
+        quickReplies.map(qr => 
+            `<button onclick="sendQuickMessage('${escapeHtml(qr)}')" style="font-size:11px;background:#fdf2f8;color:#be185d;border:1px solid #fbcfe8;padding:4px 10px;border-radius:12px;cursor:pointer;">${escapeHtml(qr)}</button>`
+        ).join('') + '</div>';
+}
+
+async function sendChatMessage(e) {
+    e.preventDefault();
+    const input = document.getElementById('chatbot-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const messagesDiv = document.getElementById('chatbot-messages');
+    
+    // Add user message (escaped)
+    messagesDiv.innerHTML += `<div style="display:flex;justify-content:flex-end;margin-top:12px;">
+        <div style="background:#db2777;color:white;border-radius:16px;border-bottom-right-radius:4px;padding:8px 16px;max-width:85%;">
+            <p style="font-size:14px;margin:0;">${escapeHtml(text)}</p>
+        </div>
+    </div>`;
+    
+    input.value = '';
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // Show typing indicator
+    const typingId = 'typing-' + Date.now();
+    messagesDiv.innerHTML += `<div id="${typingId}" style="display:flex;justify-content:flex-start;margin-top:12px;">
+        <div style="background:white;border:1px solid #e5e7eb;border-radius:16px;padding:8px 16px;">
+            <span style="display:inline-flex;gap:4px;">
+                <span style="width:6px;height:6px;background:#9ca3af;border-radius:50%;animation:bounce 1s infinite;"></span>
+                <span style="width:6px;height:6px;background:#9ca3af;border-radius:50%;animation:bounce 1s infinite 0.15s;"></span>
+                <span style="width:6px;height:6px;background:#9ca3af;border-radius:50%;animation:bounce 1s infinite 0.3s;"></span>
+            </span>
+        </div>
+    </div>`;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    try {
+        const response = await fetch('/chatbot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: JSON.stringify({ message: text })
+        });
+        const data = await response.json();
+
+        // Remove typing indicator
+        document.getElementById(typingId)?.remove();
+
+        // Ensure reply exists (fix undefined bug)
+        const reply = data.reply || 'Je peux vous aider avec la recherche, le dépôt d\'annonces, et plus encore !';
+        
+        // Build actions HTML
+        let actionsHtml = '';
+        if (data.actions && data.actions.length > 0) {
+            actionsHtml = '<div style="margin-top:8px;">' + 
+                data.actions.map(a => `<a href="${escapeHtml(a.url || '#')}" style="display:block;font-size:12px;background:#fdf2f8;color:#be185d;padding:6px 12px;border-radius:8px;text-decoration:none;text-align:center;margin-top:4px;border:1px solid #fbcfe8;">${escapeHtml(a.label || 'Action')}</a>`).join('') +
+                '</div>';
+        }
+
+        // Build quick replies HTML
+        const quickRepliesHtml = addQuickReplies(data.quick_replies);
+
+        messagesDiv.innerHTML += `<div style="display:flex;justify-content:flex-start;margin-top:12px;">
+            <div style="background:white;border:1px solid #e5e7eb;border-radius:16px;border-bottom-left-radius:4px;padding:8px 16px;max-width:85%;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+                <p style="font-size:14px;margin:0;">${escapeHtml(reply)}</p>
+                ${actionsHtml}
+                ${quickRepliesHtml}
+            </div>
+        </div>`;
+    } catch (err) {
+        document.getElementById(typingId)?.remove();
+        messagesDiv.innerHTML += `<div style="display:flex;justify-content:flex-start;margin-top:12px;">
+            <div style="background:white;border:1px solid #e5e7eb;border-radius:16px;padding:8px 16px;">
+                <p style="font-size:14px;margin:0;">Désolé, une erreur est survenue. Réessayez ou utilisez les boutons ci-dessus.</p>
+            </div>
+        </div>`;
+    }
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 </script>
+
+<style>
+@keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-4px); }
+}
+</style>
 
 
 </body>
